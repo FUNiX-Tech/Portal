@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="assignment_view_form" model="ir.ui.view">
+        <field name="name">assignment.form</field>
+        <field name="model">assignment</field>
+        <field name="arch" type="xml">
+            <form string="Assignment">
+                <sheet>
+                    <field name="name" />
+                    <field name="course_code" />
+                    <field name="order" />
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="assignment_view_tree" model="ir.ui.view">
+        <field name="name">assignment.tree</field>
+        <field name="model">assignment</field>
+        <field name="arch" type="xml">
+            <tree string="Assignment" editable="bottom">
+                <field name="name"/>
+                <field name="course_code"/>
+                <field name="order"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Configuration/Lead & Opportunities/Lost Reasons Menu -->
+    <record id="assignment_action" model="ir.actions.act_window">
+        <field name="name">Assignments</field>
+        <field name="res_model">assignment</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- <menuitem id="menu_assignment_action" action="assignment_action" name="Assignment" /> -->
+
+    <menuitem id="menu_assignment_root" name="Assignment">
+        <menuitem id="menu_action_assignment" name="Assignment" action="assignment_action"/>
+        <menuitem id="menu_action_assignment_criterion_group" name="Criterion Group" action="assignment_criterion_group_action"/>
+        <menuitem id="menu_action_assignment_criterion" name="Criterion" action="assignment_criterion_action"/>
+    </menuitem>
+</odoo>

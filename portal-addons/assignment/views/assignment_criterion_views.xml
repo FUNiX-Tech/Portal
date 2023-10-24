@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="assignment_criterion_view_form" model="ir.ui.view">
+        <field name="name">assignment_criterion.form</field>
+        <field name="model">assignment_criterion</field>
+        <field name="arch" type="xml">
+            <form string="Assignment Criterion">
+                <sheet>
+                   <group>
+                        <field name="name" />
+                        <field name="order" />
+                        <field name="group" />
+                        <notebook>
+                            <page string="Specifications">
+                                <field name="specifications" widget="html"/>
+                            </page>
+                        </notebook>
+                   </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="assignment_criterion_view_tree" model="ir.ui.view">
+        <field name="name">assignment_criterion.tree</field>
+        <field name="model">assignment_criterion</field>
+        <field name="arch" type="xml">
+            <tree string="Assignment Criterion Group" editable="bottom">
+                <field name="name" />
+                <field name="order" />
+                <field name="group" />
+                <field name="specifications" />
+            </tree>
+        </field>
+    </record>
+
+    <!-- Configuration/Lead & Opportunities/Lost Reasons Menu -->
+    <record id="assignment_criterion_action" model="ir.actions.act_window">
+        <field name="name">Assignment Criterions</field>
+        <field name="res_model">assignment_criterion</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>
