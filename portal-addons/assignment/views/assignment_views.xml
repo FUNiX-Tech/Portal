@@ -6,9 +6,11 @@
         <field name="arch" type="xml">
             <form string="Assignment">
                 <sheet>
-                    <field name="name" />
-                    <field name="course_code" />
-                    <field name="order" />
+                    <group>
+                        <field name="name" string="Tên Assignment" class="border bg-light"/>
+                        <field name="course_code" string="Mã môn học" class="border bg-light"/>
+                        <field name="order" string="STT" class="border bg-light"/>
+                    </group>
                 </sheet>
             </form>
         </field>
@@ -18,7 +20,7 @@
         <field name="name">assignment.tree</field>
         <field name="model">assignment</field>
         <field name="arch" type="xml">
-            <tree string="Assignment" editable="bottom">
+            <tree string="Assignment" edit="false" class="text-center">
                 <field name="name"/>
                 <field name="course_code"/>
                 <field name="order"/>
