@@ -1,0 +1,17 @@
+<odoo>
+    <!-- App Name -->
+    <menuitem id="student_mgmt_app"
+        name="Funix"
+        sequence="10" />
+
+    <!-- Main Menu -->
+    <menuitem id="student_mgmt_main_menu"
+        name="Funix Student"
+        parent="student_mgmt_app"
+        sequence="10">
+        <menuitem id="student_mgmt_student_dropdown_item"
+            name="Students"
+            action="student_action"
+            sequence="10" />
+    </menuitem>
+</odoo>

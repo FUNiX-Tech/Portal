@@ -1,0 +1,23 @@
+<odoo>
+    <data noupdate="0">
+        <!-- Tạo category hay group để phân quyền, các nhóm được tạo ra sẽ trực thuộc category này -->
+        <record id="module_category_student_management" model="ir.module.category">
+            <field name="name">Student Management</field>
+            <field name="sequence">1</field>
+        </record>
+
+        <!-- Nhóm Admin -->
+        <record id='group_portal_student_admin' model='res.groups'>
+            <field name="name">Admin</field>
+            <field name="category_id" ref='module_category_student_management'></field>
+            <field name="implied_ids" eval="[(4,ref('base.group_user'))]"></field>
+        </record>
+
+        <!-- Nhóm Teacher -->
+        <record id='group_portal_student_teacher' model='res.groups'>
+            <field name="name">Teacher</field>
+            <field name="category_id" ref='module_category_student_management'></field>
+            <field name="implied_ids" eval="[(4,ref('base.group_user'))]"></field>
+        </record>
+    </data>
+</odoo>
