@@ -6,9 +6,11 @@
         <field name="arch" type="xml">
             <form string="Assignment Criterion Group">
                 <sheet>
-                    <field name="name" string="Tên nhóm tiêu chí"  class="border bg-light"/>
-                    <field name="order" string="STT"  class="border bg-light"/>
-                    <field name="assignment" string="Assignment"  class="border bg-light"/>
+                    <group>
+                        <field name="title" string="Tên nhóm tiêu chí" class="border bg-light"/>
+                        <field name="number" string="STT" class="border bg-light"/>
+                        <field name="assignment" string="Assignment" class="border bg-light"/>
+                    </group>
                 </sheet>
             </form>
         </field>
@@ -18,9 +20,9 @@
         <field name="name">assignment_criterion_group.tree</field>
         <field name="model">assignment_criterion_group</field>
         <field name="arch" type="xml">
-            <tree string="Assignment Criterion Group"  edit="false" class="text-center">
-                <field name="name"/>
-                <field name="order"/>
+            <tree string="Assignment Criterion Group" edit="false" class="text-center">
+                <field name="title"/>
+                <field name="number"/>
                 <field name="assignment"/>
             </tree>
         </field>

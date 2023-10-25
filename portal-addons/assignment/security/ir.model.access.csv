@@ -2,3 +2,4 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 assignment.access_assignment,access_assignment,assignment.model_assignment,base.group_user,1,0,0,0
 assignment.access_assignment_criterion_group,access_assignment_criterion_group,assignment.model_assignment_criterion_group,base.group_user,1,0,0,0
 assignment.access_assignment_criterion,access_assignment_criterion,assignment.model_assignment_criterion,base.group_user,1,0,0,0
+assignment.access_assignment_course,access_assignment_course,assignment.model_assignment_course,base.group_user,1,0,0,0

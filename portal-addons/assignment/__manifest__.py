@@ -27,6 +27,7 @@
         'security/ir.model.access.csv',
         'views/assignment_criterion_group_views.xml',
         'views/assignment_criterion_views.xml',
+        'views/assignment_course_views.xml',
         'views/assignment_views.xml',
     ],
 }

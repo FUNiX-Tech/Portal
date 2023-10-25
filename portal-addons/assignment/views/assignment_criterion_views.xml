@@ -8,9 +8,9 @@
                 <sheet>
                    <group>
                         <group>
-                            <field name="name" string="Tên tiêu chí" class="border bg-light"/>
-                            <field name="order" string="STT" class="border bg-light"/>
-                            <field name="group" string="Nhóm tiêu chí" class="border bg-light"/>
+                            <field name="title" string="Tên tiêu chí" class="border bg-light"/>
+                            <field name="number" string="STT" class="border bg-light"/>
+                            <field name="criterion_group" string="Nhóm tiêu chí" class="border bg-light"/>
                         </group>
                         <notebook>
                             <page string="Specifications">
@@ -28,9 +28,9 @@
         <field name="model">assignment_criterion</field>
         <field name="arch" type="xml">
             <tree string="Assignment Criterion Group" edit="false" class="text-center">
-                <field name="name" />
-                <field name="order" />
-                <field name="group" />
+                <field name="title" />
+                <field name="number" />
+                <field name="criterion_group" />
             </tree>
         </field>
     </record>

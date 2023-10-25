@@ -7,9 +7,9 @@
             <form string="Assignment">
                 <sheet>
                     <group>
-                        <field name="name" string="Tên Assignment" class="border bg-light"/>
-                        <field name="course_code" string="Mã môn học" class="border bg-light"/>
-                        <field name="order" string="STT" class="border bg-light"/>
+                        <field name="title" string="Tên Assignment" class="border bg-light"/>
+                        <field name="course" string="Mã môn học" class="border bg-light"/>
+                        <field name="number" string="STT" class="border bg-light"/>
                     </group>
                 </sheet>
             </form>
@@ -21,9 +21,9 @@
         <field name="model">assignment</field>
         <field name="arch" type="xml">
             <tree string="Assignment" edit="false" class="text-center">
-                <field name="name"/>
-                <field name="course_code"/>
-                <field name="order"/>
+                <field name="title"/>
+                <field name="course"/>
+                <field name="number"/>
             </tree>
         </field>
     </record>
@@ -39,6 +39,7 @@
 
     <menuitem id="menu_assignment_root" name="Assignment">
         <menuitem id="menu_action_assignment" name="Assignment" action="assignment_action"/>
+        <menuitem id="menu_action_assignment_course" name="Course" action="assignment_course_action"/>
         <menuitem id="menu_action_assignment_criterion_group" name="Criterion Group" action="assignment_criterion_group_action"/>
         <menuitem id="menu_action_assignment_criterion" name="Criterion" action="assignment_criterion_action"/>
     </menuitem>

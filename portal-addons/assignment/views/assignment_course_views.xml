@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="assignment_course_view_form" model="ir.ui.view">
+        <field name="name">assignment_course.form</field>
+        <field name="model">assignment_course</field>
+        <field name="arch" type="xml">
+            <form string="Course">
+                <sheet>
+                    <group>
+                        <field name="code" string="Mã môn học" class="border bg-light"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="assignment_course_view_tree" model="ir.ui.view">
+        <field name="name">assignment_course.tree</field>
+        <field name="model">assignment_course</field>
+        <field name="arch" type="xml">
+            <tree string="Assignment Criterion Group" edit="false" class="text-center">
+                <field name="code" string="Mã môn học"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Configuration/Lead & Opportunities/Lost Reasons Menu -->
+    <record id="assignment_course_action" model="ir.actions.act_window">
+        <field name="name">Course</field>
+        <field name="res_model">assignment_course</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>
