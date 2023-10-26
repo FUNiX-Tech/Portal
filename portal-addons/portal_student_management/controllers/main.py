@@ -130,3 +130,74 @@ class StudentAPI(http.Controller):
                             httponly=True, max_age=60 * 60 * 24 * 7)
 
         return response
+
+    @http.route('/api/student/refreshAccessToken', auth='public', methods=['POST'], type='http', cors='*', csrf=False)
+    def refresh_access_token(self, **kwargs):
+        """
+        API để refresh access token
+
+        1. Lấy refresh token từ cookies
+        2. Kiểm tra refresh token có tồn tại không
+        3. Decode refresh token để lấy student_id
+        4. Kiểm tra thông tin trong refresh token có đầy đủ không
+        5. Tìm refresh token trong database
+        6. Kiểm tra refresh token đã sử dụng chưa
+        7. Kiểm tra refresh token có hết hạn không
+        8. Tạo access token mới
+        9. Trả về response với access token mới
+        """
+
+        # 1. Lấy refresh token từ cookies
+        refresh_token = http.request.httprequest.cookies.get('refresh_token')
+
+        # 2. Kiểm tra refresh token có tồn tại không
+        if not refresh_token:
+            return json_error('Missing refresh token', 400)
+
+        # 3. Decode refresh token để lấy student_id
+        decoded_token = JWTEncoder.decode_jwt(refresh_token)
+
+        # 4. Kiểm tra thông tin trong refresh token có đầy đủ không
+        if 'email' not in decoded_token or 'student_id' not in decoded_token or 'student_name' not in decoded_token:
+            return json_error('Invalid refresh token', 400)
+
+        decoded_token['student_id']
+
+        # 5. Tìm refresh token trong database
+        refresh_token_record = http.request.env['portal.student.refresh.token'].sudo().search([
+            ('student_id', '=', decoded_token['student_id']),
+            ('token', '=', refresh_token),
+        ])
+
+        # 6. Kiểm tra refresh token đã sử dụng chưa
+        if refresh_token_record.used:
+            return json_error('Refresh token has been used', 400)
+
+        # 7. Kiểm tra refresh token có hết hạn không
+        if not refresh_token_record:
+            return json_error('Invalid refresh token', 400)
+
+        now = datetime.now()
+        if now > refresh_token_record.expired_at:
+            return json_error('Refresh token has expired', 400)
+
+        # REFRESH TOKEN HỢP LỆ
+        # 8. Tạo access token mới
+
+        payload = {
+            'student_id': decoded_token['student.id'],
+            'student_name': decoded_token['student.name'],
+            'email': decoded_token['email'],
+        }
+        access_token = JWTEncoder.encode_jwt(payload, 'days', 1)
+
+        http.request.env['portal.student.refresh.token'].sudo().write({
+            'used': True})
+
+        # 9. Trả về response với access token mới
+
+        response = json_success('Access token refreshed', 200)
+        response.set_cookie('access_token', access_token,
+                            httponly=True, max_age=60 * 60 * 24)
+
+        return response
