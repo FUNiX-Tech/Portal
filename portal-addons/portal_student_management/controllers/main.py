@@ -249,3 +249,101 @@ class StudentAPI(http.Controller):
         response = json_response({'message': 'Logout successful'})
 
         return response
+
+    @http.route('/api/student/edit/<int:student_id>', auth='public', methods=['POST'], type='http', cors='*', csrf=False)
+    def student_edit(self, student_id, **kwargs):
+        # !TODO: Refactor
+        """
+        API để cập nhật thông tin học viên
+
+        1. Lấy access token từ cookies
+        2. Kiểm tra access token có tồn tại không
+        3. Decode access token để lấy student_id
+        4. Kiểm tra thông tin trong access token có đầy đủ không
+        5. Lấy dữ liệu từ request
+            a. Kiểm tra có student_id trong request không
+            b. Validate dữ liệu (gender, date_of_birth,phone)
+            c. Kiểm tra student_id trong request có trùng với student_id trong access token không
+        6. Kiểm tra học viên có tồn tại không
+        7. Cập nhật thông tin học viên
+
+        Note: date_of_birth được truyền dưới dạng string, sau đó chuyển sang date để lưu vào database, phải ở format YYYY-MM-DD
+        """
+        # 1. Lấy access token từ cookies
+        access_token = http.request.httprequest.cookies.get('access_token')
+
+        # 2. Kiểm tra access token có tồn tại không
+        if not access_token:
+            return json_error('Missing access token', 400)
+
+        # 3. Decode access token để lấy student_id
+        decoded_token = JWTEncoder.decode_jwt(access_token)
+
+        # 4. Kiểm tra thông tin trong access token có đầy đủ không
+        if 'email' not in decoded_token or 'student_id' not in decoded_token or 'student_name' not in decoded_token:
+            return json_error('Invalid access token', 400)
+
+        # 5. Lấy dữ liệu từ request
+        request_data = get_body_json(http.request)
+
+        # 5.a. Kiểm tra có student_id trong request không
+
+        if not student_id:
+            return json_error('Missing id', 400)
+
+        # 5.b. Validate gender, phone, date_of_birth
+
+        # Gender
+        if not request_data['gender'] and (request_data['gender'] != 'male' and request_data['gender'] != 'female'):
+            return json_error('Invalid input', 400)
+
+        # Phone
+        if request_data['phone'] and not re.match(r'^\d+$', request_data['phone']):
+            return json_error('Invalid input', 400)
+
+        # Date of birth
+        if 'date_of_birth' in request_data:
+            date_of_birth_str = request_data['date_of_birth']
+
+        try:
+            # Chuyển date_of_birth từ string sang date
+            datetime.strptime(date_of_birth_str, '%Y-%m-%d')
+        except ValueError:
+            # Nếu không đúng định dạng thì trả về lỗi
+            return json_error('Invalid date format for date_of_birth. Expected format: YYYY-MM-DD', 400)
+
+        # c. Kiểm tra student_id trong request có trùng với student_id trong access token không
+        student_id_request = decoded_token['student_id']
+
+        if student_id != student_id_request:
+            return json_error('Invalid access token', 400)
+
+        # 6. Kiểm tra học viên có tồn tại không
+        student = http.request.env['portal.student'].sudo().search(
+            [('id', '=', student_id_request)])
+
+        if not student:
+            return json_error('Student not found', 404)
+
+        # 7. Cập nhật thông tin học viên
+        fields = ['phone', 'name', 'gender', 'date_of_birth']
+
+        fields_to_update = {}
+
+        for field in fields:
+            if field in request_data:
+                fields_to_update[field] = request_data[field]
+
+        fields_to_update['date_of_birth'] = datetime.strptime(
+            fields_to_update['date_of_birth'], '%Y-%m-%d').date()
+
+        if fields_to_update:
+            student.write(fields_to_update)
+        else:
+            # Nếu không có field nào được cập nhật thì trả về lỗi
+            return json_error('Missing input', 400)
+
+        response = json_success(
+            {'message': 'Student updated successfully'})
+
+        return response
