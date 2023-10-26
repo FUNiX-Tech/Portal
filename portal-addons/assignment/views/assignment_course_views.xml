@@ -24,7 +24,6 @@
         </field>
     </record>
 
-    <!-- Configuration/Lead & Opportunities/Lost Reasons Menu -->
     <record id="assignment_course_action" model="ir.actions.act_window">
         <field name="name">Course</field>
         <field name="res_model">assignment_course</field>

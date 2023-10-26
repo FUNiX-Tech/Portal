@@ -28,14 +28,11 @@
         </field>
     </record>
 
-    <!-- Configuration/Lead & Opportunities/Lost Reasons Menu -->
     <record id="assignment_action" model="ir.actions.act_window">
         <field name="name">Assignments</field>
         <field name="res_model">assignment</field>
         <field name="view_mode">tree,form</field>
     </record>
-
-    <!-- <menuitem id="menu_assignment_action" action="assignment_action" name="Assignment" /> -->
 
     <menuitem id="menu_assignment_root" name="Assignment">
         <menuitem id="menu_action_assignment" name="Assignment" action="assignment_action"/>

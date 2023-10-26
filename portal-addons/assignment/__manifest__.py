@@ -2,13 +2,9 @@
 {
     'name': "assignment",
 
-    'summary': """
-    Assignment
-    """,
+    'summary': "Assignment",
 
-    'description': """
-        Assignment
-    """,
+    'description': "Assignment",
 
     'author': "portal",
     'website': "https://www.portal.example.com",
@@ -24,6 +20,7 @@
 
     # always loaded
     'data': [
+        'security/security.xml',
         'security/ir.model.access.csv',
         'views/assignment_criterion_group_views.xml',
         'views/assignment_criterion_views.xml',
