@@ -201,3 +201,51 @@ class StudentAPI(http.Controller):
                             httponly=True, max_age=60 * 60 * 24)
 
         return response
+
+    @http.route('/api/student/logout', auth='public', methods=['POST'], type='http', cors='*', csrf=False)
+    def student_logout(self, **kwargs):
+        """
+        API để logout học viên
+
+        1. Lấy access token từ cookies
+        2. Kiểm tra access token có tồn tại không
+        3. Decode access token để lấy student_id
+        4. Kiểm tra thông tin trong access token có đầy đủ không
+        5. Tìm refresh token trong database
+        6. Xóa refresh token trong database
+        7. Trả về response và clear access token và refresh token trong cookies
+
+        """
+
+        # 1. Lấy access token từ cookies
+        access_token = http.request.httprequest.cookies.get('access_token')
+
+        # 2. Kiểm tra access token có tồn tại không
+        if not access_token:
+            return json_error('Missing access token', 400)
+
+        # 3. Decode access token để lấy student_id
+        decoded_token = JWTEncoder.decode_jwt(access_token)
+
+        # 4. Kiểm tra thông tin trong access token có đầy đủ không
+        if 'email' not in decoded_token or 'student_id' not in decoded_token or 'student_name' not in decoded_token:
+            return json_error('Invalid access token', 400)
+
+        student_id = decoded_token['student_id']
+
+        # 5. Xóa access token và refresh token trong cookies
+        response.set_cookie('access_token', '', max_age=0)
+        response.set_cookie('refresh_token', '', max_age=0)
+
+        # 6. Xóa refresh token trong database
+        refresh_token_record = http.request.env['portal.student.refresh.token'].sudo().search([
+            ('student_id', '=', student_id),
+        ])
+        refresh_token_record.write({
+            'token': '',
+            'expired_at': '',
+            'used': False
+        })
+        response = json_response({'message': 'Logout successful'})
+
+        return response
