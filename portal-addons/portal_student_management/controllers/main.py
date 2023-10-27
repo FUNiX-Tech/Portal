@@ -34,6 +34,10 @@ class StudentAPI(http.Controller):
         if not name or not email or not password or not password_confirm:
             return json_error('Missing input data', 400)
 
+        # Kiểm tra email có hợp lệ không : 
+        # Regex : https://regex101.com/r/O9oCj8/1
+        elif not re.match(r"^[^\.\s][\w\-\.{2,}]+@([\w-]+\.)+[\w-]{2,}$", email):
+            return json_error('Invalid email', 400)
         # 2.b. Kiểm tra password và password_confirm
         elif password != password_confirm:
             return json_error('Password and confirm password do not match', 400)

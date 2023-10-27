@@ -94,7 +94,9 @@ class Student(models.Model):
         @decorator: api.constrains để gọi hàm khi tạo mới hoặc cập nhật đối tượng Student
         """
         for record in self:
-            if record.email and not re.match(r"[^@]+@[^@]+\.[^@]+", record.email):
+            # Kiểm tra email có hợp lệ không
+            # Link Regex: https://regex101.com/r/O9oCj8/1
+            if record.email and not re.match(r"^[^\.\s][\w\-\.{2,}]+@([\w-]+\.)+[\w-]{2,}$", record.email):
                 raise exceptions.ValidationError('Email không hợp lệ')
 
     # ==================== OVERRIDE MODEL METHOD ====================
