@@ -11,7 +11,7 @@ class Assignment(models.Model):
     _rec_name = "title"
 
     title = fields.Char("Tên assignment", required=True)
-    course = fields.Many2one("assignment_course", string="Mã môn học", required=True) # Waiting for course module...
+    course = fields.Many2one("course_management.course_management", string="Môn học", required=True) 
     number = fields.Integer(string="STT", required=True)
 
     _sql_constraints = [ UNIQUE_ASSIGNMENT_NAME, UNIQUE_ASSIGNMENT_ORDER ]
