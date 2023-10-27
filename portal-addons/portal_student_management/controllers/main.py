@@ -34,7 +34,7 @@ class StudentAPI(http.Controller):
         if not name or not email or not password or not password_confirm:
             return json_error('Missing input data', 400)
 
-        # Kiểm tra email có hợp lệ không : 
+        # Kiểm tra email có hợp lệ không :
         # Regex : https://regex101.com/r/O9oCj8/1
         elif not re.match(r"^[^\.\s][\w\-\.{2,}]+@([\w-]+\.)+[\w-]{2,}$", email):
             return json_error('Invalid email', 400)
@@ -302,8 +302,8 @@ class StudentAPI(http.Controller):
             return json_error('Invalid input', 400)
 
         # Phone
-        if request_data['phone'] and not re.match(r'^\d+$', request_data['phone']):
-            return json_error('Invalid input', 400)
+        if 'phone' in request_data and not re.match(r'^\d+$', request_data['phone']):
+            return json_error('Invalid input phone', 400)
 
         # Date of birth
         if 'date_of_birth' in request_data:
