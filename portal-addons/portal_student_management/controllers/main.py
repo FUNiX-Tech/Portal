@@ -38,6 +38,18 @@ class StudentAPI(http.Controller):
         # Regex : https://regex101.com/r/O9oCj8/1
         elif not re.match(r"^[^\.\s][\w\-\.{2,}]+@([\w-]+\.)+[\w-]{2,}$", email):
             return json_error('Invalid email', 400)
+
+        # Kiểm tra password có đúng định dạng không: https://regex101.com/r/7Hpebb/1
+
+        # password must contain 1 number (0-9)
+        # password must contain 1 uppercase letters
+        # password must contain 1 lowercase letters
+        # password must contain 1 non-alpha numeric number
+        # password is 8-32 characters with no space
+
+        elif not re.match(r"^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\w\d\s:])([^\s]){8,32}$", password):
+            return json_error('Invalid password', 400)
+
         # 2.b. Kiểm tra password và password_confirm
         elif password != password_confirm:
             return json_error('Password and confirm password do not match', 400)
