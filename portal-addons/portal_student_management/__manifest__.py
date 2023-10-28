@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': "Portal Student Management",
-    'version': '0.4',
+    'version': '1.0',
 
     # Tóm tắt module
     'summary': """
@@ -22,18 +22,25 @@
 
     # Phân loại module
     'category': 'portal_addons',
-    'version': '0.1',
 
 
-    'data': ['security/security.xml','security/ir.model.access.csv','views/student_actions.xml','views/student_view_menu.xml','views/student_view_form.xml','views/student_view_tree.xml'],
+    'data': ['security/security.xml',
+             'security/ir.model.access.csv',
+             'views/student_actions.xml',
+             'views/student_view_menu.xml',
+             'views/student_view_form.xml',
+             'views/student_view_tree.xml',
+             ],
 
     # Các dependencies :
     # 1. base : module cơ bản của odoo
-    'depends': ['base'],
+    'depends': ['base', ],
+    'external_dependencies': {
+        'python': ['secrets', 'pyjwt', 'uuid'],
+    },
 
     # Khác:
     'auto_install': False,
     'installable': True,
-    
-}
 
+}
