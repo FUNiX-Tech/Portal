@@ -28,7 +28,6 @@
         </field>
     </record>
 
-    <!-- Configuration/Lead & Opportunities/Lost Reasons Menu -->
     <record id="assignment_criterion_group_action" model="ir.actions.act_window">
         <field name="name">Assignment Criterion Groups</field>
         <field name="res_model">assignment_criterion_group</field>

@@ -36,8 +36,8 @@
 
     <menuitem id="menu_assignment_root" name="Assignment">
         <menuitem id="menu_action_assignment" name="Assignment" action="assignment_action"/>
-        <menuitem id="menu_action_assignment_course" name="Course" action="assignment_course_action"/>
         <menuitem id="menu_action_assignment_criterion_group" name="Criterion Group" action="assignment_criterion_group_action"/>
         <menuitem id="menu_action_assignment_criterion" name="Criterion" action="assignment_criterion_action"/>
+        <menuitem id="menu_action_assignment_submission" name="Submission" action="assignment_submission_action"/>
     </menuitem>
 </odoo>

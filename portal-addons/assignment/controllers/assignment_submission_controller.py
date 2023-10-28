@@ -12,11 +12,12 @@ class AssignmentSubmissionController(http.Controller):
     @http.route('/api/v1/assignment/submission', type='http', auth='public', methods=['POST'], cors="*", csrf=False)
     @request_validators.check_fields_presence("submission_url", "student_id", "assignment_id")
     @request_validators.check_url("submission_url")
-    @assignment_validators.check_student_enrolled_course()
+    @assignment_validators.check_has_student()
+    @assignment_validators.check_has_assignment()
+    @assignment_validators.check_student_has_enrolled_course()
     def submit_submission(self):
 
         try:
-
             request_data = json.loads(request.httprequest.data)
 
             created_submission = request.env['assignment_submission'].sudo().create({
@@ -37,6 +38,8 @@ class AssignmentSubmissionController(http.Controller):
         except Exception as e:
 
             logger.error(f'[ERROR]: {str(e)}')
+            if str(e) == "'_unknown' object has no attribute 'id'":
+                logger.info("WRONG RELATIONAL FIELD!")
 
             return json_response(500, "Internal Server Error")
 

@@ -16,7 +16,7 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base'],
+    'depends': ['base','portal_student_management',"course_management",],
 
     # always loaded
     'data': [
@@ -24,7 +24,7 @@
         'security/ir.model.access.csv',
         'views/assignment_criterion_group_views.xml',
         'views/assignment_criterion_views.xml',
-        'views/assignment_course_views.xml',
+        'views/assignment_submission_views.xml',
         'views/assignment_views.xml',
     ],
 }
