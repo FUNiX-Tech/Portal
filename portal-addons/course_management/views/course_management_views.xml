@@ -34,7 +34,6 @@
                               </div>
                           </div>
                           <div class="col-4 o_kanban_primary_right">
-                              <!-- <button class="btn btn-primary" name="%(course_management.action_window)d"  type="action">View course</button> -->
                           </div>
                       </div>
                       <div class="row">
