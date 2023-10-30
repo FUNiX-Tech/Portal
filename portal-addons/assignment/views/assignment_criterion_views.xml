@@ -10,7 +10,7 @@
                         <group>
                             <field name="title" string="Tên tiêu chí" class="border bg-light"/>
                             <field name="number" string="STT" class="border bg-light"/>
-                            <field name="assignment" string="Assignment" class="border bg-light"/>
+                            <field name="assignment" string="Assignment" class="border bg-light" invisible="1"/>
                         </group>
                         <notebook>
                             <page string="Specifications">
@@ -27,10 +27,10 @@
         <field name="name">assignment_criterion.tree</field>
         <field name="model">assignment_criterion</field>
         <field name="arch" type="xml">
-            <tree string="Assignment Criterion Group" edit="false" class="text-center">
-                <field name="title" />
+            <tree string="Assignment Criterion" edit="false" class="text-center">
                 <field name="number" />
-                <field name="assignment" />
+                <field name="title" />
+                <field name="specifications" />
             </tree>
         </field>
     </record>

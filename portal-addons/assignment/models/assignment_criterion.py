@@ -14,6 +14,6 @@ class AssignmentCriterion(models.Model):
     title = fields.Char("Tên tiêu chí", required=True)
     specifications = fields.Html(string="Các yêu cầu", required=True)
     number = fields.Integer(string="STT", required=True)
-    assignment = fields.Many2one("assignment")
+    assignment = fields.Many2one("assignment", required=True)
 
     _sql_constraints = [ UNIQUE_ASSIGNMENT_CRITERION_NAME, UNIQUE_ASSIGNMENT_CRITERION_ORDER ]
