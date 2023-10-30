@@ -6,10 +6,11 @@
         <field name="arch" type="xml">
             <form string="Assignment Submission">
                 <sheet>
-                   <group>
-                        <field name="student" string="Học viên" class="border bg-light"/>
-                        <field name="assignment" string="Assignment" class="border bg-light"/>
-                        <field name="submission_url" string="URL Submission" class="border bg-light"/>
+                    <button string="Submit" class="oe_button oe_form_button oe_highligh"></button>
+                    <group>
+                        <field name="student" string="Học viên" class="border bg-light" write="false"/>
+                        <field name="assignment" string="Assignment" class="border bg-light" write="false"/>
+                        <field name="submission_url" string="URL Submission" class="border bg-light" write="false"/>
                         <field name="criteria_responses" string="Chấm các tiêu chí" class="border bg-light">
                             <tree string="Criterion Response" create="false" delete="false">
                                 <field name="submission"/>
@@ -18,7 +19,7 @@
                                 <field name="result"/>
                             </tree>
                         </field>
-                   </group>
+                    </group>
                 </sheet>
             </form>
         </field>
