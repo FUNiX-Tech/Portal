@@ -9,6 +9,7 @@ from ..utils.api_utils import json_response, exclude_keys_from_dict, json_error,
 
 
 class StudentAPI(http.Controller):
+
     @http.route('/api/student/register', auth='public', method=['POST'], type='http', cors='*', csrf=False)
     def student_register(self, **kwargs):
         """
