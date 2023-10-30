@@ -9,3 +9,4 @@ class AssignmentSubmission(models.Model):
     student = fields.Many2one('portal.student', string="Học viên") 
     assignment = fields.Many2one("assignment", string="Assignment")
     submission_url = fields.Char(string="Submission Url") 
+    criteria_responses = fields.One2many("assignment_criterion_response", inverse_name="submission", string="Các tiêu chí")

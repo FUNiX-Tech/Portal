@@ -7,11 +7,17 @@
             <form string="Assignment Submission">
                 <sheet>
                    <group>
-                        <group>
-                            <field name="student" string="Học viên" class="border bg-light"/>
-                            <field name="assignment" string="Assignment" class="border bg-light"/>
-                            <field name="submission_url" string="URL Submission" class="border bg-light"/>
-                        </group>
+                        <field name="student" string="Học viên" class="border bg-light"/>
+                        <field name="assignment" string="Assignment" class="border bg-light"/>
+                        <field name="submission_url" string="URL Submission" class="border bg-light"/>
+                        <field name="criteria_responses" string="Chấm các tiêu chí" class="border bg-light">
+                            <tree string="Criterion Response" create="false" delete="false">
+                                <field name="submission"/>
+                                <field name="criterion"/>
+                                <field name="feed_back"/>
+                                <field name="result"/>
+                            </tree>
+                        </field>
                    </group>
                 </sheet>
             </form>
@@ -26,6 +32,7 @@
                 <field name="student" />
                 <field name="assignment" />
                 <field name="submission_url" />
+                <!-- <button type="action" name="%(assignment.assignment_criterion_response_view_form)d" string="Grade" class="oe_highlight"/> -->
             </tree>
         </field>
     </record>

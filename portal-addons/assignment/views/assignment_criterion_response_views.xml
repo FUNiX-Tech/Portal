@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="assignment_criterion_response_view_form" model="ir.ui.view">
+        <field name="name">assignment_criterion_response.form</field>
+        <field name="model">assignment_criterion_response</field>
+        <field name="arch" type="xml">
+            <form string="Assignment Criterion Response">
+                <sheet>
+                   <group>
+                        <group>
+                            <field name="submission" string="Submission" class="border bg-light" editable="false"/>
+                            <field name="criterion" string="Tiêu chí" class="border bg-light" editable="false"/>/>
+                            <field name="result" string="Kết quả" class="border bg-light"/>
+                        </group>
+                        <notebook>
+                            <page string="Nhận xét">
+                                <field name="feed_back" widget="html" string="Nhận xét"/>
+                            </page>
+                        </notebook>
+                   </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="assignment_criterion_response_action" model="ir.actions.act_window">
+        <field name="name">Assignment Criterion Response</field>
+        <field name="res_model">assignment_criterion_response</field>
+        <field name="view_mode">form</field>
+    </record>
+
+
+</odoo>

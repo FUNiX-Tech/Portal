@@ -27,6 +27,18 @@ class AssignmentSubmissionController(http.Controller):
                 "submission_url": request_data['submission_url'],
             })
 
+            assignment = self.assignment
+
+            for criterion in assignment.criteria: 
+                try:
+                    created_criterion_response = request.env['assignment_criterion_response'].sudo().create({
+                        "submission": created_submission.id,
+                        "criterion": criterion.id, 
+                    })
+                except Exception as e: 
+                    logger.error(str(e))
+                    # uuuv need to handle this exception
+
             response_data = {
                 "id": created_submission.id,
                 "student": created_submission.student.id,
