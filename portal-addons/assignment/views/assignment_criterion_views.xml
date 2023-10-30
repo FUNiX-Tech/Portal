@@ -10,7 +10,7 @@
                         <group>
                             <field name="title" string="Tên tiêu chí" class="border bg-light"/>
                             <field name="number" string="STT" class="border bg-light"/>
-                            <field name="criterion_group" string="Nhóm tiêu chí" class="border bg-light"/>
+                            <field name="assignment" string="Assignment" class="border bg-light"/>
                         </group>
                         <notebook>
                             <page string="Specifications">
@@ -30,13 +30,13 @@
             <tree string="Assignment Criterion Group" edit="false" class="text-center">
                 <field name="title" />
                 <field name="number" />
-                <field name="criterion_group" />
+                <field name="assignment" />
             </tree>
         </field>
     </record>
 
     <record id="assignment_criterion_action" model="ir.actions.act_window">
-        <field name="name">Assignment Criterions</field>
+        <field name="name">Assignment Criteria</field>
         <field name="res_model">assignment_criterion</field>
         <field name="view_mode">tree,form</field>
     </record>
