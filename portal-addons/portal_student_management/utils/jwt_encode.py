@@ -26,7 +26,7 @@ class JWTEncoder:
 
         """
         time_args = {time_scale: time_expire}
-        payload['exp'] = datetime.now() + timedelta(**time_args)
+        payload["exp"] = datetime.now() + timedelta(**time_args)
         token = jwt.encode(payload, cls.SECRET_KEY, cls.ALGORITHM)
         return token
 
