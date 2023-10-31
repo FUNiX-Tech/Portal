@@ -6,6 +6,7 @@ import re
 from ..utils.jwt_encode import JWTEncoder
 from datetime import datetime, timedelta
 from ..utils.api_utils import json_response, exclude_keys_from_dict, json_error, json_success, get_body_json
+from ..middlewares.middlewares import verify_access_token
 
 
 class StudentAPI(http.Controller):
@@ -268,47 +269,35 @@ class StudentAPI(http.Controller):
         return response
 
     @http.route('/api/student/edit/<int:student_id>', auth='public', methods=['POST'], type='http', cors='*', csrf=False)
+    @verify_access_token
     def student_edit(self, student_id, **kwargs):
-        # !TODO: Refactor
         """
         API để cập nhật thông tin học viên
 
-        1. Lấy access token từ cookies
-        2. Kiểm tra access token có tồn tại không
-        3. Decode access token để lấy student_id
-        4. Kiểm tra thông tin trong access token có đầy đủ không
-        5. Lấy dữ liệu từ request
+        1. Verify access token bằng middleware verify_access_token
+        2. Lấy decoded_token (thông tin học viên) từ middleware
+        3. Lấy dữ liệu từ request
             a. Kiểm tra có student_id trong request không
             b. Validate dữ liệu (gender, date_of_birth,phone)
             c. Kiểm tra student_id trong request có trùng với student_id trong access token không
-        6. Kiểm tra học viên có tồn tại không
-        7. Cập nhật thông tin học viên
+        4. Kiểm tra học viên có tồn tại không
+        5. Cập nhật thông tin học viên
 
         Note: date_of_birth được truyền dưới dạng string, sau đó chuyển sang date để lưu vào database, phải ở format YYYY-MM-DD
         """
-        # 1. Lấy access token từ cookies
-        access_token = http.request.httprequest.cookies.get('access_token')
 
-        # 2. Kiểm tra access token có tồn tại không
-        if not access_token:
-            return json_error('Missing access token', 400)
+        # 1. Lấy decoded access token từ middleware
+        decoded_token = kwargs.get('decoded_access_token', {})
 
-        # 3. Decode access token để lấy student_id
-        decoded_token = JWTEncoder.decode_jwt(access_token)
-
-        # 4. Kiểm tra thông tin trong access token có đầy đủ không
-        if 'email' not in decoded_token or 'student_id' not in decoded_token or 'student_name' not in decoded_token:
-            return json_error('Invalid access token', 400)
-
-        # 5. Lấy dữ liệu từ request
+        # 2. Lấy dữ liệu từ request
         request_data = get_body_json(http.request)
 
-        # 5.a. Kiểm tra có student_id trong request không
+        # 2a. Kiểm tra có student_id trong request không
 
         if not student_id:
             return json_error('Missing id', 400)
 
-        # 5.b. Validate gender, phone, date_of_birth
+        # 2b. Validate gender, phone, date_of_birth
 
         # Gender
         if not request_data['gender'] and (request_data['gender'] != 'male' and request_data['gender'] != 'female'):
@@ -329,20 +318,20 @@ class StudentAPI(http.Controller):
             # Nếu không đúng định dạng thì trả về lỗi
             return json_error('Invalid date format for date_of_birth. Expected format: YYYY-MM-DD', 400)
 
-        # c. Kiểm tra student_id trong request có trùng với student_id trong access token không
+        # 2c. Kiểm tra student_id trong request có trùng với student_id trong access token không
         student_id_request = decoded_token['student_id']
 
         if student_id != student_id_request:
             return json_error('Invalid access token', 400)
 
-        # 6. Kiểm tra học viên có tồn tại không
+        # 3. Kiểm tra học viên có tồn tại không
         student = http.request.env['portal.student'].sudo().search(
             [('id', '=', student_id_request)])
 
         if not student:
             return json_error('Student not found', 404)
 
-        # 7. Cập nhật thông tin học viên
+        # 4. Cập nhật thông tin học viên
         fields = ['phone', 'name', 'gender', 'date_of_birth']
 
         fields_to_update = {}
