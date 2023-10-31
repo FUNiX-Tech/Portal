@@ -300,8 +300,8 @@ class StudentAPI(http.Controller):
         # 2b. Validate gender, phone, date_of_birth
 
         # Gender
-        if not request_data['gender'] and (request_data['gender'] != 'male' and request_data['gender'] != 'female'):
-            return json_error('Invalid input', 400)
+        if 'gender' in request_data and (request_data['gender'] != 'male' and request_data['gender'] != 'female'):
+            return json_error('Invalid input gender', 400)
 
         # Phone
         if 'phone' in request_data and not re.match(r'^\d+$', request_data['phone']):
@@ -310,13 +310,12 @@ class StudentAPI(http.Controller):
         # Date of birth
         if 'date_of_birth' in request_data:
             date_of_birth_str = request_data['date_of_birth']
-
-        try:
-            # Chuyển date_of_birth từ string sang date
-            datetime.strptime(date_of_birth_str, '%Y-%m-%d')
-        except ValueError:
-            # Nếu không đúng định dạng thì trả về lỗi
-            return json_error('Invalid date format for date_of_birth. Expected format: YYYY-MM-DD', 400)
+            try:
+                # Chuyển date_of_birth từ string sang date
+                datetime.strptime(date_of_birth_str, '%Y-%m-%d')
+            except ValueError:
+                # Nếu không đúng định dạng thì trả về lỗi
+                return json_error('Invalid date format for date_of_birth. Expected format: YYYY-MM-DD', 400)
 
         # 2c. Kiểm tra student_id trong request có trùng với student_id trong access token không
         student_id_request = decoded_token['student_id']
@@ -340,8 +339,9 @@ class StudentAPI(http.Controller):
             if field in request_data:
                 fields_to_update[field] = request_data[field]
 
-        fields_to_update['date_of_birth'] = datetime.strptime(
-            fields_to_update['date_of_birth'], '%Y-%m-%d').date()
+        if 'date_of_birth' in fields_to_update:
+            fields_to_update['date_of_birth'] = datetime.strptime(
+                fields_to_update['date_of_birth'], '%Y-%m-%d').date()
 
         if fields_to_update:
             student.write(fields_to_update)
