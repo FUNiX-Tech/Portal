@@ -5,16 +5,16 @@
 
     # Tóm tắt module
     'summary': """
-        Module dùng để quản lý học viên, học viên có thể đăng ký, đăng nhập ở, admin có thể thêm mới, sửa, xóa học viên.
+        Module used to manage students, students can register, login via API, admin can add, edit, delete students.
     """,
 
     # Mô tả các chức năng trong module
     'description': """
-        1. Admin có thể thêm mới, sửa, xóa học viên.
-        2. Học viên có thể xem thông tin cá nhân, thay đổi mật khẩu và sửa thông tin cá nhân.
-        3. API đăng ký học viên mới.
-        4. API đăng nhập.
-        5. API để cập nhật thông tin cá nhân của học viên.
+        1. Admin can add, edit, delete students.
+        2. Teacher can view list of students.
+        3. API Student Register.
+        4. API Login.
+        5. API Update Student Information.
     """,
 
     # Tác giả

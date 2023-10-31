@@ -7,14 +7,14 @@ import re
 
 class Student(models.Model):
     _name = "portal.student"
-    _description = "Thông tin học viên"
+    _description = "Student Information"
 
-    name = fields.Char(string='Họ tên', required=True)
+    name = fields.Char(string='Student Name', required=True)
     email = fields.Char(string='Email', required=True, unique=True, index=True)
-    student_code = fields.Char(string='Mã học viên', readonly=True)
-    date_of_birth = fields.Date(string='Ngày sinh')
-    password_hash = fields.Char(string='Mật khẩu')
-    phone = fields.Char(string='Số điện thoại')
+    student_code = fields.Char(string='Student Code', readonly=True)
+    date_of_birth = fields.Date(string='Date of birth')
+    password_hash = fields.Char(string='Password')
+    phone = fields.Char(string='Phone')
     gender = fields.Selection(
         string='Giới tính',
         selection=[('male', 'Nam'), ('female', 'Nữ'), ('other', 'khác')],
@@ -22,37 +22,33 @@ class Student(models.Model):
         default='male'
     )
     email_verified_status = fields.Boolean(
-        string='Xác thực email', default=False)
+        string='Veriied Email', default=False)
     created_at = fields.Datetime(
-        string='Ngày tạo', readonly=True, default=fields.Datetime.now())
+        string='Created At', readonly=True, default=fields.Datetime.now())
     updated_at = fields.Datetime(
-        string='Ngày cập nhật', readonly=True, default=fields.Datetime.now())
+        string='Updated At', readonly=True, default=fields.Datetime.now())
 
     @api.model
     def _student_code_generator(self, student_dict):
         """
-        Hàm này được gọi khi tạo mới học viên. Kiếm tra xem học viên đã có student_code chưa. Nếu chưa có thì tạo mới, khi tạo mới nếu trùng thì sẽ tạo lại student_code mới đến khi nào không trùng thì thôi.
+        Function is called when creating a new student. Check to see if the student has a student_code yet. If not, create a new one, when creating a new one if it is duplicated, it will create a new student_code until it is not duplicated.
 
         @params:
-            dict: student_dict: Dữ liệu học viên được gửi từ form
-            self: Đối tượng Student
+            dict: student_dict: Student data sent from the form
+            self: Student object
 
-        @return: int: student_code: Mã học viên mới được tạo ra
-
-        @Decorator: api.model để gọi hàm mà không cần tạo đối tượng (như hàm self.create(), self.search(),...)
-
-
+        @return: int: student_code: Student code
 
         """
         student_code = student_dict.get('student_code')
 
         if not student_code:
             while True:
-                # !TODO: Tạo mã học viên ngẫu nhiên - Thay đổi logic để phù hợp với yêu cầu
-                # zfill(6) để thêm số 0 vào đầu cho đủ 6 chữ số => 000001, 000002, 000003,... -> string
+                # !TODO: Student code generator, need to change the algorithm to suit the needs
+                # zfill(6) to fill 0 to reach 6 numbers => 000001, 000002, 000003,... -> string
                 new_student_code = str(random.randint(1, 100000)).zfill(6)
 
-                # Kiểm tra mã học viên có trùng với ai trong database không
+                # Check if the student_code is already in the database
                 if not self.env['portal.student'].search([('student_code', '=', new_student_code)]):
                     student_code = new_student_code
                     break
@@ -64,67 +60,74 @@ class Student(models.Model):
     @api.constrains('phone')
     def _check_phone(self):
         """
-        Hàm để kiểm tra số điện thoại có hợp lệ không. Sử dụng regex để kiểm tra số điện thoại có đúng định dạng không
+        Check if the phone number is valid. Use regex to check if the phone number is in the correct format
 
         @params:
-        1. self: Đối tượng Student
+        1. self: Student object
 
-        @return: validation error nếu số điện thoại không hợp lệ
+        @return: validation error if phone number is invalid
 
-        @decorator: api.constrains để gọi hàm khi tạo mới hoặc cập nhật đối tượng Student
+        @decorator: api.constrains to call the function when creating or updating a Student object
         """
 
-        # Kiểm tra số điện thoại có hợp lệ không, chỉ chấp nhận số
-        # !TODO: Thay đổi pattern phù hợp với nhu cầu
+        # Check if the phone number is valid
+        # !TODO: Replace the regex with the correct phone number format for stronger validation
         pattern = r'^\d+$'
         for record in self:
             if record.phone and not re.match(pattern, record.phone):
-                raise exceptions.ValidationError('Số điện thoại không hợp lệ')
+                raise exceptions.ValidationError('Invalid phone number')
 
     @api.constrains('email')
     def _check_email(self):
         """
-        Hàm để kiểm tra email có hợp lệ không. Sử dụng regex để kiểm tra email có đúng định dạng không
+        Check if the email is valid. Use regex to check if the email is in the correct format
 
         @params: 
-        1. self: Đối tượng Student
+        1. self: Student Object
 
-        @return: validation error nếu email không hợp lệ 
+        @return: validation error if email is invalid 
 
-        @decorator: api.constrains để gọi hàm khi tạo mới hoặc cập nhật đối tượng Student
+        @decorator: api.constrains to call the function when creating or updating a Student object
         """
         for record in self:
-            # Kiểm tra email có hợp lệ không
+            #  Check if the email is valid
             # Link Regex: https://regex101.com/r/O9oCj8/1
             if record.email and not re.match(r"^[^\.\s][\w\-\.{2,}]+@([\w-]+\.)+[\w-]{2,}$", record.email):
-                raise exceptions.ValidationError('Email không hợp lệ')
+                raise exceptions.ValidationError('Invalid email')
+
+            # Kiểm tra email đã tồn tại trong database chưa
+            if record.email and self.env['portal.student'].search([('email', '=', record.email), ('id', '!=', record.id)]):
+                raise exceptions.ValidationError('Email already exists')
 
     # ==================== OVERRIDE MODEL METHOD ====================
 
     def write(self, student_dict):
         """
-        Hàm để cập nhật field updated_at khi cập nhật thông tin học viên
+        Update the student information. Update the 'updated_at' field with the current datetime
         """
         # Update the 'updated_at' field with the current datetime
         student_dict['updated_at'] = fields.Datetime.now()
+
+        # Check if the email already exists in the database
+        if student_dict['email'] and self.env['portal.student'].search([('email', '=', student_dict['email'])]):
+            raise exceptions.ValidationError('Email đã tồn tại')
         return super(Student, self).write(student_dict)
 
     @api.model
     def create(self, student_dict):
         """
-        Hàm này được gọi khi tạo mới học viên. Kiếm tra xem học viên đã có student_code chưa. Nếu chưa có thì tạo mới, khi tạo mới nếu trùng thì sẽ tạo lại student_code mới đến khi nào không trùng thì thôi.
+        Function is called when creating a new student. Check to see if the student has a student_code yet. If not, create a new one, when creating a new one if it is duplicated, it will create a new student_code until it is not duplicated.
 
         @params:
-            dict: student_dict: Dữ liệu học viên được gửi từ form
-            self: Đối tượng Student
-
-        @Decorator: api.model để gọi hàm mà không cần tạo đối tượng (như hàm self.create(), self.search(),...)
-
-
+            dict: student_dict: Student data sent from the form
+            self: Student Object
 
         """
         student_dict['student_code'] = self._student_code_generator(
             student_dict)
+        # Kiểm tra email đã tồn tại trong database chưa
+        if student_dict['email'] and self.env['portal.student'].search([('email', '=', student_dict['email'])]):
+            raise exceptions.ValidationError('Email already exists')
         self._check_phone()
 
         return super(Student, self).create(student_dict)
