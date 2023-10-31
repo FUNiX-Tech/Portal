@@ -42,5 +42,12 @@ class JWTEncoder:
         @return: payload được giải mã
 
         """
-        payload = jwt.decode(token, cls.SECRET_KEY, cls.ALGORITHM)
+        try:
+            payload = jwt.decode(token, cls.SECRET_KEY, cls.ALGORITHM)
+        except jwt.ExpiredSignatureError:
+            raise Unauthorized('Access token expired')
+        except jwt.InvalidTokenError:
+            raise BadRequest('Access token invalid')
+        except jwt.DecodeError:
+            raise BadRequest('Access token invalid')
         return payload
