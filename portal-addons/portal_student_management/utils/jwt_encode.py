@@ -6,23 +6,23 @@ from werkzeug.exceptions import Unauthorized, BadRequest
 class JWTEncoder:
 
     # SECRET_KEY AND ALGORITHM
-    # !TODO: Thay đổi SECRET_KEY và ALGORITHM phù hợp với nhu cầu. Thay thế bằng env variable
+    # !TODO: Replace the SECRET_KEY and ALGORITHM with appropriate values
     SECRET_KEY = 'YOUR_SECRET_KEY'
     ALGORITHM = 'HS256'
 
     @classmethod
     def encode_jwt(cls, payload, time_scale='minutes', time_expire=60):
         """
-        Hàm để mã hóa payload thành token
+        Function to encode payload into token
 
         @params:
-        1. cls: Class JWTEncoder, dùng để truy cập các biến trong class
-        2. payload: Dữ liệu cần mã hóa
-        3. time_scale: Đơn vị thời gian
+        1. cls: Class JWTEncoder, used to access variables in the class
+        2. payload: Payload to be encoded
+        3. time_scale: Time unit
             - days, seconds, minutes, hours, weeks, microseconds, milliseconds
-        4. time_expire: Số lượng đơn vị thời gian
+        4. time_expire: Time to expire
 
-        @return: token được mã hóa
+        @return: encoded token
 
         """
         time_args = {time_scale: time_expire}
@@ -33,13 +33,13 @@ class JWTEncoder:
     @classmethod
     def decode_jwt(cls, token):
         """
-        Hàm để giải mã token thành payload
+        Function to decode token into payload
 
         @params:
-        1. cls: Class JWTEncoder, dùng để truy cập các biến trong class
-        2. token: Token cần giải mã
+        1. cls: Class JWTEncoder, used to access variables in the class
+        2. token: Token to be decoded
 
-        @return: payload được giải mã
+        @return: decoded payload
 
         """
         try:

@@ -10,21 +10,21 @@ def verify_access_token(func):
 
         # ==================== VERIFY ACCESS TOKEN ====================
 
-        # 1. Lâý access token từ cookie
+        # 1. Extract access token from cookie
         access_token = http.request.httprequest.cookies.get('access_token')
 
-        # 2. Kiểm tra access token có tồn tại không
+        # 2. Check access token exists
         if not access_token:
             return json_error('Access token not found', status=400)
 
         # 3. Decode access token
         decoded_access_token = JWTEncoder.decode_jwt(access_token)
 
-        # 4. Kiểm tra thông tin access token có đầy đủ không
+        # 4. Check access token contains enough information
         if 'email' not in decoded_access_token or 'student_id' not in decoded_access_token or 'student_name' not in decoded_access_token:
             return json_error('Access token invalid', status=400)
 
-        # 5. Lấy thông tin từ access token
+        # 5. Extract information from access token
         kwargs['decoded_access_token'] = decoded_access_token
 
         # ==================== CALL CONTROLLER METHOD ====================
