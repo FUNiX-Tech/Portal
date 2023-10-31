@@ -99,6 +99,10 @@ class Student(models.Model):
             if record.email and not re.match(r"^[^\.\s][\w\-\.{2,}]+@([\w-]+\.)+[\w-]{2,}$", record.email):
                 raise exceptions.ValidationError('Email không hợp lệ')
 
+            # Kiểm tra email đã tồn tại trong database chưa
+            if record.email and self.env['portal.student'].search([('email', '=', record.email), ('id', '!=', record.id)]):
+                raise exceptions.ValidationError('Email đã tồn tại')
+
     # ==================== OVERRIDE MODEL METHOD ====================
 
     def write(self, student_dict):
@@ -107,6 +111,10 @@ class Student(models.Model):
         """
         # Update the 'updated_at' field with the current datetime
         student_dict['updated_at'] = fields.Datetime.now()
+
+        # Kiểm tra email đã tồn tại trong database chưa
+        if student_dict['email'] and self.env['portal.student'].search([('email', '=', student_dict['email'])]):
+            raise exceptions.ValidationError('Email đã tồn tại')
         return super(Student, self).write(student_dict)
 
     @api.model
@@ -125,6 +133,9 @@ class Student(models.Model):
         """
         student_dict['student_code'] = self._student_code_generator(
             student_dict)
+        # Kiểm tra email đã tồn tại trong database chưa
+        if student_dict['email'] and self.env['portal.student'].search([('email', '=', student_dict['email'])]):
+            raise exceptions.ValidationError('Email đã tồn tại')
         self._check_phone()
 
         return super(Student, self).create(student_dict)
