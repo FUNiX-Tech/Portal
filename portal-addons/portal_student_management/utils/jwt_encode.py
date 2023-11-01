@@ -4,14 +4,13 @@ from werkzeug.exceptions import Unauthorized, BadRequest
 
 
 class JWTEncoder:
-
     # SECRET_KEY AND ALGORITHM
     # !TODO: Replace the SECRET_KEY and ALGORITHM with appropriate values
-    SECRET_KEY = 'YOUR_SECRET_KEY'
-    ALGORITHM = 'HS256'
+    SECRET_KEY = "YOUR_SECRET_KEY"
+    ALGORITHM = "HS256"
 
     @classmethod
-    def encode_jwt(cls, payload, time_scale='minutes', time_expire=60):
+    def encode_jwt(cls, payload, time_scale="minutes", time_expire=60):
         """
         Function to encode payload into token
 
@@ -26,7 +25,7 @@ class JWTEncoder:
 
         """
         time_args = {time_scale: time_expire}
-        payload['exp'] = datetime.now() + timedelta(**time_args)
+        payload["exp"] = datetime.now() + timedelta(**time_args)
         token = jwt.encode(payload, cls.SECRET_KEY, cls.ALGORITHM)
         return token
 
@@ -45,9 +44,9 @@ class JWTEncoder:
         try:
             payload = jwt.decode(token, cls.SECRET_KEY, cls.ALGORITHM)
         except jwt.ExpiredSignatureError:
-            raise Unauthorized('Access token expired')
+            raise Unauthorized("Access token expired")
         except jwt.InvalidTokenError:
-            raise BadRequest('Access token invalid')
+            raise BadRequest("Access token invalid")
         except jwt.DecodeError:
-            raise BadRequest('Access token invalid')
+            raise BadRequest("Access token invalid")
         return payload

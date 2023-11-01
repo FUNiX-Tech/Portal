@@ -1,4 +1,3 @@
-
 # -*- coding: utf-8 -*-
 from odoo import api, fields, models, exceptions
 import random
@@ -9,24 +8,27 @@ class Student(models.Model):
     _name = "portal.student"
     _description = "Student Information"
 
-    name = fields.Char(string='Student Name', required=True)
-    email = fields.Char(string='Email', required=True, unique=True, index=True)
-    student_code = fields.Char(string='Student Code', readonly=True)
-    date_of_birth = fields.Date(string='Date of birth')
-    password_hash = fields.Char(string='Password')
-    phone = fields.Char(string='Phone')
+    name = fields.Char(string="Student Name", required=True)
+    email = fields.Char(string="Email", required=True, unique=True, index=True)
+    student_code = fields.Char(string="Student Code", readonly=True)
+    date_of_birth = fields.Date(string="Date of birth")
+    password_hash = fields.Char(string="Password")
+    phone = fields.Char(string="Phone")
     gender = fields.Selection(
-        string='Giới tính',
-        selection=[('male', 'Nam'), ('female', 'Nữ'), ('other', 'khác')],
+        string="Giới tính",
+        selection=[("male", "Nam"), ("female", "Nữ"), ("other", "khác")],
         required=True,
-        default='male'
+        default="male",
     )
     email_verified_status = fields.Boolean(
-        string='Veriied Email', default=False)
+        string="Veriied Email", default=False
+    )
     created_at = fields.Datetime(
-        string='Created At', readonly=True, default=fields.Datetime.now())
+        string="Created At", readonly=True, default=fields.Datetime.now()
+    )
     updated_at = fields.Datetime(
-        string='Updated At', readonly=True, default=fields.Datetime.now())
+        string="Updated At", readonly=True, default=fields.Datetime.now()
+    )
 
     @api.model
     def _student_code_generator(self, student_dict):
@@ -40,7 +42,7 @@ class Student(models.Model):
         @return: int: student_code: Student code
 
         """
-        student_code = student_dict.get('student_code')
+        student_code = student_dict.get("student_code")
 
         if not student_code:
             while True:
@@ -49,7 +51,9 @@ class Student(models.Model):
                 new_student_code = str(random.randint(1, 100000)).zfill(6)
 
                 # Check if the student_code is already in the database
-                if not self.env['portal.student'].search([('student_code', '=', new_student_code)]):
+                if not self.env["portal.student"].search(
+                    [("student_code", "=", new_student_code)]
+                ):
                     student_code = new_student_code
                     break
 
@@ -57,7 +61,7 @@ class Student(models.Model):
 
     # ==================== VALIDATION ====================
 
-    @api.constrains('phone')
+    @api.constrains("phone")
     def _check_phone(self):
         """
         Check if the phone number is valid. Use regex to check if the phone number is in the correct format
@@ -72,32 +76,36 @@ class Student(models.Model):
 
         # Check if the phone number is valid
         # !TODO: Replace the regex with the correct phone number format for stronger validation
-        pattern = r'^\d+$'
+        pattern = r"^\d+$"
         for record in self:
             if record.phone and not re.match(pattern, record.phone):
-                raise exceptions.ValidationError('Invalid phone number')
+                raise exceptions.ValidationError("Invalid phone number")
 
-    @api.constrains('email')
+    @api.constrains("email")
     def _check_email(self):
         """
         Check if the email is valid. Use regex to check if the email is in the correct format
 
-        @params: 
+        @params:
         1. self: Student Object
 
-        @return: validation error if email is invalid 
+        @return: validation error if email is invalid
 
         @decorator: api.constrains to call the function when creating or updating a Student object
         """
         for record in self:
             #  Check if the email is valid
             # Link Regex: https://regex101.com/r/O9oCj8/1
-            if record.email and not re.match(r"^[^\.\s][\w\-\.{2,}]+@([\w-]+\.)+[\w-]{2,}$", record.email):
-                raise exceptions.ValidationError('Invalid email')
+            if record.email and not re.match(
+                r"^[^\.\s][\w\-\.{2,}]+@([\w-]+\.)+[\w-]{2,}$", record.email
+            ):
+                raise exceptions.ValidationError("Invalid email")
 
             # Kiểm tra email đã tồn tại trong database chưa
-            if record.email and self.env['portal.student'].search([('email', '=', record.email), ('id', '!=', record.id)]):
-                raise exceptions.ValidationError('Email already exists')
+            if record.email and self.env["portal.student"].search(
+                [("email", "=", record.email), ("id", "!=", record.id)]
+            ):
+                raise exceptions.ValidationError("Email already exists")
 
     # ==================== OVERRIDE MODEL METHOD ====================
 
@@ -106,11 +114,13 @@ class Student(models.Model):
         Update the student information. Update the 'updated_at' field with the current datetime
         """
         # Update the 'updated_at' field with the current datetime
-        student_dict['updated_at'] = fields.Datetime.now()
+        student_dict["updated_at"] = fields.Datetime.now()
 
         # Check if the email already exists in the database
-        if student_dict['email'] and self.env['portal.student'].search([('email', '=', student_dict['email'])]):
-            raise exceptions.ValidationError('Email đã tồn tại')
+        if student_dict["email"] and self.env["portal.student"].search(
+            [("email", "=", student_dict["email"])]
+        ):
+            raise exceptions.ValidationError("Email đã tồn tại")
         return super(Student, self).write(student_dict)
 
     @api.model
@@ -123,11 +133,14 @@ class Student(models.Model):
             self: Student Object
 
         """
-        student_dict['student_code'] = self._student_code_generator(
-            student_dict)
+        student_dict["student_code"] = self._student_code_generator(
+            student_dict
+        )
         # Kiểm tra email đã tồn tại trong database chưa
-        if student_dict['email'] and self.env['portal.student'].search([('email', '=', student_dict['email'])]):
-            raise exceptions.ValidationError('Email already exists')
+        if student_dict["email"] and self.env["portal.student"].search(
+            [("email", "=", student_dict["email"])]
+        ):
+            raise exceptions.ValidationError("Email already exists")
         self._check_phone()
 
         return super(Student, self).create(student_dict)

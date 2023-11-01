@@ -31,7 +31,9 @@ def json_success(message, status=200):
     """
     Function to return json success response
     """
-    return json_response({"response": message, "status": status}, status=status)
+    return json_response(
+        {"response": message, "status": status}, status=status
+    )
 
 
 def json_error(message, status=400):
@@ -46,6 +48,6 @@ def get_body_json(request):
     Function to get json from request body
     """
 
-    data_body_str = request.httprequest.data.decode('utf-8')
+    data_body_str = request.httprequest.data.decode("utf-8")
     data_body_json = json.loads(data_body_str)
     return data_body_json
