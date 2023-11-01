@@ -1,3 +1,4 @@
+# flake8: noqa
 from odoo import http
 from werkzeug.security import generate_password_hash, check_password_hash
 import re
@@ -48,7 +49,10 @@ class StudentAPI(http.Controller):
 
         # 2b. Check email format
         # Regex : https://regex101.com/r/O9oCj8/1
-        elif not re.match(r"^[^\.\s][\w\-\.{2,}]+@([\w-]+\.)+[\w-]{2,}$", email):
+
+        elif not re.match(
+            r"^[^\.\s][\w\-\.{2,}]+@([\w-]+\.)+[\w-]{2,}$", email
+        ):
             return json_error("Invalid email", 400)
 
         # 2c. Kiểm tra password có đúng định dạng không: https://regex101.com/r/7Hpebb/1
@@ -60,18 +64,22 @@ class StudentAPI(http.Controller):
         # password is 8-32 characters with no space
 
         elif not re.match(
-            r"^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\w\d\s:])([^\s]){8,32}$", password
+            r"^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\w\d\s:])([^\s]){8,32}$",
+            password,
         ):
             return json_error("Invalid password", 400)
 
         # 2d. Check password and password_confirm
         elif password != password_confirm:
-            return json_error("Password and confirm password do not match", 400)
+            return json_error(
+                "Password and confirm password do not match", 400
+            )
 
         # 3. Check if email is already registered
         student = (
-            http.request.env["portal.student"].sudo().search(
-                [("email", "=", email)])
+            http.request.env["portal.student"]
+            .sudo()
+            .search([("email", "=", email)])
         )
         if student:
             return json_error("Email already registered", 400)
@@ -80,10 +88,9 @@ class StudentAPI(http.Controller):
         password_hash = generate_password_hash(password)
 
         # 5. Create student record
-        created_student = (
-            http.request.env["portal.student"]
-            .sudo()
-            .create(
+        http.request.env["portal.student"]
+        .sudo()
+        .create(
                 {
                     "name": name,
                     "email": email,
@@ -128,8 +135,9 @@ class StudentAPI(http.Controller):
 
         # 3. Look up student in database to see if student exists
         student = (
-            http.request.env["portal.student"].sudo().search(
-                [("email", "=", email)])
+            http.request.env["portal.student"]
+            .sudo()
+            .search([("email", "=", email)])
         )
 
         if not student:
@@ -181,7 +189,10 @@ class StudentAPI(http.Controller):
             "access_token", access_token, httponly=True, max_age=60 * 60 * 24
         )
         response.set_cookie(
-            "refresh_token", refresh_token, httponly=True, max_age=60 * 60 * 24 * 7
+            "refresh_token",
+            refresh_token,
+            httponly=True,
+            max_age=60 * 60 * 24 * 7,
         )
 
         return response
@@ -264,8 +275,9 @@ class StudentAPI(http.Controller):
         }
         access_token = JWTEncoder.encode_jwt(payload, "days", 1)
 
-        http.request.env["portal.student.refresh.token"].sudo().write({
-            "used": True})
+        http.request.env["portal.student.refresh.token"].sudo().write(
+            {"used": True}
+        )
 
         # 9. Return response with new access token in cookies
 
@@ -318,6 +330,7 @@ class StudentAPI(http.Controller):
         student_id = decoded_token["student_id"]
 
         # 5. Delete access token and refresh token in cookies
+
         response = json_success({"message": "Logout successful"})
         response.set_cookie("access_token", "", max_age=0)
         response.set_cookie("refresh_token", "", max_age=0)
@@ -333,7 +346,10 @@ class StudentAPI(http.Controller):
             )
         )
         refresh_token_record.write(
-            {"token": "", "expired_at": "", "used": False})
+            {"token": "", "expired_at": "", "used": False}
+        )
+        response = json_response({"message": "Logout successful"})
+
 
         return response
 
@@ -379,12 +395,16 @@ class StudentAPI(http.Controller):
 
         # Gender
         if "gender" in request_data and (
-            request_data["gender"] != "male" and request_data["gender"] != "female"
+            request_data["gender"] != "male"
+            and request_data["gender"] != "female"
         ):
             return json_error("Invalid input gender", 400)
 
         # Phone
-        if "phone" in request_data and not re.match(r"^\d+$", request_data["phone"]):
+
+        if "phone" in request_data and not re.match(
+            r"^\d+$", request_data["phone"]
+        ):
             return json_error("Invalid input phone", 400)
 
         # Date of birth

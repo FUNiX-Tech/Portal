@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="assignment_submission_view_form" model="ir.ui.view">
+        <field name="name">assignment_submission.form</field>
+        <field name="model">assignment_submission</field>
+        <field name="arch" type="xml">
+            <form string="Assignment Submission">
+                <sheet>
+                   <group>
+                        <group>
+                            <field name="student" string="Học viên" class="border bg-light"/>
+                            <field name="assignment" string="Assignment" class="border bg-light"/>
+                            <field name="submission_url" string="URL Submission" class="border bg-light"/>
+                        </group>
+                   </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="assignment_submission_view_tree" model="ir.ui.view">
+        <field name="name">assignment_submission.tree</field>
+        <field name="model">assignment_submission</field>
+        <field name="arch" type="xml">
+            <tree string="Assignment Submission Group" edit="false" class="text-center">
+                <field name="student" />
+                <field name="assignment" />
+                <field name="submission_url" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="assignment_submission_action" model="ir.actions.act_window">
+        <field name="name">Assignment Submission</field>
+        <field name="res_model">assignment_submission</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>

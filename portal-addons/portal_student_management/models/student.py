@@ -23,7 +23,8 @@ class Student(models.Model):
         default="male",
     )
     email_verified_status = fields.Boolean(
-        string="Veriied Email", default=False)
+        string="Veriied Email", default=False
+    )
     created_at = fields.Datetime(
         string="Created At", readonly=True, default=fields.Datetime.now()
     )
@@ -111,6 +112,7 @@ class Student(models.Model):
             ):
                 raise exceptions.ValidationError("Invalid email")
 
+
     # ==================== OVERRIDE MODEL METHOD ====================
 
     def write(self, student_dict):
@@ -131,7 +133,6 @@ class Student(models.Model):
                 [("email", "=", student_dict["email"])]
             ):
                 raise exceptions.ValidationError("Email already exists")
-
         return super(Student, self).write(student_dict)
 
     @api.model
@@ -153,13 +154,6 @@ class Student(models.Model):
                 self._generate_fixed_length_password(8)
             )
 
-        # If the password_hash is in the student_dict, hash it
-        if "password_hash" in student_dict and len(student_dict["password_hash"]) < 32:
-            student_dict["password_hash"] = generate_password_hash(
-                student_dict["password_hash"]
-            )
-
-        # Check if the email already exists in the database
         if student_dict["email"] and self.env["portal.student"].search(
             [("email", "=", student_dict["email"])]
         ):

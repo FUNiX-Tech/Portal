@@ -38,11 +38,16 @@ class StudentEmailVerificationToken(models.TransientModel):
     used = fields.Boolean(string="Used", default=False)
 
     _sql_constraints = [
-        unique_constraint("Each student can only create one email verification token")
+
+        unique_constraint(
+            "Each student can only create one email verification token"
+        )
     ]
 
     def create_verification_token(self, student_id):
-        student = self.env["portal.student"].sudo().search([("id", "=", student_id)])
+        student = (
+            self.env["portal.student"].sudo().search([("id", "=", student_id)])
+        )
 
         if student:
             token = self.generate_token()
@@ -66,7 +71,10 @@ class StudentPasswordResetToken(models.TransientModel):
     used = fields.Boolean(string="Used", default=False)
 
     _sql_constraints = [
-        unique_constraint("Each student can only create one password reset token")
+
+        unique_constraint(
+            "Each student can only create one password reset token"
+        )
     ]
 
 
