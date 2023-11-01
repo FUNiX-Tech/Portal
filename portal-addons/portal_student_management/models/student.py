@@ -2,6 +2,7 @@
 from odoo import api, fields, models, exceptions
 import random
 import re
+import string
 from werkzeug.security import generate_password_hash
 
 
@@ -21,7 +22,8 @@ class Student(models.Model):
         required=True,
         default="male",
     )
-    email_verified_status = fields.Boolean(string="Veriied Email", default=False)
+    email_verified_status = fields.Boolean(
+        string="Veriied Email", default=False)
     created_at = fields.Datetime(
         string="Created At", readonly=True, default=fields.Datetime.now()
     )
@@ -57,6 +59,15 @@ class Student(models.Model):
                     break
 
         return student_code
+
+    def _generate_fixed_length_password(self, length):
+        # Define the character set from which to generate the password
+        characters = string.ascii_letters + string.digits + string.punctuation
+
+        # Generate a random password with selected length by selecting characters from the set
+        password = ''.join(random.choice(characters) for _ in range(length))
+
+        return password
 
     # ==================== VALIDATION ====================
 
@@ -133,8 +144,22 @@ class Student(models.Model):
             self: Student Object
 
         """
-        student_dict["student_code"] = self._student_code_generator(student_dict)
-        # Kiểm tra email đã tồn tại trong database chưa
+        student_dict["student_code"] = self._student_code_generator(
+            student_dict)
+
+        # If the password_hash is not in the student_dict, generate a random password and hash it
+        if "password_hash" not in student_dict:
+            student_dict["password_hash"] = generate_password_hash(
+                self._generate_fixed_length_password(8)
+            )
+
+        # If the password_hash is in the student_dict, hash it
+        if "password_hash" in student_dict and len(student_dict["password_hash"]) < 32:
+            student_dict["password_hash"] = generate_password_hash(
+                student_dict["password_hash"]
+            )
+
+        # Check if the email already exists in the database
         if student_dict["email"] and self.env["portal.student"].search(
             [("email", "=", student_dict["email"])]
         ):
