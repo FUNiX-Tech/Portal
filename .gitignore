@@ -3,6 +3,8 @@ _build/
 
 # dotfiles
 .*
+!.flake8
+!.pre-commit-config.yaml
 !.gitignore
 !.github
 !.mailmap
