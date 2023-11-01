@@ -1,4 +1,3 @@
-from odoo import http
 from werkzeug.wrappers.response import Response
 import json
 
@@ -19,7 +18,6 @@ def exclude_keys_from_dict(dictionary, *keys):
 def json_response(data, status=200):
     """
     Function to return json response
-
     """
     return Response(
         json.dumps(data),
@@ -45,7 +43,6 @@ def get_body_json(request):
     """
     Function to get json from request body
     """
-
-    data_body_str = request.httprequest.data.decode('utf-8')
+    data_body_str = request.httprequest.data.decode("utf-8")
     data_body_json = json.loads(data_body_str)
     return data_body_json
