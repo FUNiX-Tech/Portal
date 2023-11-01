@@ -1,4 +1,10 @@
 # -*- coding: utf-8 -*-
+"""
+Need to set the following variables to config file: 
+- lms_submission_notification: the lms url to send submission result notification.
+- email_from: sender email (e.g. notification@example.com)
+"""
+
 
 import logging
 import requests
@@ -26,6 +32,7 @@ class AssignmentSubmission(models.Model):
     result = fields.Selection([ NOT_GRADED, PASSED, DID_NOT_PASS, UNABLE_TO_REVIEW ], required=True, string="Kết quả", default=DEFAULT_RESULT, readonly=True)
 
     has_graded_all_criteria = fields.Boolean(compute="_has_graded_all_criteria", store=True)
+    course = fields.Char(related='assignment.course.course_name')
 
     @api.depends("criteria_responses.result")
     def _has_graded_all_criteria(self):
@@ -40,7 +47,13 @@ class AssignmentSubmission(models.Model):
             record.has_graded_all_criteria = graded_all
             
     def submit_grade(self):
-
+        """
+        After graded all the criteria, mentor should click the submit button to trigger this function. 
+        TODO:
+            - Calculate and set the final result to the submission according to its criteria.
+            - Send notification email to the student. 
+            - Send notification request to lms. 
+        """
         for record in self:
             if record.has_graded_all_criteria:
                 if any(response.result == self.UNABLE_TO_REVIEW[0] for response in record.criteria_responses):

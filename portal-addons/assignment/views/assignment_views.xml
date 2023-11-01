@@ -38,6 +38,5 @@
     <menuitem id="menu_assignment_root" name="Assignment">
         <menuitem id="menu_action_assignment" name="Assignment" action="assignment_action"/>
         <menuitem id="menu_action_assignment_submission" name="Submission" action="assignment_submission_action"/>
-        <menuitem id="menu_action_criterion_resopnse" name="Criterion Response" action="assignment_criterion_response_action"/>
     </menuitem>
 </odoo>

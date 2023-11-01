@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api
+from odoo.exceptions import ValidationError
 
 class AssignmentCriterionResponse(models.Model):
     _name = 'assignment_criterion_response'
@@ -20,3 +21,16 @@ class AssignmentCriterionResponse(models.Model):
     number = fields.Integer(related='criterion.number')
 
     _sql_constraints = [ ('unique_submission_criterion', 'unique(submission, criterion', 'Mỗi submission chỉ được chấm 1 lần.') ]
+
+    @api.constrains('submission')
+    def _check_the_same_assignment(self):
+        for record in self:
+            if record.criterion.assignment.id != record.submission.assignment.id:
+                raise ValidationError("Criterion and submission must be belong to an assignment")
+            
+    @api.constrains('criterion')
+    def _check_the_same_assignment(self):
+        for record in self:
+            if record.criterion.assignment.id != record.submission.assignment.id:
+                raise ValidationError("Criterion and submission must be belong to an assignment")
+            

@@ -7,8 +7,8 @@
             <form string="Assignment Submission">
                 <sheet>
                     <header class="d-flex align-items-center justify-content-start px-0 py-2">
-                        <button name="submit_grade" attrs="{'invisible':[('has_graded_all_criteria','=',True),('result','=','not_graded')]}" string="Submit" confirm="Bạn sẽ không thể sửa lại bài đã chấm sau khi Submit. Bạn có chắc chắn muốn Submit chứ?" type="object" class="oe_highlight disabled"/>
-                        <button name="submit_grade" attrs="{'invisible':['|',('has_graded_all_criteria','=',False),('result','!=','not_graded')]}" string="Submit" confirm="Bạn sẽ không thể sửa lại bài đã chấm sau khi Submit. Bạn có chắc chắn muốn Submit chứ?" type="object" class="oe_highlight"/>
+                        <button name="submit_grade" attrs="{'invisible':[('has_graded_all_criteria','=',True),('result','=','not_graded')]}" string="Submit" confirm="Are you sure? You can not re-grade this submission after clicking OK." type="object" class="oe_highlight disabled"/>
+                        <button name="submit_grade" attrs="{'invisible':['|',('has_graded_all_criteria','=',False),('result','!=','not_graded')]}" string="Submit" confirm="Are you sure? You can not re-grade this submission after clicking OK." type="object" class="oe_highlight"/>
                     </header>
                     <group>
                         <field name="has_graded_all_criteria" invisible="1"/>
@@ -36,8 +36,9 @@
         <field name="model">assignment_submission</field>
         <field name="arch" type="xml">
             <tree string="Assignment Submission Group" edit="false" class="text-center">
-                <field name="student" />
+                <field name="course" />
                 <field name="assignment" />
+                <field name="student" />
                 <field name="submission_url" />
                 <field name="result" />
             </tree>

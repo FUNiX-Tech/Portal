@@ -2,8 +2,8 @@
 
 from odoo import models, fields
 
-UNIQUE_ASSIGNMENT_CRITERION_NAME = ('unique_assignment_criterion_name', 'unique(title, assignment)', 'Tên tiêu chí trong một nhóm tiêu chí không được giống nhau.') 
-UNIQUE_ASSIGNMENT_CRITERION_ORDER = ('unique_assignment_criterion_order', 'unique(number, assignment)', 'Số thứ tự của tiêu chí trong một nhóm tiêu chí không được giống nhau.') 
+UNIQUE_ASSIGNMENT_CRITERION_NAME = ('unique_assignment_criterion_name', 'unique(title, assignment)', 'The criteria in an assignment must not have the same names.') 
+UNIQUE_ASSIGNMENT_CRITERION_ORDER = ('unique_assignment_criterion_order', 'unique(number, assignment)', 'Criterion numbers conflict.') 
 
 
 class AssignmentCriterion(models.Model):
