@@ -35,7 +35,7 @@
         <field name="name">assignment_submission.tree</field>
         <field name="model">assignment_submission</field>
         <field name="arch" type="xml">
-            <tree string="Assignment Submission Group" edit="false" class="text-center">
+            <tree limit="20" string="Assignment Submission Group" edit="false" class="text-center">
                 <field name="course" />
                 <field name="assignment" />
                 <field name="student" />

@@ -42,7 +42,7 @@ def authentication_validator():
                 self.student = student
                 return origin_function(self, *args, **kwargs)
             except IndexError:
-                logger.info(f"[INFO]: Not found student with id {student_id}")
+                logger.info(f"Not found student with id {student_id}")
                 return json_response(400, f"Not found student with id {student_id}")
             except Exception as e: 
                 logger.error(str(e))
@@ -120,7 +120,7 @@ def check_student_has_enrolled_course():
             student_id = self.student.id
 
             try:
-                course = (
+                (
                     request.env["course_management"]
                     .sudo()
                     .search([("id", "=", course_id), ("student_ids", "in", [student_id])])

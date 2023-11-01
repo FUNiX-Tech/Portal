@@ -21,7 +21,7 @@
         <field name="name">assignment.tree</field>
         <field name="model">assignment</field>
         <field name="arch" type="xml">
-            <tree string="Assignment" edit="false" class="text-center">
+            <tree limit="20" string="Assignment" edit="false" class="text-center">
                 <field name="title"/>
                 <field name="course"/>
                 <field name="number"/>

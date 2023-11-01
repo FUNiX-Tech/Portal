@@ -5,7 +5,6 @@ Need to set the following variables to config file:
 - email_from: sender email (e.g. notification@example.com)
 """
 
-
 import logging
 import requests
 from odoo import models, fields, api
@@ -62,28 +61,41 @@ class AssignmentSubmission(models.Model):
                     record.result = self.DID_NOT_PASS[0]
                 else:
                     record.result = self.PASSED[0]
+                
+                email_error = self._send_notification_email_to_student()
+                lms_error = self._send_notification_request_to_lms()
 
-                self._send_notification_email_to_student()
-                self._send_notification_request_to_lms()
-                    
-                return True
-            return False
+                error_message = ""
+                if email_error != "":
+                    error_message += email_error 
+                
+                if lms_error != "":
+                    error_message += lms_error
+
+                if error_message != "":
+                    return {
+                                'type': 'ir.actions.client',
+                                'tag': 'display_notification',
+                                'params': {
+                                    'title': 'Error',
+                                    'message':error_message,
+                                    'sticky': True,
+                                }
+                            }
+
+            return True
 
     def _send_notification_email_to_student(self):
-        """
-        NEED TO READ MORE AND HANDLE EXCEPTION!!!
-        mail_template.send_mail(self.id, force_send=True) doesn't raise an exception if it fails to send an email.
-        """
         for record in self: 
             try: 
                 mail_template = self.env.ref('assignment.submission_result_notification_email_template')
-                mail_template.send_mail(self.id, force_send=True)
+                mail_template.send_mail(self.id, force_send=True, raise_exception=True)
                 logger.info(f"[Assignment Submission]: Sent notification email to '{record.student.email}'")
-                return True
+                return ""
             except Exception as e:
                 logger.error(str(e))
                 logger.error(f"[Assignment Submission]: Failed to send notification email to '{record.student.email}'")
-                return False
+                return f"ERROR: Failed to send notification email to '{record.student.email}'"
 
     def _send_notification_request_to_lms(self):      
         for record in self: 
@@ -102,11 +114,13 @@ class AssignmentSubmission(models.Model):
                 response = requests.post(url, headers=headers, json=payload)
             
                 if response.status_code == 200:
-                    logger.info("[Assignment Submission]: Sent notification email to LMS")
-                    return True
+                    logger.info("[Assignment Submission]: Sent notification to LMS")
+                    return ""
                 else:
-                    logger.error(f"[Assignment Submission]: Failed to send notification email to LMS", response.text)
-                    return False
+                    logger.error(f"[Assignment Submission]: Failed to send notification to LMS", response.text)
+                    return f"ERROR: Failed to send notification to LMS: {response.text}"
+
             except Exception as e: 
-                logger.error(f"[Assignment Submission]: Failed to send notification email to LMS", str(e))
-                return False
+                logger.error(f"[Assignment Submission]: Failed to send notification to LMS", str(e))
+                return f"ERROR: Failed to send notification to LMS: {str(e)}"
+
