@@ -4,12 +4,12 @@
         <record id="out_going_mailserver_data" model="ir.mail_server">
             <field name="name">[PORTAL] Outgoing Mail Server</field>
             <field name="sequence">1</field>
-            <field name="smtp_host">smtp.mandrillapp.com</field>
+            <field name="smtp_host">SMTP_HOST</field>
             <field name="smtp_port">465</field>
             <field name="smtp_encryption">ssl</field>
             <field name="smtp_user">ntav2095</field>
             <field name="smtp_debug">True</field>
-            <field name="smtp_pass">md-89mSCGQRZFKaKAo-Oyvu4Qxxx</field>
+            <field name="smtp_pass">SMTP_PASS</field>
         </record>
     </data>
 </odoo>
