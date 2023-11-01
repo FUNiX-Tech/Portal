@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields
+from odoo import models, fields, api
 
 class AssignmentCriterionResponse(models.Model):
     _name = 'assignment_criterion_response'
@@ -17,5 +17,6 @@ class AssignmentCriterionResponse(models.Model):
     criterion = fields.Many2one("assignment_criterion", required=True, readonly=True)
     feed_back = fields.Html(string="Nhận xét", default="")
     result = fields.Selection([ NOT_GRADED, PASSED, DID_NOT_PASS, UNABLE_TO_REVIEW ], required=True, string="Kết quả", default=DEFAULT_RESULT)
+    number = fields.Integer(related='criterion.number')
 
     _sql_constraints = [ ('unique_submission_criterion', 'unique(submission, criterion', 'Mỗi submission chỉ được chấm 1 lần.') ]
