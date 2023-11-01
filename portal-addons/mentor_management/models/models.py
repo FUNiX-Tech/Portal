@@ -1,0 +1,64 @@
+# -*- coding: utf-8 -*-
+
+# from odoo import models, fields, api
+
+
+# class mentor_management(models.Model):
+#     _name = 'mentor_management.mentor_management'
+#     _description = 'mentor_management.mentor_management'
+
+#     name = fields.Char()
+#     value = fields.Integer()
+#     value2 = fields.Float(compute="_value_pc", store=True)
+#     description = fields.Text()
+#
+#     @api.depends('value')
+#     def _value_pc(self):
+#         for record in self:
+#             record.value2 = float(record.value) / 100
+
+from odoo import models, fields, api
+
+class Mentor(models.Model):
+    _name = 'mentor_management'
+    _description = 'Mentor Management'
+    
+    full_name = fields.Char(string='Fullname', required=True)
+    mentor_code = fields.Char(string='Mentor Code', required=True)
+    email = fields.Char(string='Email')
+    # active_courses = fields.Many2many('course_management', inverse_name='course_code', string='Courses active for mentor') 
+    active_courses = fields.Many2many(
+        'course_management', 
+        relation= 'mentor_course_table',
+        column1='mentor_ids',
+        column2='course_ids',
+        string='Courses active for mentor'
+    )
+    create_date = fields.Datetime(string='Create at', default=fields.Datetime.now, readonly=True)
+
+    # @api.model
+    # def create(self, vals):
+    #     new_record = super(Mentor, self).create(vals)
+    #     self._update_user_role(new_record.email)
+    #     return new_record
+
+    # def write(self, vals):
+    #     result = super(Mentor, self).write(vals)
+    #     if 'email' in vals:
+    #         for record in self:
+    #             self._update_user_role(record.email)
+    #     return result
+
+    # def _update_user_role(self, email):
+    #     User = self.env['res.users']
+    #     user = User.search([('login', '=', email)], limit=1)
+    #     mentor_group = self.env.ref('your_module.group_mentor')
+
+    #     if user:
+    #         user.groups_id |= mentor_group
+    #     else:
+    #         new_user = User.create({
+    #             'name': self.name,
+    #             'login': email,
+    #             'groups_id': [(4, mentor_group.id)]
+    #         })

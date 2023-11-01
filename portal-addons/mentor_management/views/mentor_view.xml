@@ -1,0 +1,46 @@
+<odoo>
+    <record id="view_mentor_tree" model="ir.ui.view">
+        <field name="name">mentor.tree</field>
+        <field name="model">mentor_management</field>
+        <field name="arch" type="xml">
+            <tree string="Mentor">
+                <field name="full_name"/>
+                <field name="mentor_code"/>
+                <field name="email"/>
+                <field name="active_courses"/>
+                <field name="create_date"/>
+            </tree>
+        </field>
+    </record>
+
+
+    <record id="view_mentor_form" model="ir.ui.view">
+        <field name="name">mentor.form</field>
+        <field name="model">mentor_management</field>
+        <field name="arch" type="xml">
+            <form string="Mentor">
+                <sheet>
+                    <group>
+                        <field name="full_name"/>
+                        <field name="mentor_code"/>
+                        <field name="email"/>
+                        <field name="active_courses"/>
+                        <field name="create_date" readonly="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+
+
+    <record id="action_mentor" model="ir.actions.act_window">
+        <field name="name">Mentors</field>
+        <field name="res_model">mentor_management</field>
+        <field name="view_mode">tree,form</field>
+        <!-- <field name="view_id" ref="view_mentor_tree"/> -->
+    </record>
+
+    <menuitem id="menu_mentor_management" name="Mentor Management" />
+    <menuitem id="menu_mentor_management_1" name="Mentor" action="action_mentor" parent="menu_mentor_management" />
+</odoo>
