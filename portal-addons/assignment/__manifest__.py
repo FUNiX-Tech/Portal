@@ -16,15 +16,16 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base','portal_student_management',"course_management",],
+    'depends': ['base','email_server_config','portal_student_management',"course_management",],
 
     # always loaded
     'data': [
         'security/security.xml',
         'security/ir.model.access.csv',
-        'views/assignment_criterion_group_views.xml',
+        'views/assignment_criterion_response_views.xml',
         'views/assignment_criterion_views.xml',
         'views/assignment_submission_views.xml',
         'views/assignment_views.xml',
+        'views/graded_email_template.xml',
     ],
 }

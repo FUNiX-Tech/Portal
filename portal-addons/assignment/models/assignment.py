@@ -13,5 +13,6 @@ class Assignment(models.Model):
     title = fields.Char("Tên assignment", required=True)
     course = fields.Many2one("course_management", string="Môn học", required=True) 
     number = fields.Integer(string="STT", required=True)
+    criteria = fields.One2many("assignment_criterion", inverse_name="assignment", srting="Các tiêu chí")
 
     _sql_constraints = [ UNIQUE_ASSIGNMENT_NAME, UNIQUE_ASSIGNMENT_ORDER ]

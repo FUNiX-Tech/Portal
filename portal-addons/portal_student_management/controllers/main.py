@@ -112,13 +112,13 @@ class StudentAPI(http.Controller):
 
         # 5. Tạo access token và refresh token
         payload = {
-            'student_id': student.id,
-            'student_name': student.name,
-            'email': student.email,
+            "student_id": student.id,
+            "student_name": student.name,
+            "email": student.email,
         }
 
-        access_token = JWTEncoder.encode_jwt(payload, 'days', 1)
-        refresh_token = JWTEncoder.encode_jwt(payload, 'days', 7)
+        access_token = JWTEncoder.encode_jwt(payload, "days", 1)
+        refresh_token = JWTEncoder.encode_jwt(payload, "days", 7)
 
         # 6. Lưu refresh token vào database
         refresh_token_record = http.request.env['portal.student.refresh.token'].sudo().search(
