@@ -11,6 +11,7 @@
                             <field name="name" />
                             <field name="email" />
                             <field name="gender" />
+                            <field name="password_hash" password="True" class='oe_inline' />
                         </group>
                         <group>
                             <field name="phone" />

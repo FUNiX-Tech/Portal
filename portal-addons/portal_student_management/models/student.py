@@ -3,6 +3,7 @@
 from odoo import api, fields, models, exceptions
 import random
 import re
+from werkzeug.security import generate_password_hash
 
 
 class Student(models.Model):
@@ -16,8 +17,8 @@ class Student(models.Model):
     password_hash = fields.Char(string='Password')
     phone = fields.Char(string='Phone')
     gender = fields.Selection(
-        string='Giới tính',
-        selection=[('male', 'Nam'), ('female', 'Nữ'), ('other', 'khác')],
+        string='Gender',
+        selection=[('male', 'Male'), ('female', 'Female'), ('other', 'khác')],
         required=True,
         default='male'
     )
@@ -90,14 +91,10 @@ class Student(models.Model):
         @decorator: api.constrains to call the function when creating or updating a Student object
         """
         for record in self:
-            #  Check if the email is valid
+            # Check if the email is valid
             # Link Regex: https://regex101.com/r/O9oCj8/1
             if record.email and not re.match(r"^[^\.\s][\w\-\.{2,}]+@([\w-]+\.)+[\w-]{2,}$", record.email):
                 raise exceptions.ValidationError('Invalid email')
-
-            # Kiểm tra email đã tồn tại trong database chưa
-            if record.email and self.env['portal.student'].search([('email', '=', record.email), ('id', '!=', record.id)]):
-                raise exceptions.ValidationError('Email already exists')
 
     # ==================== OVERRIDE MODEL METHOD ====================
 
@@ -108,9 +105,15 @@ class Student(models.Model):
         # Update the 'updated_at' field with the current datetime
         student_dict['updated_at'] = fields.Datetime.now()
 
+        if 'password_hash' in student_dict and len(student_dict['password_hash']) < 32:
+            student_dict['password_hash'] = generate_password_hash(
+                student_dict['password_hash'])
+
         # Check if the email already exists in the database
-        if student_dict['email'] and self.env['portal.student'].search([('email', '=', student_dict['email'])]):
-            raise exceptions.ValidationError('Email đã tồn tại')
+        if 'email' in student_dict:
+            if student_dict['email'] and self.env['portal.student'].search([('email', '=', student_dict['email'])]):
+                raise exceptions.ValidationError('Email already exists')
+
         return super(Student, self).write(student_dict)
 
     @api.model
