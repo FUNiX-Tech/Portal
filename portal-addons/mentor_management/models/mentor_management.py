@@ -22,6 +22,7 @@ from odoo import models, fields, api
 class Mentor(models.Model):
     _name = 'mentor_management'
     _description = 'Mentor Management'
+    _rec_name = 'full_name'
     
     full_name = fields.Char(string='Fullname', required=True)
     mentor_code = fields.Char(string='Mentor Code', required=True)
@@ -34,13 +35,14 @@ class Mentor(models.Model):
         column2='course_ids',
         string='Courses active for mentor'
     )
+    submission_ids = fields.One2many('assignment_submission', 'mentor_id', string="Submissions")
     create_date = fields.Datetime(string='Create at', default=fields.Datetime.now, readonly=True)
 
-    # @api.model
-    # def create(self, vals):
-    #     new_record = super(Mentor, self).create(vals)
-    #     self._update_user_role(new_record.email)
-    #     return new_record
+    @api.model
+    def create(self, vals):
+        new_record = super(Mentor, self).create(vals)
+        new_record._update_user_role(new_record.email)
+        return new_record
 
     # def write(self, vals):
     #     result = super(Mentor, self).write(vals)
@@ -49,16 +51,16 @@ class Mentor(models.Model):
     #             self._update_user_role(record.email)
     #     return result
 
-    # def _update_user_role(self, email):
-    #     User = self.env['res.users']
-    #     user = User.search([('login', '=', email)], limit=1)
-    #     mentor_group = self.env.ref('your_module.group_mentor')
+    def _update_user_role(self, email):
+        User = self.env['res.users']
+        user = User.search([('login', '=', email)], limit=1)
+        mentor_group = self.env.ref('mentor_management.group_mentor_management_mentor')
 
-    #     if user:
-    #         user.groups_id |= mentor_group
-    #     else:
-    #         new_user = User.create({
-    #             'name': self.name,
-    #             'login': email,
-    #             'groups_id': [(4, mentor_group.id)]
-    #         })
+        if user:
+            user.groups_id |= mentor_group
+        else:
+            new_user = User.create({
+                'name': self.full_name,
+                'login': email,
+                'groups_id': [(4, mentor_group.id)]
+            })
