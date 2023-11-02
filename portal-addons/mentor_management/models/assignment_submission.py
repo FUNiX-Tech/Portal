@@ -13,8 +13,13 @@ from odoo.tools import config
 
 logger = logging.getLogger(__name__)
 
+
 class AssignmentSubmission(models.Model):
-    _inherit = 'assignment_submission'
+    _inherit = "assignment_submission"
     # _description = 'assignment_submission'
 
-    mentor_id = fields.Many2one('mentor_management', string="Mentor",group="mentor_management.group_mentor_management_admin")
+    mentor_id = fields.Many2one(
+        "mentor_management",
+        string="Mentor",
+        group="mentor_management.group_mentor_management_admin",
+    )
