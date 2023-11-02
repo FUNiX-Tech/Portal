@@ -30,7 +30,7 @@
                               <div class="d-flex flex-column"  >
                                   <span>Course Creator: <field name="course_creator"/></span>
                                   <span>Created at: <field name="created_at"/></span>
-                                  
+
                               </div>
                           </div>
                           <div class="col-4 o_kanban_primary_right">
@@ -46,7 +46,7 @@
         </kanban>
       </field>
     </record>
-    
+
     <!-- explicit list view definition -->
     <record model="ir.ui.view" id="view_course_management_list">
       <field name="name">course_management list</field>

@@ -7,7 +7,10 @@ import json
 class CourseManagement(http.Controller):
     # API check course has enrolled yet or not?
     @http.route(
-        "/api/course_management/check_enroll", type="http", auth="none", method=["GET"]
+        "/api/course_management/check_enroll",
+        type="http",
+        auth="none",
+        method=["GET"],
     )
     def check_enroll(self, **kw):
         course_id = kw.get("course_id")
@@ -17,7 +20,12 @@ class CourseManagement(http.Controller):
             course = (
                 request.env["course_management"]
                 .sudo()
-                .search([("id", "=", course_id), ("student_ids", "in", [student_id])])
+                .search(
+                    [
+                        ("id", "=", course_id),
+                        ("student_ids", "in", [student_id]),
+                    ]
+                )
             )
             if course:
                 enrolled = True
