@@ -8,13 +8,13 @@
                 <sheet>
                    <group>
                         <group>
-                            <field name="title" string="Tên tiêu chí" class="border bg-light"/>
-                            <field name="number" string="STT" class="border bg-light"/>
+                            <field name="title" string="Criterion Name" class="border bg-light"/>
+                            <field name="number" string="Number" class="border bg-light"/>
                             <field name="assignment" string="Assignment" class="border bg-light" invisible="1"/>
                         </group>
                         <notebook>
                             <page string="Specifications">
-                                <field name="specifications" widget="html" string="Đặc điểm kỹ thuật"/>
+                                <field name="specifications" widget="html" string="Specifications"/>
                             </page>
                         </notebook>
                    </group>

@@ -7,10 +7,10 @@
             <form string="Assignment">
                 <sheet>
                     <group>
-                        <field name="title" string="Tên Assignment" class="border bg-light"/>
-                        <field name="course" string="Mã môn học" class="border bg-light"/>
-                        <field name="number" string="STT" class="border bg-light"/>
-                        <field name="criteria" string="Các tiêu chí" class="border bg-light"/>
+                        <field name="title" string="Assignment Name" class="border bg-light"/>
+                        <field name="course" string="Course" class="border bg-light"/>
+                        <field name="number" string="Number" class="border bg-light"/>
+                        <field name="criteria" string="Criteria" class="border bg-light"/>
                     </group>
                 </sheet>
             </form>

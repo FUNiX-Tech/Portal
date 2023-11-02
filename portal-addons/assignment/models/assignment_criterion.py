@@ -19,9 +19,9 @@ class AssignmentCriterion(models.Model):
     _description = "assignment_criterion"
     _rec_name = "title"
 
-    title = fields.Char("Tên tiêu chí", required=True)
-    specifications = fields.Html(string="Các yêu cầu", required=True)
-    number = fields.Integer(string="STT", required=True)
+    title = fields.Char("Criterion name", required=True)
+    specifications = fields.Html(string="Specifications", required=True)
+    number = fields.Integer(string="Number", required=True)
     assignment = fields.Many2one("assignment", required=True)
 
     _sql_constraints = [

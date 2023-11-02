@@ -9,12 +9,13 @@
                    <group>
                         <group>
                             <field name="submission" string="Submission" class="border bg-light" editable="false"/>
-                            <field name="criterion" string="Tiêu chí" class="border bg-light" editable="false"/>/>
-                            <field name="result" string="Kết quả" class="border bg-light"/>
+                            <field name="criterion" string="Criterion" class="border bg-light" editable="false"/>
+                            <field name="result" string="Result" class="border bg-light"/>
+                             <field name="submission_result"  string="Submission Result" invisible="1"/>
                         </group>
                         <notebook>
-                            <page string="Nhận xét">
-                                <field name="feed_back" widget="html" string="Nhận xét"/>
+                            <page string="Feedback">
+                                <field attrs="{'readonly':[('submission_result','!=','not_graded')]}" name="feed_back" widget="html" string="Feedback"/>
                             </page>
                         </notebook>
                    </group>
@@ -28,6 +29,4 @@
         <field name="res_model">assignment_criterion_response</field>
         <field name="view_mode">form</field>
     </record>
-
-
 </odoo>

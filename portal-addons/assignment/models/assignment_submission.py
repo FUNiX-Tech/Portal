@@ -26,7 +26,7 @@ class AssignmentSubmission(models.Model):
     DEFAULT_RESULT = NOT_GRADED[0]
 
     student = fields.Many2one(
-        "portal.student", string="Học viên", readonly=True
+        "portal.student", string="Student", readonly=True
     )
     assignment = fields.Many2one(
         "assignment", string="Assignment", readonly=True
@@ -35,12 +35,12 @@ class AssignmentSubmission(models.Model):
     criteria_responses = fields.One2many(
         "assignment_criterion_response",
         inverse_name="submission",
-        string="Các tiêu chí",
+        string="Criteria",
     )
     result = fields.Selection(
         [NOT_GRADED, PASSED, DID_NOT_PASS, UNABLE_TO_REVIEW],
         required=True,
-        string="Kết quả",
+        string="Result",
         default=DEFAULT_RESULT,
         readonly=True,
     )

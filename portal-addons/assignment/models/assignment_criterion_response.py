@@ -21,14 +21,18 @@ class AssignmentCriterionResponse(models.Model):
     criterion = fields.Many2one(
         "assignment_criterion", required=True, readonly=True
     )
-    feed_back = fields.Html(string="Nhận xét", default="")
+    feed_back = fields.Html(string="Feedback", default="")
     result = fields.Selection(
         [NOT_GRADED, PASSED, DID_NOT_PASS, UNABLE_TO_REVIEW],
         required=True,
-        string="Kết quả",
+        string="Result",
         default=DEFAULT_RESULT,
     )
     number = fields.Integer(related="criterion.number")
+    submission_result = fields.Selection(
+        [NOT_GRADED, PASSED, DID_NOT_PASS, UNABLE_TO_REVIEW],
+        related="submission.result",
+    )
 
     _sql_constraints = [
         (

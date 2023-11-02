@@ -12,11 +12,11 @@
                     </header>
                     <group>
                         <field name="has_graded_all_criteria" invisible="1"/>
-                        <field name="student" string="Học viên" class="border bg-light" write="false"/>
-                        <field name="result" string="Kết quả" class="border bg-light" write="false"/>
+                        <field name="student" string="Student" class="border bg-light" write="false"/>
+                        <field name="result" string="Result" class="border bg-light" write="false"/>
                         <field name="assignment" string="Assignment" class="border bg-light" write="false"/>
-                        <field name="submission_url" string="URL Submission" class="border bg-light" write="false"/>
-                        <field name="criteria_responses" string="Chấm các tiêu chí" class="border bg-light">
+                        <field name="submission_url" string="Submission URL" class="border bg-light" write="false"/>
+                        <field attrs="{'readonly':[('result','!=','not_graded')]}" name="criteria_responses" string="Criterion Grading" class="border bg-light">
                             <tree string="Criterion Response" create="false" delete="false">
                                 <field name="number"/>
                                 <field name="submission"/>
