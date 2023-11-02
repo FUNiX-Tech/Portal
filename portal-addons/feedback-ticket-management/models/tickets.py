@@ -69,12 +69,12 @@ class FeedbackTicket(models.Model):
 
     @api.model
     def create(self, vals):
-        if "created_at" not in vals:
-            vals["created_at"] = datetime.now()
-            vals["ticket_number"] = self.env["ir.sequence"].next_by_code(
-                "feedback_ticket"
-            )
-        if "ticket_response" in vals:
+        vals["created_at"] = datetime.now()
+        vals["ticket_number"] = (
+            self.env["ir.sequence"].sudo().next_by_code("feedback_ticket")
+        )
+        # if response is submitted to reply requester, the request is done, do like if below to check for api and create on portal.
+        if "ticket_response" in vals and vals["ticket_response"]:
             vals["ticket_status"] = "done"
         ticket = super(FeedbackTicket, self).create(vals)
         if (
@@ -83,10 +83,10 @@ class FeedbackTicket(models.Model):
             ticket.action_send_mail(ticket.id)
         if "ticket_response" in vals:
             ticket.action_send_mail(ticket.id, "response")
-            ticket.write()
         return ticket
 
     def write(self, vals):
+        # if response is submitted to reply requester, the request is done
         if "ticket_response" in vals:
             vals["ticket_status"] = "done"
         success = super(FeedbackTicket, self).write(
