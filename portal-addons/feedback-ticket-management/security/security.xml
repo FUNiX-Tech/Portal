@@ -1,0 +1,34 @@
+<odoo>
+    <data noupdate="0">
+        <record id="module_category_feedback_ticket_management" model="ir.module.category">
+            <field name="name">Feedback Ticket Management</field>
+            <field name="sequence">1</field>
+        </record>
+        <!-- Admin Group-->
+        <record id='group_feedback_ticket_management_admin' model='res.groups'>
+            <field name="name">Admin</field>
+            <field name="category_id" ref='module_category_feedback_ticket_management'></field>
+            <field name="implied_ids" eval="[(4,ref('base.group_user'))]"></field>
+        </record>
+
+        <!-- User Group -->
+        <record id='group_feedback_ticket_management_staff' model='res.groups'>
+            <field name="name">Staff</field>
+            <field name="category_id" ref='module_category_feedback_ticket_management'></field>
+            <field name="implied_ids" eval="[(4,ref('base.group_user'))]"></field>
+        </record>
+    </data>
+<!--Filtered ticket by staff' user-id  -->
+    <data >
+        <record id="personal_ticket" model="ir.rule">
+            <field name="name">Personal ticket for user</field>
+            <field name="model_id" ref="model_feedback_ticket" />
+            <field name="groups" eval="[(4, ref('group_feedback_ticket_management_staff'))]" />
+            <field name="domain_force">[('ticket_assignee', '=', user.id)]</field>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_unlink" eval="False" />
+        </record>
+    </data>
+</odoo>

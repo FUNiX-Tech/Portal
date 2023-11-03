@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_feedback_ticket_management_admin,feedback_ticket_management_admin,model_feedback_ticket,group_feedback_ticket_management_admin,1,1,1,1
+access_feedback_ticket_management_staff,feedback_ticket_management_staff,model_feedback_ticket,group_feedback_ticket_management_staff,1,1,0,0
