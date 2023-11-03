@@ -49,6 +49,5 @@ package.json
 /man/
 /share/
 /src/
-
-email_server.secret.xml
 /env/
+odoo.conf

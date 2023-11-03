@@ -1,0 +1,23 @@
+<odoo>
+    <data noupdate="0">
+        <!-- Tạo category hay group để phân quyền, các nhóm được tạo ra sẽ trực thuộc category này -->
+        <record id="module_category_mentor_management" model="ir.module.category">
+            <field name="name">Mentor Management</field>
+            <field name="sequence">1</field>
+        </record>
+
+        <!-- Nhóm Admin -->
+        <record id='group_mentor_management_admin' model='res.groups'>
+            <field name="name">Admin</field>
+            <field name="category_id" ref='module_category_mentor_management'></field>
+            <field name="implied_ids" eval="[(4,ref('base.group_user'))]"></field>
+        </record>
+
+        <!-- Nhóm Mentor -->
+        <record id='group_mentor_management_mentor' model='res.groups'>
+            <field name="name">Mentor</field>
+            <field name="category_id" ref='module_category_mentor_management'></field>
+            <field name="implied_ids" eval="[(4,ref('base.group_user'))]"></field>
+        </record>
+    </data>
+</odoo>
