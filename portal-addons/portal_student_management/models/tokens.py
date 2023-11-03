@@ -1,5 +1,4 @@
-from odoo import api, fields, models, exceptions
-
+from odoo import fields, models
 import uuid
 
 
@@ -39,6 +38,7 @@ class StudentEmailVerificationToken(models.TransientModel):
     used = fields.Boolean(string="Used", default=False)
 
     _sql_constraints = [
+
         unique_constraint(
             "Each student can only create one email verification token"
         )
@@ -71,6 +71,7 @@ class StudentPasswordResetToken(models.TransientModel):
     used = fields.Boolean(string="Used", default=False)
 
     _sql_constraints = [
+
         unique_constraint(
             "Each student can only create one password reset token"
         )

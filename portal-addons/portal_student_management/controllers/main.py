@@ -1,14 +1,10 @@
 # flake8: noqa
 from odoo import http
-from werkzeug.wrappers.response import Response
 from werkzeug.security import generate_password_hash, check_password_hash
 import re
-
 from ..utils.jwt_encode import JWTEncoder
 from datetime import datetime, timedelta
 from ..utils.api_utils import (
-    json_response,
-    exclude_keys_from_dict,
     json_error,
     json_success,
     get_body_json,
@@ -53,6 +49,7 @@ class StudentAPI(http.Controller):
 
         # 2b. Check email format
         # Regex : https://regex101.com/r/O9oCj8/1
+
         elif not re.match(
             r"^[^\.\s][\w\-\.{2,}]+@([\w-]+\.)+[\w-]{2,}$", email
         ):
@@ -91,10 +88,9 @@ class StudentAPI(http.Controller):
         password_hash = generate_password_hash(password)
 
         # 5. Create student record
-        (
-            http.request.env["portal.student"]
-            .sudo()
-            .create(
+        http.request.env["portal.student"]
+        .sudo()
+        .create(
                 {
                     "name": name,
                     "email": email,
@@ -334,6 +330,8 @@ class StudentAPI(http.Controller):
         student_id = decoded_token["student_id"]
 
         # 5. Delete access token and refresh token in cookies
+
+        response = json_success({"message": "Logout successful"})
         response.set_cookie("access_token", "", max_age=0)
         response.set_cookie("refresh_token", "", max_age=0)
 
@@ -351,6 +349,7 @@ class StudentAPI(http.Controller):
             {"token": "", "expired_at": "", "used": False}
         )
         response = json_response({"message": "Logout successful"})
+
 
         return response
 
@@ -376,7 +375,9 @@ class StudentAPI(http.Controller):
         4. Check if student exists
         5. Update student info
 
-        Note: date_of_birth is a string in request, only YYYY-MM-DD format is accepted, it will be converted to date in database
+        Note:
+        - Date_of_birth is a string in request
+        - Only YYYY-MM-DD format is accepted, it will be converted to date in database
         """
 
         # 1. Verify access token (middleware) and extract decoded_token
@@ -400,6 +401,7 @@ class StudentAPI(http.Controller):
             return json_error("Invalid input gender", 400)
 
         # Phone
+
         if "phone" in request_data and not re.match(
             r"^\d+$", request_data["phone"]
         ):

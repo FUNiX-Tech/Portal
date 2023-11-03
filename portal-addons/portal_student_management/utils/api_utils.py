@@ -1,4 +1,3 @@
-from odoo import http
 from werkzeug.wrappers.response import Response
 import json
 
@@ -19,7 +18,6 @@ def exclude_keys_from_dict(dictionary, *keys):
 def json_response(data, status=200):
     """
     Function to return json response
-
     """
     return Response(
         json.dumps(data),

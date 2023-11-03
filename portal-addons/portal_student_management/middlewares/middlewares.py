@@ -1,12 +1,5 @@
 from odoo import http
-import json
-from werkzeug.wrappers.response import Response
-from ..utils.api_utils import (
-    get_body_json,
-    json_response,
-    json_success,
-    json_error,
-)
+from ..utils.api_utils import json_error
 from ..utils.jwt_encode import JWTEncoder
 
 
