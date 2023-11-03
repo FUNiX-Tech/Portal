@@ -7,9 +7,10 @@
             <form string="Assignment">
                 <sheet>
                     <group>
-                        <field name="title" string="Tên Assignment" class="border bg-light"/>
-                        <field name="course" string="Mã môn học" class="border bg-light"/>
-                        <field name="number" string="STT" class="border bg-light"/>
+                        <field name="title" string="Assignment Name" class="border bg-light"/>
+                        <field name="course" string="Course" class="border bg-light"/>
+                        <field name="number" string="Number" class="border bg-light"/>
+                        <field name="criteria" string="Criteria" class="border bg-light"/>
                     </group>
                 </sheet>
             </form>
@@ -20,7 +21,7 @@
         <field name="name">assignment.tree</field>
         <field name="model">assignment</field>
         <field name="arch" type="xml">
-            <tree string="Assignment" edit="false" class="text-center">
+            <tree limit="20" string="Assignment" edit="false" class="text-center">
                 <field name="title"/>
                 <field name="course"/>
                 <field name="number"/>
@@ -36,8 +37,6 @@
 
     <menuitem id="menu_assignment_root" name="Assignment">
         <menuitem id="menu_action_assignment" name="Assignment" action="assignment_action"/>
-        <menuitem id="menu_action_assignment_criterion_group" name="Criterion Group" action="assignment_criterion_group_action"/>
-        <menuitem id="menu_action_assignment_criterion" name="Criterion" action="assignment_criterion_action"/>
         <menuitem id="menu_action_assignment_submission" name="Submission" action="assignment_submission_action"/>
     </menuitem>
 </odoo>

@@ -3,7 +3,7 @@ import uuid
 
 
 def unique_constraint(message):
-    return ("student_id_unique", "UNIQUIE(student_id)", message)
+    return ("student_id_unique", "UNIQUE(student_id)", message)
 
 
 def generate_token(self, length=32):
