@@ -15,7 +15,7 @@
     "category": "Uncategorized",
     "version": "0.1",
     # any module necessary for this one to work correctly
-    "depends": ["base", "mail"],
+    "depends": ["base", "mail", "portal_student_management"],
     # always loaded
     "data": [
         "security/security.xml",
@@ -25,5 +25,7 @@
         "data/assign_email_template.xml",
         "data/email_server.xml",
         "data/response_email_template.xml",
+        "data/email_assignee_reminder_template.xml",
+        "data/schedule_remind_assignee.xml",
     ],
 }

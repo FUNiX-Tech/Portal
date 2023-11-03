@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <!-- Email template for Assignee Reminder -->
+        <record id="email_assignee_reminder_template" model="mail.template">
+            <field name="name">[PORTAL] Reminder Handle Ticket To Assignee </field>
+            <field name="model_id" ref="model_feedback_ticket"/>
+            <field name="subject">Your Ticket Is Pending For {{(ctx.get("datenow") - object.created_at).days}} days - {{object.ticket_number}}</field>
+            <field name="email_from">portal.funix@funix.edu.vn</field>
+            <field name="email_to">{{object.ticket_assignee.email}}</field>
+            <field name="description">The ticket is assigned for days, please check and handle it</field>
+            <field name="body_html" type="html">
+                <div style="width:100%">
+                        <h2>Ticket Title: <t t-out="object.ticket_title"></t></h2>
+                        <h4>Dear <t t-out="object.ticket_assignee.name">,</t></h4>
+                        <p>Your assigned ticket is pending for a long time . Please go to Portal to check it and proceed the next step.</p>
+                        <p>Best regards,</p>
+                        <p>Funix portal</p>
+                </div>
+            </field>
+        </record>
+    </data>
+</odoo>

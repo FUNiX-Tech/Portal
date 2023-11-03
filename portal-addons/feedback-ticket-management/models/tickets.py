@@ -55,6 +55,7 @@ class FeedbackTicket(models.Model):
         help="Editable on update view",
     )
 
+    # Action send email based on type
     def action_send_mail(self, ticket_id, email_type="assign"):
         if email_type == "assign" and self.ticket_assignee.email:
             template = self.env.ref(
@@ -66,6 +67,23 @@ class FeedbackTicket(models.Model):
                 "feedback-ticket-management.response_ticket_email_template"
             )
             template.send_mail(ticket_id, force_send=True)
+        elif email_type == "reminder":
+            template = self.env.ref(
+                "feedback-ticket-management.email_assignee_reminder_template"
+            )
+            datenow = datetime.now()
+            template.with_context({"datenow": datenow}).send_mail(
+                ticket_id, force_send=True
+            )
+
+    # Scheduled send email action as assignee reminder
+    def assignee_reminder(self):
+        for ticket in self.env["feedback_ticket"].search(
+            [("ticket_status", "in", ["assigned", "in_progress"])]
+        ):
+            if (datetime.now() - ticket.created_at).days % 3 == 0:
+                print("bcd", ticket)
+                ticket.action_send_mail(ticket.id, "reminder")
 
     @api.model
     def create(self, vals):
