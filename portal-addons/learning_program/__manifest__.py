@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    "name": "learning_program",
+    "name": "Learning Program",
     "summary": """
      Adding students into Learning Program
      Adding courses into Learning Program

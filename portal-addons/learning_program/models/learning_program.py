@@ -10,14 +10,14 @@ class LearningProgram(models.Model):
     name = fields.Char(string="name", required=True)
     student_list = fields.Many2many(
         "portal.student",
-        relation="group_students_relation",
+        relation="group_learning_program_students_relation",
         column1="learning_program_ids",
         column2="student_ids",
         string="Student List",
     )
     course_list = fields.Many2many(
         "course_management",
-        relation="group_courses_relation",
+        relation="group_learning_program_courses_relation",
         column1="learning_program_ids",
         column2="course_ids",
         string="Course List",
