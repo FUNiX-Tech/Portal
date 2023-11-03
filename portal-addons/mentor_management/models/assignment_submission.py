@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 """
-Need to set the following variables to config file: 
+Need to set the following variables to config file:
 - lms_submission_notification: the lms url to send submission result notification.
 - email_from: sender email (e.g. notification@example.com)
 """
 
 
 import logging
+
 import requests
-from odoo import models, fields, api
+
+from odoo import api, fields, models
 from odoo.tools import config
 
 logger = logging.getLogger(__name__)

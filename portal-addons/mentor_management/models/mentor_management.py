@@ -17,18 +17,17 @@
 #         for record in self:
 #             record.value2 = float(record.value) / 100
 
-from odoo import models, fields, api
+from odoo import api, fields, models
 
 
 class Mentor(models.Model):
     _name = "mentor_management"
     _description = "Mentor Management"
-    _rec_name = "full_name"
+    _rec_name = "email"
 
     full_name = fields.Char(string="Fullname", required=True)
     mentor_code = fields.Char(string="Mentor Code", required=True)
     email = fields.Char(string="Email")
-    # active_courses = fields.Many2many('course_management', inverse_name='course_code', string='Courses active for mentor')
     active_courses = fields.Many2many(
         "course_management",
         relation="mentor_course_table",
@@ -59,7 +58,9 @@ class Mentor(models.Model):
     def _update_user_role(self, email):
         User = self.env["res.users"]
         user = User.search([("login", "=", email)], limit=1)
-        mentor_group = self.env.ref("mentor_management.group_mentor_management_mentor")
+        mentor_group = self.env.ref(
+            "mentor_management.group_mentor_management_mentor"
+        )
 
         if user:
             user.groups_id |= mentor_group
@@ -71,3 +72,4 @@ class Mentor(models.Model):
                     "groups_id": [(4, mentor_group.id)],
                 }
             )
+            print(new_user)

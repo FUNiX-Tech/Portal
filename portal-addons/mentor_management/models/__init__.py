@@ -1,4 +1,3 @@
 # -*- coding: utf-8 -*-
 
-from . import mentor_management
-from . import assignment_submission
+from . import assignment_submission, mentor_management
