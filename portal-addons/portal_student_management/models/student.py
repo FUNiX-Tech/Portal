@@ -66,7 +66,7 @@ class Student(models.Model):
         characters = string.ascii_letters + string.digits + string.punctuation
 
         # Generate a random password with selected length by selecting characters from the set
-        password = ''.join(random.choice(characters) for _ in range(length))
+        password = "".join(random.choice(characters) for _ in range(length))
 
         return password
 
@@ -112,7 +112,6 @@ class Student(models.Model):
             ):
                 raise exceptions.ValidationError("Invalid email")
 
-
     # ==================== OVERRIDE MODEL METHOD ====================
 
     def write(self, student_dict):
@@ -122,7 +121,10 @@ class Student(models.Model):
         # Update the 'updated_at' field with the current datetime
         student_dict["updated_at"] = fields.Datetime.now()
 
-        if "password_hash" in student_dict and len(student_dict["password_hash"]) < 32:
+        if (
+            "password_hash" in student_dict
+            and len(student_dict["password_hash"]) < 32
+        ):
             student_dict["password_hash"] = generate_password_hash(
                 student_dict["password_hash"]
             )
@@ -146,7 +148,8 @@ class Student(models.Model):
 
         """
         student_dict["student_code"] = self._student_code_generator(
-            student_dict)
+            student_dict
+        )
 
         # If the password_hash is not in the student_dict, generate a random password and hash it
         if "password_hash" not in student_dict:

@@ -88,9 +88,10 @@ class StudentAPI(http.Controller):
         password_hash = generate_password_hash(password)
 
         # 5. Create student record
-        http.request.env["portal.student"]
-        .sudo()
-        .create(
+        (
+            http.request.env["portal.student"]
+            .sudo()
+            .create(
                 {
                     "name": name,
                     "email": email,
@@ -349,7 +350,6 @@ class StudentAPI(http.Controller):
             {"token": "", "expired_at": "", "used": False}
         )
         response = json_response({"message": "Logout successful"})
-
 
         return response
 
