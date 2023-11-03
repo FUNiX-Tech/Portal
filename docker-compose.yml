@@ -1,0 +1,23 @@
+version: '3.1'
+services:
+  portal:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: portal:latest
+    depends_on:
+      - psql
+    ports:
+      - "8069:8069"
+    volumes:
+      - data:/var/lib/odoo
+      - ./config:/etc/odoo
+      # - ./portal-addons:/mnt/extra-addons
+  psql:
+    image: postgres:13
+    env_file: .env
+    volumes:
+      - db:/var/lib/pgsql/data/pgdata
+volumes:
+  data:
+  db:
