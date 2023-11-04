@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <odoo>
-    <record id="assignment_submission_view_form" model="ir.ui.view">
+    <!-- <record id="assignment_submission_view_form" model="ir.ui.view">
         <field name="name">assignment_submission.form</field>
         <field name="model">assignment_submission</field>
         <field name="inherit_id" ref="assignment.assignment_submission_view_form" />
@@ -11,7 +11,7 @@
             </field>
 
         </field>
-    </record>
+    </record> -->
 
     <record id="assignment_submission_view_tree" model="ir.ui.view">
         <field name="name">assignment_submission.tree</field>
