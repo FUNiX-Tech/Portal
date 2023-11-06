@@ -11,6 +11,7 @@ services:
       - "8069:8069"
     volumes:
       - data:/var/lib/odoo
+      - filestore:/root/.local/share/Odoo/filestore
       - ./config:/etc/odoo
       # - ./portal-addons:/mnt/extra-addons
   psql:
@@ -21,3 +22,4 @@ services:
 volumes:
   data:
   db:
+  filestore:
