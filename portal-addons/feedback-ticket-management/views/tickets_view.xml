@@ -13,6 +13,7 @@
         <field name="assign_to_you" />
         <field name="created_at" />
         <field name="ticket_status" />
+        <field name="processing_time" />
       </tree>
     </field>
   </record>
@@ -30,16 +31,21 @@
                   <field name="ticket_category" />
                   <field name="ticket_requester" />
                   <field name="ticket_assignee" />
+                  <field name="course_rel" />
+                  <field name="lesson_url" />
+                  <field name="processing_time"   />
+                  <field name="complete_date" />
                 </group>
                 <group>
                   <field name="ticket_status" attrs="{'readonly':[('ticket_assignee','==',False)]}"/>
                   <field name="created_at" />
                   <field name="ticket_description"/>
                   <field name="ticket_response" attrs="{'invisible':[('ticket_status','==','waiting')], 'readonly':[('ticket_status','==','done')]}"/>
+                  <field name="ticket_attachment" string="Attachments" />
                 </group>
               </group>
               <group>
-                <field name="ticket_attachment" widget="image" string="Add Attachments" />
+
               </group>
           </sheet>
         </form>

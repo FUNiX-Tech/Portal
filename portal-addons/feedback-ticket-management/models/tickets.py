@@ -25,7 +25,7 @@ class FeedbackTicket(models.Model):
     ticket_number = fields.Char(string="Ticket Number", readonly=True)
     ticket_title = fields.Char(string="Title", required=True)
     ticket_description = fields.Text(string="Ticket Descriptions")
-    ticket_attachment = fields.Image(string="Ticket Attachment")
+    ticket_attachment = fields.Char(string="Ticket Attachment")
     ticket_assignee = fields.Many2one(
         "res.users",
         string="Assigned Staff",
@@ -53,6 +53,16 @@ class FeedbackTicket(models.Model):
         required=True,
         default="waiting",
         help="Editable on update view",
+    )
+    course_rel = fields.Many2one("course_management", string="Course")
+    lesson_url = fields.Char(string="Lesson Link")
+    processing_time = fields.Char(
+        string="Processing Time",
+        compute="cal_processing_time",
+        default="0 days 0 hours",
+    )
+    complete_date = fields.Datetime(
+        string="Complete Ticket Date", readonly=True
     )
 
     # Action send email based on type
@@ -82,7 +92,6 @@ class FeedbackTicket(models.Model):
             [("ticket_status", "in", ["assigned", "in_progress"])]
         ):
             if (datetime.now() - ticket.created_at).days % 3 == 0:
-                print("bcd", ticket)
                 ticket.action_send_mail(ticket.id, "reminder")
 
     @api.model
@@ -94,6 +103,7 @@ class FeedbackTicket(models.Model):
         # if response is submitted to reply requester, the request is done, do like if below to check for api and create on portal.
         if "ticket_response" in vals and vals["ticket_response"]:
             vals["ticket_status"] = "done"
+            vals["complete_date"] = datetime.now()
         ticket = super(FeedbackTicket, self).create(vals)
         if (
             "ticket_assignee" in vals
@@ -107,6 +117,7 @@ class FeedbackTicket(models.Model):
         # if response is submitted to reply requester, the request is done
         if "ticket_response" in vals:
             vals["ticket_status"] = "done"
+            vals["complete_date"] = datetime.now()
         success = super(FeedbackTicket, self).write(
             vals
         )  # This variable return boolean for update process
@@ -130,3 +141,24 @@ class FeedbackTicket(models.Model):
                 record.assign_to_you = "Assign to you"
             else:
                 record.assign_to_you = ""
+
+    # Function calculate processing time
+    @api.depends("created_at")
+    def cal_processing_time(self):
+        for ticket in self:
+            if ticket.ticket_status in ["waiting", "assigned", "in_progress"]:
+                process_time_temp = datetime.now() - ticket.created_at
+                ticket.processing_time = f"{process_time_temp.days} days {round(process_time_temp.seconds/3600)} hours"
+            elif ticket.ticket_status == "done" and ticket.complete_date:
+                process_time_temp = ticket.complete_date - ticket.created_at
+                ticket.processing_time = f"{process_time_temp.days} days {round(process_time_temp.seconds/3000)} hours"
+            else:
+                ticket.processing_time = ""
+
+    # assign datetime now to complete_date when ticket change status to done.
+    @api.onchange("ticket_status")
+    def ticket_status_change(self):
+        if self.ticket_status == "done":
+            self.complete_date = datetime.now()
+        else:  # reopen ticket complete_date will be none
+            self.complete_date = None
