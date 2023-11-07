@@ -7,20 +7,6 @@ class StudentGroup(models.Model):
     _description = "Student Group"
 
     name = fields.Char(string="name", required=True)
-    student_list = fields.Many2many(
-        "portal.student",
-        relation="group_students_relation",
-        column1="group_ids",
-        column2="student_ids",
-        string="Student List",
-    )
-    course_list = fields.Many2many(
-        "course_management",
-        relation="group_courses_relation",
-        column1="student_group_ids",
-        column2="course_ids",
-        string="Course List",
-    )
     creator = fields.Char(
         string="creator", default=lambda self: self.env.user.name
     )

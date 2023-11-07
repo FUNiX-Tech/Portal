@@ -21,6 +21,8 @@
         "security/security.xml",
         "security/ir.model.access.csv",
         "views/student_group_views.xml",
+        "views/student_student_group.xml",
+        "views/course_student_group.xml",
     ],
     # only loaded in demonstration mode
 }
