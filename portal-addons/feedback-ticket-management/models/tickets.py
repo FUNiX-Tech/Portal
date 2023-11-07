@@ -23,7 +23,6 @@ class FeedbackTicket(models.Model):
         required=True,
     )
     ticket_number = fields.Char(string="Ticket Number", readonly=True)
-    ticket_title = fields.Char(string="Title", required=True)
     ticket_description = fields.Text(string="Ticket Descriptions")
     ticket_attachment = fields.Char(string="Ticket Attachment")
     ticket_assignee = fields.Many2one(
@@ -33,9 +32,13 @@ class FeedbackTicket(models.Model):
     assign_to_you = fields.Char(
         compute="_assign_to_you", string="Assign To You"
     )  # field computed to add on information, not store in database
+
     ticket_requester = fields.Many2one(
         "portal.student", string="Requester"
     )  # Student request a ticket for feedback
+    requester_email = fields.Char(
+        compute="compute_email_requester", string="Requester Email"
+    )
     ticket_response = fields.Text(string="Response")
     created_at = fields.Datetime(
         string="Created Datetime",
@@ -94,6 +97,7 @@ class FeedbackTicket(models.Model):
             if (datetime.now() - ticket.created_at).days % 3 == 0:
                 ticket.action_send_mail(ticket.id, "reminder")
 
+    # Override create method
     @api.model
     def create(self, vals):
         vals["created_at"] = datetime.now()
@@ -113,6 +117,7 @@ class FeedbackTicket(models.Model):
             ticket.action_send_mail(ticket.id, "response")
         return ticket
 
+    # Override write method
     def write(self, vals):
         # if response is submitted to reply requester, the request is done
         if "ticket_response" in vals:
@@ -134,6 +139,7 @@ class FeedbackTicket(models.Model):
         if self.ticket_assignee and self.ticket_status == "waiting":
             self.ticket_status = "assigned"
 
+    # Function compute to show "Assign to you" tag if the ticket is assigned to current logged in user.
     @api.depends("ticket_assignee")
     def _assign_to_you(self):
         for record in self:
@@ -141,6 +147,12 @@ class FeedbackTicket(models.Model):
                 record.assign_to_you = "Assign to you"
             else:
                 record.assign_to_you = ""
+
+    # Function:
+    @api.depends("ticket_requester")
+    def compute_email_requester(self):
+        for record in self:
+            record.requester_email = record.ticket_requester.email
 
     # Function calculate processing time
     @api.depends("created_at")

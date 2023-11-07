@@ -7,7 +7,6 @@
     <field name="arch" type="xml">
       <tree>
         <field name="ticket_number" />
-        <field name="ticket_title" />
         <field name="ticket_category" />
         <field name="ticket_assignee" />
         <field name="assign_to_you" />
@@ -25,11 +24,11 @@
         <form>
           <sheet>
               <h1><field name="ticket_number"/> </h1>
-              <h2><field name="ticket_title" placeholder="Ticket Title" /></h2>
               <group>
                 <group>
                   <field name="ticket_category" />
                   <field name="ticket_requester" />
+                  <field name="requester_email" />
                   <field name="ticket_assignee" />
                   <field name="course_rel" />
                   <field name="lesson_url" />
@@ -59,7 +58,6 @@
       <field name="arch" type="xml">
         <search>
           <field name="ticket_number" />
-          <field name="ticket_title" />
           <field name="ticket_assignee" />
           <field name="ticket_status" />
           <filter name="filter_personal_ticket" string="Your Tickets" domain="[('ticket_assignee', '=', uid)]" />
@@ -81,5 +79,4 @@
   <menuitem name="Feedback Ticket" id="feedback_ticket_management_menu_root"/>
   <menuitem name="All Tickets" id="feedback_ticket_management_list_all" parent="feedback_ticket_management_menu_root"
               action="feedback_ticket_management_action_window" />
-
 </odoo>
