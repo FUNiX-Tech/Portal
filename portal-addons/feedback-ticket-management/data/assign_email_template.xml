@@ -11,7 +11,6 @@
             <field name="description">There is new ticket which is assigned to you</field>
             <field name="body_html" type="html">
                 <div style="width:100%">
-                        <h2>Ticket Title: <t t-out="object.ticket_title"></t></h2>
                         <h4>Dear <t t-out="object.ticket_assignee.name">,</t></h4>
                         <p>There is new ticket which is assigned to you. Go to Portal and check it out for further details.</p>
                         <p>Best regards,</p>
