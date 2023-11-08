@@ -28,14 +28,9 @@ class FeedbackTicket(models.Model):
         string="Ticket Descriptions",
         readonly=True,
     )
-    ticket_attachment = fields.Char(
-        string="Ticket Attachment",
-        readonly=True,
-    )
+    ticket_attachment = fields.Char(string="Ticket Attachment", readonly=True)
     ticket_assignee = fields.Many2one(
-        "res.users",
-        string="Assigned Staff",
-        tracking=True,
+        "res.users", string="Assigned Staff", tracking=True
     )
     assign_to_you = fields.Char(
         compute="_assign_to_you", string="Assign To You"
@@ -49,10 +44,7 @@ class FeedbackTicket(models.Model):
     requester_email = fields.Char(
         compute="compute_email_requester", string="Requester Email"
     )
-    ticket_response = fields.Text(
-        string="Response Content",
-        tracking=True,
-    )
+    ticket_response = fields.Text(string="Response Content", tracking=True)
     created_at = fields.Datetime(
         string="Created Datetime",
         readonly=True,
@@ -94,18 +86,36 @@ class FeedbackTicket(models.Model):
             template = self.env.ref(
                 "feedback-ticket-management.assign_ticket_email_template"
             )
+            email = (
+                template.generate_email(
+                    ticket_id, fields=["subject", "body_html", "email_to"]
+                ),
+            )
+            self.message_log_email(email)
             template.send_mail(ticket_id, force_send=True)
         elif email_type == "response" and self.ticket_requester.email:
             template = self.env.ref(
                 "feedback-ticket-management.response_ticket_email_template"
             )
+            email = (
+                template.generate_email(
+                    ticket_id, fields=["subject", "body_html", "email_to"]
+                ),
+            )
+            self.message_log_email(email)
             template.send_mail(ticket_id, force_send=True)
         elif email_type == "reminder":
             template = self.env.ref(
                 "feedback-ticket-management.email_assignee_reminder_template"
             )
-            datenow = datetime.now()
-            template.with_context({"datenow": datenow}).send_mail(
+            date_diff = (datetime.now() - self.created_at).days
+            email = (
+                template.with_context({"date_diff": date_diff}).generate_email(
+                    ticket_id, fields=["subject", "body_html", "email_to"]
+                ),
+            )
+            self.message_log_email(email)
+            template.with_context({"date_diff": date_diff}).send_mail(
                 ticket_id, force_send=True
             )
 
@@ -114,7 +124,8 @@ class FeedbackTicket(models.Model):
         for ticket in self.env["feedback_ticket"].search(
             [("ticket_status", "in", ["assigned", "in_progress"])]
         ):
-            if (datetime.now() - ticket.created_at).days % 3 == 0:
+            diff_days = (datetime.now() - ticket.created_at).days
+            if diff_days != 0 and diff_days % 3 == 0:
                 ticket.action_send_mail(ticket.id, "reminder")
 
     # Override create method
@@ -129,6 +140,7 @@ class FeedbackTicket(models.Model):
             vals["ticket_status"] = "done"
             vals["complete_date"] = datetime.now()
         ticket = super(FeedbackTicket, self).create(vals)
+        ticket.message_log_create(vals)
         if (
             "ticket_assignee" in vals
         ):  # If assignee is populated email will be sent to them.
@@ -194,3 +206,26 @@ class FeedbackTicket(models.Model):
             self.complete_date = datetime.now()
         else:  # reopen ticket complete_date will be none
             self.complete_date = None
+
+    # Tracking message log:
+    def message_log_create(self, vals):
+        body = "<ul><strong>This ticket has been created:</strong>"
+        for field in vals:
+            if field == "course_rel":
+                value_field = self.course_rel.course_name
+            elif field == "ticket_requester":
+                value_field = self.ticket_requester.name
+            else:
+                value_field = vals.get(field)
+            body = (
+                body + f"<li>{self._fields[field].string}: {value_field}</li>"
+            )
+        body = body + "</ul>"
+        self.message_post(body=body)
+
+    # format body of email and post it to tracing log message
+    def message_log_email(self, email_data):
+        print("asd")
+        body = f"<em>Subject : {email_data[0]['subject']}</em><br/><p>Email to: {email_data[0]['email_to']}</p><br/>{email_data[0]['body_html']}"
+        print(body)
+        self.message_post(body=body)
