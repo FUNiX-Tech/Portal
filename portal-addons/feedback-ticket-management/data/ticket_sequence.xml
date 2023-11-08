@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+  <data>
+  <!--Data of field ticket_number-->
+  <record id="ticket_number_sequence" model="ir.sequence">
+    <field name="name">Ticket number</field>
+    <field name="code">feedback_ticket</field>
+    <field name="prefix">#T</field>
+    <field name="padding">5</field> <!--Set total digit for auto increased number-->
+    <field name="number_increment" eval="0"></field>
+  </record>
+  </data>
+</odoo>

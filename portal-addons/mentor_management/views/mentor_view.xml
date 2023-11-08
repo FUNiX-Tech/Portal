@@ -1,0 +1,76 @@
+<odoo>
+    <!-- Start Menu mentor -->
+    <record id="view_mentor_tree" model="ir.ui.view">
+        <field name="name">mentor.tree</field>
+        <field name="model">mentor_management</field>
+        <field name="arch" type="xml">
+            <tree string="Mentor">
+                <field name="full_name"/>
+                <field name="mentor_code"/>
+                <field name="email"/>
+                <field name="active_courses"/>
+                <field name="submission_ids"/>
+                <field name="create_date"/>
+            </tree>
+        </field>
+    </record>
+
+
+    <record id="view_mentor_form" model="ir.ui.view">
+        <field name="name">mentor.form</field>
+        <field name="model">mentor_management</field>
+        <field name="arch" type="xml">
+            <form string="Mentor">
+                <sheet>
+                    <group>
+                        <field name="full_name"/>
+                        <field name="mentor_code"/>
+                        <field name="email"/>
+                        <field name="active_courses"/>
+                        <field name="submission_ids" widget="many2many" domain="[('result', '=', 'not_graded')]"/>
+                        <field name="create_date" readonly="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_mentor" model="ir.actions.act_window">
+        <field name="name">Mentors</field>
+        <field name="res_model">mentor_management</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    <!-- End Menu mentor -->
+
+
+    <!-- Start block Menu những submission chưa chấm điểm -->
+        <!-- View tree -->
+    <record id="assignment_submission_view_tree" model="ir.ui.view">
+        <field name="name">assignment_submission.tree</field>
+        <field name="model">assignment_submission</field>
+        <field name="arch" type="xml">
+            <tree string="Assignment Submission Group" edit="false" class="text-center">
+                <field name="course" />
+                <field name="assignment" />
+                <field name="student" />
+                <field name="submission_url" />
+                <field name="result"/>
+            </tree>
+        </field>
+    </record>
+
+        <!-- action window -->
+    <record id="action_mentor_2" model="ir.actions.act_window">
+        <field name="name">Waiting Submission</field>
+        <field name="res_model">assignment_submission</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="assignment_submission_view_tree"/>
+        <field name="domain">[('result', '=', 'not_graded')]</field>
+    </record>
+    <!-- End Block Menu những submission chưa chấm điểm -->
+
+    <menuitem id="menu_mentor_management" name="Mentor Management" />
+    <menuitem id="menu_mentor_management_1" name="Mentor" action="action_mentor" parent="menu_mentor_management" />
+    <menuitem id="menu_mentor_management_2" name="Waiting Submission" action="action_mentor_2" parent="menu_mentor_management" />
+
+</odoo>

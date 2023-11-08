@@ -1,0 +1,37 @@
+<odoo>
+    <data noupdate="0">
+        <!-- Tạo category hay group để phân quyền, các nhóm được tạo ra sẽ trực thuộc category này -->
+        <record id="module_category_mentor_management" model="ir.module.category">
+            <field name="name">Mentor Management</field>
+            <field name="sequence">1</field>
+        </record>
+
+        <!-- Nhóm Admin -->
+        <record id='group_mentor_management_admin' model='res.groups'>
+            <field name="name">Admin</field>
+            <field name="category_id" ref='module_category_mentor_management'></field>
+            <field name="implied_ids" eval="[(4,ref('base.group_user'))]"></field>
+        </record>
+
+        <!-- Nhóm Mentor -->
+        <record id='group_mentor_management_mentor' model='res.groups'>
+            <field name="name">Mentor</field>
+            <field name="category_id" ref='module_category_mentor_management'></field>
+            <field name="implied_ids" eval="[(4,ref('base.group_user'))]"></field>
+        </record>
+    </data>
+
+    <!-- Phân quyền user của module theo id chỉ user id đó mới có quyền coi thông tin user có id trùng -->
+    <!-- <data >
+        <record id="mentor_grade_submission" model="ir.rule">
+            <field name="name">Mentor grade submission</field>
+            <field name="model_id" ref="model_mentor_management" />
+            <field name="groups" eval="[(4, ref('group_mentor_management_mentor'))]" />
+            <field name="domain_force">[('id', '=', user.id)]</field>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_unlink" eval="False" />
+        </record>
+    </data> -->
+</odoo>

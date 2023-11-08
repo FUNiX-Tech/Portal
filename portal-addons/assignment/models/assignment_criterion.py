@@ -4,13 +4,13 @@ from odoo import models, fields
 
 UNIQUE_ASSIGNMENT_CRITERION_NAME = (
     "unique_assignment_criterion_name",
-    "unique(title, criterion_group)",
-    "Tên tiêu chí trong một nhóm tiêu chí không được giống nhau.",
+    "unique(title, assignment)",
+    "The criteria in an assignment must not have the same names.",
 )
 UNIQUE_ASSIGNMENT_CRITERION_ORDER = (
     "unique_assignment_criterion_order",
-    "unique(number, criterion_group)",
-    "Số thứ tự của tiêu chí trong một nhóm tiêu chí không được giống nhau.",
+    "unique(number, assignment)",
+    "Criterion numbers conflict.",
 )
 
 
@@ -19,12 +19,10 @@ class AssignmentCriterion(models.Model):
     _description = "assignment_criterion"
     _rec_name = "title"
 
-    title = fields.Char("Tên tiêu chí", required=True)
-    specifications = fields.Html(string="Các yêu cầu", required=True)
-    number = fields.Integer(string="STT", required=True)
-    criterion_group = fields.Many2one(
-        "assignment_criterion_group", string="Nhóm tiêu chí", required=True
-    )
+    title = fields.Char("Criterion name", required=True)
+    specifications = fields.Html(string="Specifications", required=True)
+    number = fields.Integer(string="Number", required=True)
+    assignment = fields.Many2one("assignment", required=True)
 
     _sql_constraints = [
         UNIQUE_ASSIGNMENT_CRITERION_NAME,
