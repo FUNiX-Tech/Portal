@@ -29,9 +29,6 @@ jobs:
         IMAGE_TAG: ${{ github.sha }}
       run:
         # Assuming IMAGE_TAG is correctly defined above and ECR_REGISTRY, ECR_REPOSITORY are set
-        echo $IMAGE_TAG
-        echo $ECR_REGISTRY
-        echo $ECR_REPOSITORY
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
 
