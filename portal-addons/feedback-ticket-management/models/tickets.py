@@ -2,11 +2,11 @@
 
 from odoo import models, fields, api
 from datetime import datetime
-from odoo.tools import config
 
 
 class FeedbackTicket(models.Model):
     _name = "feedback_ticket"
+    _inherit = ["mail.thread", "mail.activity.mixin"]
     _description = "feedback_ticket_management"
     ticket_category = fields.Selection(
         [
@@ -21,25 +21,38 @@ class FeedbackTicket(models.Model):
         ],
         string="Ticket Category",
         required=True,
+        readonly=True,
     )
     ticket_number = fields.Char(string="Ticket Number", readonly=True)
-    ticket_description = fields.Text(string="Ticket Descriptions")
-    ticket_attachment = fields.Char(string="Ticket Attachment")
+    ticket_description = fields.Text(
+        string="Ticket Descriptions",
+        readonly=True,
+    )
+    ticket_attachment = fields.Char(
+        string="Ticket Attachment",
+        readonly=True,
+    )
     ticket_assignee = fields.Many2one(
         "res.users",
         string="Assigned Staff",
+        tracking=True,
     )
     assign_to_you = fields.Char(
         compute="_assign_to_you", string="Assign To You"
     )  # field computed to add on information, not store in database
 
     ticket_requester = fields.Many2one(
-        "portal.student", string="Requester"
+        "portal.student",
+        string="Requester",
+        readonly=True,
     )  # Student request a ticket for feedback
     requester_email = fields.Char(
         compute="compute_email_requester", string="Requester Email"
     )
-    ticket_response = fields.Text(string="Response")
+    ticket_response = fields.Text(
+        string="Response Content",
+        tracking=True,
+    )
     created_at = fields.Datetime(
         string="Created Datetime",
         readonly=True,
@@ -55,10 +68,17 @@ class FeedbackTicket(models.Model):
         string="Ticket status",
         required=True,
         default="waiting",
-        help="Editable on update view",
+        tracking=True,
     )
-    course_rel = fields.Many2one("course_management", string="Course")
-    lesson_url = fields.Char(string="Lesson Link")
+    course_rel = fields.Many2one(
+        "course_management",
+        string="Course",
+        readonly=True,
+    )
+    lesson_url = fields.Char(
+        string="Lesson Link",
+        readonly=True,
+    )
     processing_time = fields.Char(
         string="Processing Time",
         compute="cal_processing_time",
