@@ -1,3 +1,6 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_service_key_admin,service_key_admin,model_service_key,group_service_key_admin,1,1,1,1
 access_service_key_user,service_key_user,model_service_key,group_service_key_user,1,0,0,0
+
+access_service_key_configuration_admin,service_key_configuration_admin,model_service_key_configuration,group_service_key_admin,1,1,1,1
+access_service_key_configuration_user,service_key_configuration_user,model_service_key_configuration,group_service_key_user,1,0,0,0
