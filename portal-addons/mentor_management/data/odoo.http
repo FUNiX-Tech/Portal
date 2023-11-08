@@ -1,0 +1,40 @@
+### Submit
+POST http://localhost:8080/api/v1/assignment/submission
+Content-Type: application/json
+
+{
+    "assignment_id": 10,
+    "student_id": 3,
+    "submission_url": "http://google.com"
+}
+
+
+### ENROLL
+POST http://localhost:8080/api/course_management/enroll
+Content-Type: application/json
+
+{
+    "student_id": 1,
+    "course_id": 3
+}
+
+### REGISTER
+POST http://localhost:8080/api/student/register
+Content-Type: application/json
+
+{
+    "email": "vuntafx17889@funix.edu.vn",
+    "name": "anh vu",
+    "password": "Anhvu123456!",
+    "password_confirm": "Anhvu123456!"
+}
+
+
+### Login
+POST http://localhost:8080//api/student/login
+Content-Type: application/json
+
+{
+    "email":  "vuntafx17889@funix.edu.vn",
+    "password": "Anhvu123456!"
+}

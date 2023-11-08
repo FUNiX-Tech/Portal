@@ -21,7 +21,9 @@
         "security/mentor_security.xml",
         "security/ir.model.access.csv",
         "views/mentor_view.xml",
-        "views/assignment_submission_views.xml",  # This is wrong way to do GEN-117
+        "views/assignment_submission_views.xml",
+        "views/assignment_views.xml",
+        "data/mentor_management_extension_sequence.xml",
     ],
     # only loaded in demonstration mode
     "demo": [
