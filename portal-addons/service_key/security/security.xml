@@ -1,0 +1,22 @@
+<odoo>
+    <data noupdate="0">
+        <record id="module_category_service_key" model="ir.module.category">
+            <field name="name">Service Key</field>
+            <field name="sequence">1</field>
+        </record>
+
+        <!-- Service Key Admin  -->
+        <record id='group_service_key_admin' model='res.groups'>
+            <field name="name">Admin</field>
+            <field name="category_id" ref='module_category_service_key'></field>
+            <field name="implied_ids" eval="[(4,ref('base.group_user'))]"></field>
+        </record>
+
+        <!-- Service Key User -->
+        <record id='group_service_key_user' model='res.groups'>
+            <field name="name">User</field>
+            <field name="category_id" ref='module_category_service_key'></field>
+            <field name="implied_ids" eval="[(4,ref('base.group_user'))]"></field>
+        </record>
+    </data>
+</odoo>
