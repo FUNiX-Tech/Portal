@@ -20,4 +20,18 @@
             <field name="implied_ids" eval="[(4,ref('base.group_user'))]"></field>
         </record>
     </data>
+
+    <!-- Phân quyền user của module theo id chỉ user id đó mới có quyền coi thông tin user có id trùng -->
+    <!-- <data >
+        <record id="mentor_grade_submission" model="ir.rule">
+            <field name="name">Mentor grade submission</field>
+            <field name="model_id" ref="model_mentor_management" />
+            <field name="groups" eval="[(4, ref('group_mentor_management_mentor'))]" />
+            <field name="domain_force">[('id', '=', user.id)]</field>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_unlink" eval="False" />
+        </record>
+    </data> -->
 </odoo>
