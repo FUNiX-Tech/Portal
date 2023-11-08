@@ -35,7 +35,9 @@ jobs:
         ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
       with:
         push: true
-        tags: ${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPOSITORY }}:latest
+        tags: |
+          ${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPOSITORY }}:latest
+          ${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPOSITORY }}:${{ github.sha }}
 
     # - name: Build, tag, and push image to Amazon ECR
     #   env:
