@@ -30,11 +30,20 @@ class FeedbackTicket(http.Controller):
                 .sudo()
                 .search([("email", "=", student_email)])
             )
-            if student:
+            course_code = data.get(
+                "course_id"
+            )  # code_id from lms is course_code in portal
+            course = (
+                request.env["course_management"]
+                .sudo()
+                .search([("course_code", "=", course_code)])
+            )
+
+            if student and course:
                 request.env["feedback_ticket"].sudo().create(
                     {
                         "ticket_category": data.get("ticket_category"),
-                        "course_rel": data.get("course_id"),
+                        "course_rel": course.id,
                         "lesson_url": data.get("lesson_url"),
                         "ticket_description": data.get("ticket_description"),
                         "ticket_requester": student.id,
@@ -47,7 +56,10 @@ class FeedbackTicket(http.Controller):
                 )
             else:
                 return http.request.make_json_response(
-                    data={"message": "Student email not found!"}, status=400
+                    data={
+                        "message": "Student email or Course id do not found!"
+                    },
+                    status=400,
                 )
         else:
             return http.request.make_json_response(
