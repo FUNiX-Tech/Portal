@@ -47,5 +47,5 @@ jobs:
         chmod 400 ec2-key.pem
         # SSH into the EC2 instance, pull the latest image, and restart the Docker service
         ssh -i ec2-key.pem -o "StrictHostKeyChecking=no" $USERNAME@$HOST << EOF
-          cd Portal && docker-compose pull && docker-compose up -d
+          cd portal-deploy-docker && docker-compose pull && docker-compose up -d
         EOF
