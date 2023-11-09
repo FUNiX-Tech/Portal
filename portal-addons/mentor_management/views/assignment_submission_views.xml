@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 <odoo>
-    <!-- <record id="assignment_submission_view_form" model="ir.ui.view">
+
+    <!-- Thêm trường mentor_id vào form -->
+    <record id="assignment_submission_view_form" model="ir.ui.view">
         <field name="name">assignment_submission.form</field>
         <field name="model">assignment_submission</field>
         <field name="inherit_id" ref="assignment.assignment_submission_view_form" />
@@ -11,18 +13,23 @@
             </field>
 
         </field>
-    </record> -->
+    </record>
 
+    <!-- Thêm trường mentor_id và submission_id vào tree views -->
     <record id="assignment_submission_view_tree" model="ir.ui.view">
         <field name="name">assignment_submission.tree</field>
         <field name="model">assignment_submission</field>
         <field name="inherit_id" ref="assignment.assignment_submission_view_tree" />
         <field name="arch" type="xml">
 
+            <field name="course" position="before">
+                <field name="submission_id"/>
+            </field>
 
             <field name="result" position="after">
                 <field name="mentor_id"/>
             </field>
+
         </field>
     </record>
 

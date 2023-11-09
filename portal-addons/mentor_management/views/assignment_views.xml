@@ -1,0 +1,16 @@
+<odoo>
+
+    <!-- Thêm trường assignment_id vào tree -->
+    <record id="assignment_view_tree" model="ir.ui.view">
+        <field name="name">assignment.tree</field>
+        <field name="model">assignment</field>
+        <field name="inherit_id" ref="assignment.assignment_view_tree" />
+
+        <field name="arch" type="xml">
+            <field name="title" position="before">
+                <field name="assignment_id"/>
+            </field>
+        </field>
+    </record>
+
+</odoo>

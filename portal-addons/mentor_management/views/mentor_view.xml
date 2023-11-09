@@ -1,5 +1,5 @@
 <odoo>
-    <!-- Start Menu mentor -->
+    <!-- Start Menu mentor management -->
     <record id="view_mentor_tree" model="ir.ui.view">
         <field name="name">mentor.tree</field>
         <field name="model">mentor_management</field>
@@ -40,7 +40,7 @@
         <field name="res_model">mentor_management</field>
         <field name="view_mode">tree,form</field>
     </record>
-    <!-- End Menu mentor -->
+    <!-- End Menu mentor management -->
 
 
     <!-- Start block Menu những submission chưa chấm điểm -->
@@ -69,8 +69,34 @@
     </record>
     <!-- End Block Menu những submission chưa chấm điểm -->
 
+    <!-- Start block Menu Submission tracking status -->
+            <!-- View tree -->
+    <record id="submission_history_view_tree" model="ir.ui.view">
+        <field name="name">submission_history.tree</field>
+        <field name="model">submission_history</field>
+        <field name="arch" type="xml">
+            <tree string="Submission History Group" edit="false" class="text-center">
+                <field name="student_id" />
+                <field name="assignment_id" />
+                <field name="submission_id" />
+                <field name="created_at" />
+                <field name="status"/>
+            </tree>
+        </field>
+    </record>
+
+            <!-- action window -->
+    <record id="action_mentor_3" model="ir.actions.act_window">
+        <field name="name">Tracking Submission</field>
+        <field name="res_model">submission_history</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="submission_history_view_tree"/>
+    </record>
+    <!-- End block Menu Submission tracking status -->
+
     <menuitem id="menu_mentor_management" name="Mentor Management" />
     <menuitem id="menu_mentor_management_1" name="Mentor" action="action_mentor" parent="menu_mentor_management" />
     <menuitem id="menu_mentor_management_2" name="Waiting Submission" action="action_mentor_2" parent="menu_mentor_management" />
+    <menuitem id="menu_mentor_management_3" name="Tracking Submission" action="action_mentor_3" parent="menu_mentor_management" />
 
 </odoo>
