@@ -224,3 +224,23 @@ def check_allowed_to_submit():
         return wrapper
 
     return decorator
+
+
+def skip_authentication():
+    def decorator(origin_function):
+        def wrapper(self, *args, **kwargs):
+            payload_username = json.loads(request.httprequest.data)["username"]
+
+            student = (
+                request.env["portal.student"]
+                .sudo()
+                .search([("email", "ilike", f"{payload_username}@")])[0]
+            )
+
+            self.student = student
+
+            return origin_function(self, *args, **kwargs)
+
+        return wrapper
+
+    return decorator

@@ -17,7 +17,6 @@ class AssignmentSubmissionController(http.Controller):
         cors="*",
         csrf=False,
     )
-    @assignment_validators.authentication_validator()
     @request_validators.check_fields_presence(
         "submission_url",
         "username",
@@ -25,8 +24,8 @@ class AssignmentSubmissionController(http.Controller):
         "submission_note",
         "course_code",
     )
+    @assignment_validators.skip_authentication()
     @request_validators.check_url("submission_url")
-    @assignment_validators.check_match_student()
     @assignment_validators.check_has_course()
     @assignment_validators.check_has_assignment()
     @assignment_validators.check_student_has_enrolled_course()
@@ -89,11 +88,10 @@ class AssignmentSubmissionController(http.Controller):
         cors="*",
         csrf=False,
     )
-    @assignment_validators.authentication_validator()
+    @assignment_validators.skip_authentication()
     @request_validators.check_fields_presence(
         "course_code", "assignment_name", "username"
     )
-    @assignment_validators.check_match_student()
     @assignment_validators.check_has_course()
     @assignment_validators.check_has_assignment()
     @assignment_validators.check_student_has_enrolled_course()
