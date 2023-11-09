@@ -18,6 +18,7 @@
     "depends": ["base", "service_key"],
     # always loaded
     "data": [
-        # 'security/ir.model.access.csv',
+        "security/security.xml",
+        "security/ir.model.access.csv",
     ],
 }
