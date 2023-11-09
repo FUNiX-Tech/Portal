@@ -7,26 +7,13 @@
                 <sheet>
                     <group>
                         <field name="name"/>
-                        <field name="key_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                        <field name="api_key"/>
                     </group>
                 </sheet>
             </form>
         </field>
     </record>
-    <record id="view_service_key_form" model="ir.ui.view">
-            <field name="name">service_key.form</field>
-            <field name="model">service_key</field>
-            <field name="arch" type="xml">
-                <form>
-                    <sheet>
-                        <group>
-                            <field name="config_id"/>
-                            <field name="api_key"/>
-                        </group>
-                    </sheet>
-                </form>
-            </field>
-    </record>
+
 
     <record id="action_service_key_configuration" model="ir.actions.act_window">
         <field name="name">Service Key Configuration</field>
@@ -34,15 +21,8 @@
         <field name="view_mode">tree,form</field>
     </record>
 
-    <record id="action_service_key" model="ir.actions.act_window">
-        <field name="name">Service Key</field>
-        <field name="res_model">service_key</field>
-        <field name="view_mode">tree,form</field>
-    </record>
+
 
     <menuitem id="menu_service_key_configuration" name="Service Key Configuration" groups="group_service_key_admin,group_service_key_user" />
     <menuitem id="menu_service_key_configuration_list" name="Service Keys" parent="menu_service_key_configuration" action="action_service_key_configuration"  groups="group_service_key_admin,group_service_key_user" />
-    <menuitem id="menu_service_key" name="Service Key" parent="menu_service_key_configuration" action="action_service_key" groups="group_service_key_admin,group_service_key_user"  />
-
-
 </odoo>
