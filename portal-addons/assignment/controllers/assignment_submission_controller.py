@@ -27,7 +27,7 @@ class AssignmentSubmissionController(http.Controller):
     @assignment_validators.check_student_has_enrolled_course()
     def submit_submission(self):
         try:
-            raise Exception("Test Exception")
+            # raise Exception("Test Exception")
             request_data = json.loads(request.httprequest.data)
 
             created_submission = (
