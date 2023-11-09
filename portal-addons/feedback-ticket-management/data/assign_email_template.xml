@@ -6,6 +6,7 @@
             <field name="name">[PORTAL] Ticket Assignment Notification</field>
             <field name="model_id" ref="feedback-ticket-management.model_feedback_ticket"/>
             <field name="mail_server_id" ref="feedback-ticket-management.out_going_mailserver_data" />
+            <field name="auto_delete">True</field>
             <field name="subject">You Are Assigned To New Ticket! - {{object.ticket_number}}</field>
             <field name="email_from">portal.funix@funix.edu.vn</field>
             <field name="email_to">{{object.ticket_assignee.email}}</field>
