@@ -19,10 +19,15 @@ class AssignmentSubmissionController(http.Controller):
     )
     @assignment_validators.authentication_validator()
     @request_validators.check_fields_presence(
-        "submission_url", "student_id", "assignment_id"
+        "submission_url",
+        "username",
+        "assignment_name",
+        "submission_note",
+        "course_code",
     )
     @request_validators.check_url("submission_url")
     @assignment_validators.check_match_student()
+    @assignment_validators.check_has_course()
     @assignment_validators.check_has_assignment()
     @assignment_validators.check_student_has_enrolled_course()
     def submit_submission(self):
@@ -34,9 +39,10 @@ class AssignmentSubmissionController(http.Controller):
                 .sudo()
                 .create(
                     {
-                        "student": request_data["student_id"],
-                        "assignment": request_data["assignment_id"],
+                        "student": self.student.id,
+                        "assignment": self.assignment.id,
                         "submission_url": request_data["submission_url"],
+                        "submission_note": request_data["submission_note"],
                     }
                 )
             )
@@ -62,6 +68,7 @@ class AssignmentSubmissionController(http.Controller):
                 "student": created_submission.student.id,
                 "assignment": created_submission.assignment.id,
                 "submission_url": created_submission.submission_url,
+                "submission_note": created_submission.submission_note,
             }
 
             return json_response(200, "Submission saved!", response_data)
@@ -72,4 +79,84 @@ class AssignmentSubmissionController(http.Controller):
             if str(e) == "'_unknown' object has no attribute 'id'":
                 logger.info("WRONG RELATIONAL FIELD!")
 
+            return json_response(500, "Internal Server Error")
+
+    @http.route(
+        "/api/v1/assignment/user",
+        type="http",
+        auth="public",
+        methods=["POST"],
+        cors="*",
+        csrf=False,
+    )
+    @assignment_validators.authentication_validator()
+    @request_validators.check_fields_presence(
+        "course_code", "assignment_name", "username"
+    )
+    @assignment_validators.check_match_student()
+    @assignment_validators.check_has_course()
+    @assignment_validators.check_has_assignment()
+    @assignment_validators.check_student_has_enrolled_course()
+    def get_user_assignment(self):
+        try:
+            submissions = (
+                request.env["assignment_submission"]
+                .sudo()
+                .search(
+                    [
+                        ("student", "=", self.student.id),
+                        ("assignment", "=", self.assignment.id),
+                    ]
+                )
+            ).sorted("id")
+
+            last_submission = submissions[-1] if len(submissions) > 0 else None
+            status = (
+                "has_not_submitted"
+                if last_submission is None
+                else last_submission.result
+            )
+            general_response = (
+                ""
+                if last_submission is None
+                else last_submission.general_response
+            )
+
+            response_submissions = []
+
+            for sub in submissions:
+                response_submissions.append(
+                    {"create_date": sub.create_date.timestamp(), "id": sub.id}
+                )
+
+            response_data = {
+                "status": status,
+                "submissions": response_submissions,
+            }
+
+            if last_submission:
+                responses = []
+                if last_submission.result in ["passed", "did_not_pass"]:
+                    for response in last_submission.criteria_responses:
+                        responses.append(
+                            {
+                                "title": response.criterion.title,
+                                "result": response.result,
+                                "feedback": response.feed_back,
+                            }
+                        )
+
+                response_data["submission"] = {
+                    "date": last_submission.create_date.timestamp(),
+                    "general_response": general_response,
+                    "responses": responses,
+                    "result": last_submission.result,
+                    "url": last_submission.submission_url,
+                }
+            else:
+                response_data["submission"] = None
+
+            return json_response(200, "ok", response_data)
+        except Exception as e:
+            logger.error(str(e))
             return json_response(500, "Internal Server Error")

@@ -45,12 +45,15 @@ class AssignmentSubmission(models.Model):
         readonly=True,
     )
 
+    submission_note = fields.Text("Submission Note", readonly=True, default="")
+    general_response = fields.Html(string="General Response", default="")
+
     has_graded_all_criteria = fields.Boolean(
         compute="_has_graded_all_criteria", store=True
     )
     course = fields.Char(related="assignment.course.course_name")
 
-    @api.depends("criteria_responses.result")
+    @api.depends("criteria_responses.result", "general_response")
     def _has_graded_all_criteria(self):
         for record in self:
             graded_all = True
@@ -58,8 +61,10 @@ class AssignmentSubmission(models.Model):
                 if repsonse.result == self.NOT_GRADED[0]:
                     graded_all = False
                     break
-
-            record.has_graded_all_criteria = graded_all
+            logger.info(record.general_response)
+            record.has_graded_all_criteria = (
+                graded_all and record.general_response.strip() != ""
+            )  # TODO: check empty html general_response
 
     def submit_grade(self):
         """
