@@ -8,20 +8,21 @@ class SubmissionHistory(models.Model):
     student_id = fields.Many2one(
         "portal.student", string="Student", required=True
     )
-    assignment_id = fields.Many2one(
-        "assignment", string="Assignment", required=True
+    assignment_id = fields.Many2one("assignment", string="Assignment")
+    submission_id = fields.Many2one(
+        "assignment_submission", string="Submission"
     )
-    timestamp = fields.Datetime(
+    created_at = fields.Datetime(
         string="Submission Time", default=fields.Datetime.now, required=True
     )
     status = fields.Selection(
         [
-            ("not_submitted", "Chưa nộp"),
-            ("submission_failed", "Nộp không thành công"),
-            ("submitted", "Nộp thành công"),
-            ("submission_cancelled", "Hủy nộp"),
-            ("grading", "Đang chấm"),
-            ("graded", "Đã có kết quả"),
+            ("not_submitted", "Not submitted"),
+            ("submission_failed", "Submission failed"),
+            ("submitted", "Submitted"),
+            ("submission_cancelled", "Submission cancelled"),
+            ("grading", "Grading"),
+            ("graded", "Graded"),
         ],
         string="Status",
         default="not_submitted",

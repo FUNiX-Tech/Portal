@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 
 class AssignmentSubmission(models.Model):
     _inherit = "assignment_submission"
+    _rec_name = "submission_id"
 
     mentor_id = fields.Many2one(
         "mentor_management",
@@ -38,4 +39,21 @@ class AssignmentSubmission(models.Model):
                 "assignment.assignment_submission"
             ) or _("New")
         result = super(AssignmentSubmission, self).create(vals)
+        return result
+
+    def write(self, vals):
+        # Gọi phương thức 'write' của lớp cơ sở trước để đảm bảo rằng mentor được cập nhật đúng cách.
+        result = super(AssignmentSubmission, self).write(vals)
+
+        # Kiểm tra xem 'mentor_id' có trong các giá trị được cập nhật không.
+        if "mentor_id" in vals and vals["mentor_id"]:
+            # Tạo một bản ghi mới trong SubmissionHistory với trạng thái 'grading'.
+            self.env["submission_history"].sudo().create(
+                {
+                    "student_id": self.student.id,
+                    "assignment_id": self.assignment.id,
+                    "submission_id": self.id,  # Hoặc 'submission_id' nếu đó là trường liên kết bạn muốn sử dụng
+                    "status": "grading",
+                }
+            )
         return result
