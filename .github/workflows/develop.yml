@@ -61,5 +61,8 @@ jobs:
         chmod 400 ec2-key.pem
         # SSH into the EC2 instance, pull the latest image, and restart the Docker service
         ssh -i ec2-key.pem -o "StrictHostKeyChecking=no" $USERNAME@$HOST << EOF
-          cd portal-deploy-docker && docker-compose pull && docker-compose up -d
+          cd portal-deploy-docker
+          aws ecr get-login-password --region ap-southeast-1 | docker login --username AWS --password-stdin 848839979695.dkr.ecr.ap-southeast-1.amazonaws.com
+          docker-compose pull
+          docker-compose up -d
         EOF
