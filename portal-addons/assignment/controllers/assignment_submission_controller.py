@@ -27,6 +27,7 @@ class AssignmentSubmissionController(http.Controller):
     @assignment_validators.check_student_has_enrolled_course()
     def submit_submission(self):
         try:
+            # raise Exception("Test Exception")
             request_data = json.loads(request.httprequest.data)
 
             created_submission = (
@@ -64,6 +65,19 @@ class AssignmentSubmissionController(http.Controller):
                 "submission_url": created_submission.submission_url,
             }
 
+            # create submission history --> submitted status
+
+            request.env["submission_history"].sudo().create(
+                {
+                    "student_id": request_data["student_id"],
+                    "assignment_id": request_data["assignment_id"],
+                    "submission_id": created_submission.id,
+                    "status": "submitted",  # Đặt trạng thái là 'submitted'
+                }
+            )
+
+            # end create submission history
+
             return json_response(200, "Submission saved!", response_data)
 
         except Exception as e:
@@ -71,5 +85,17 @@ class AssignmentSubmissionController(http.Controller):
             logger.error(str(e))
             if str(e) == "'_unknown' object has no attribute 'id'":
                 logger.info("WRONG RELATIONAL FIELD!")
+
+            # create submission history --> submission_failed status
+            request_data = json.loads(request.httprequest.data)
+
+            request.env["submission_history"].sudo().create(
+                {
+                    "student_id": request_data["student_id"],
+                    "assignment_id": request_data["assignment_id"],
+                    "status": "submission_failed",  # Đặt trạng thái là 'submission_failed'
+                }
+            )
+            # end create submission history
 
             return json_response(500, "Internal Server Error")
