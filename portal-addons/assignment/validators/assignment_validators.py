@@ -231,15 +231,24 @@ def skip_authentication():
         def wrapper(self, *args, **kwargs):
             payload_username = json.loads(request.httprequest.data)["username"]
 
-            student = (
-                request.env["portal.student"]
-                .sudo()
-                .search([("email", "ilike", f"{payload_username}@")])[0]
-            )
+            try:
+                student = (
+                    request.env["portal.student"]
+                    .sudo()
+                    .search([("email", "ilike", f"{payload_username}@")])[0]
+                )
 
-            self.student = student
-
-            return origin_function(self, *args, **kwargs)
+                self.student = student
+                return origin_function(self, *args, **kwargs)
+            except IndexError as e:
+                logger.info(str(e))
+                return json_response(
+                    400,
+                    f"Not found student with username {payload_username}",
+                )
+            except Exception as e:
+                logger.error(str(e))
+                return json_response(500, "Internal Server Error")
 
         return wrapper
 
