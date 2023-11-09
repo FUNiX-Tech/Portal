@@ -5,14 +5,25 @@
     <field name="name">Feedback Tickets Management List</field>
     <field name="model">feedback_ticket</field>
     <field name="arch" type="xml">
-      <tree>
+      <tree decoration-danger="warning_ticket == True">
+        <field name="created_at" />
         <field name="ticket_number" />
-        <field name="ticket_category" />
+        <field name="processing_time" widget="badge" decoration-danger="warning_ticket"/>
+        <field name="warning_ticket" invisible="True" />
+        <field name="ticket_status" widget="badge"
+                                    decoration-warning="ticket_status == 'waiting'"
+                                    decoration-info="ticket_status == 'assigned'"
+                                    decoration-primary="ticket_status == 'in_progress'"
+                                    decoration-success="ticket_status == 'done'" />
+        <field name="ticket_category"  widget="badge" decoration-bf="True" />
+        <field name="ticket_requester" />
+        <field name="requester_email" />
+        <field name="ticket_attachment" widget="url"  text="Click here to see" attrs="{'invisible':[('ticket_attachment','=', False)]}" />
+        <field name="course_rel" />
         <field name="ticket_assignee" />
         <field name="assign_to_you" />
-        <field name="created_at" />
-        <field name="ticket_status" />
-        <field name="processing_time" />
+        <field name="write_date" />
+
       </tree>
     </field>
   </record>
