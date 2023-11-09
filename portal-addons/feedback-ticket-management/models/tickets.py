@@ -38,11 +38,11 @@ class FeedbackTicket(models.Model):
 
     ticket_requester = fields.Many2one(
         "portal.student",
-        string="Requester",
+        string="Student",
         readonly=True,
     )  # Student request a ticket for feedback
     requester_email = fields.Char(
-        compute="compute_email_requester", string="Requester Email"
+        compute="compute_email_requester", string="Student Email"
     )
     ticket_response = fields.Text(string="Response Content", tracking=True)
     created_at = fields.Datetime(
@@ -76,6 +76,7 @@ class FeedbackTicket(models.Model):
         compute="cal_processing_time",
         default="0 days 0 hours",
     )
+    warning_ticket = fields.Boolean(compute="cal_processing_time")
     complete_date = fields.Datetime(
         string="Complete Ticket Date", readonly=True
     )
@@ -192,12 +193,12 @@ class FeedbackTicket(models.Model):
         for ticket in self:
             if ticket.ticket_status in ["waiting", "assigned", "in_progress"]:
                 process_time_temp = datetime.now() - ticket.created_at
+                ticket.warning_ticket = process_time_temp.days >= 2
                 ticket.processing_time = f"{process_time_temp.days} days {round(process_time_temp.seconds/3600)} hours"
             elif ticket.ticket_status == "done" and ticket.complete_date:
+                ticket.warning_ticket = False
                 process_time_temp = ticket.complete_date - ticket.created_at
                 ticket.processing_time = f"{process_time_temp.days} days {round(process_time_temp.seconds/3000)} hours"
-            else:
-                ticket.processing_time = ""
 
     # assign datetime now to complete_date when ticket change status to done.
     @api.onchange("ticket_status")
