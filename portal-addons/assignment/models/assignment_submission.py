@@ -84,6 +84,17 @@ class AssignmentSubmission(models.Model):
                 else:
                     record.result = self.PASSED[0]
 
+                # create submission history --> graded status
+                record.env["submission_history"].sudo().create(
+                    {
+                        "student_id": record.student.id,
+                        "assignment_id": record.assignment.id,
+                        "submission_id": record.id,
+                        "status": "graded",  # Đặt trạng thái là 'graded'
+                    }
+                )
+                # end create submission history
+
                 email_error = self._send_notification_email_to_student()
                 lms_error = self._send_notification_request_to_lms()
 
