@@ -29,6 +29,7 @@ class AssignmentSubmissionController(http.Controller):
     @assignment_validators.check_has_course()
     @assignment_validators.check_has_assignment()
     @assignment_validators.check_student_has_enrolled_course()
+    @assignment_validators.check_allowed_to_submit()
     def submit_submission(self):
         try:
             request_data = json.loads(request.httprequest.data)
