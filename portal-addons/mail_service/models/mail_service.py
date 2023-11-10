@@ -4,23 +4,24 @@ from sendgrid.helpers.mail import Mail, Content
 import datetime
 
 
-class MailServiceSendGrid(models.TransientModel):
+# Mail Module Class
+class MailServiceSendGrid(models.AbstractModel):
     _name = "mail_service"
     _description = "Mail Service"
+    _inherit = ["mail.thread", "mail.activity.mixin"]
 
-    # send mail func
+    # Define send mail func
     def send_email_with_sendgrid(
-        self, service_key_config, recipient_email, subject, body
+        self, service_key_config, recipient_email, subject, body, object
     ):
-        # Get api key from service_key module
+        # Get API key
         api_key = service_key_config.get_api_key_by_service_name(
             "Mail Service"
         )
 
-        # Check api_key exist
+        # Check API key
         if api_key:
             try:
-                # setup sendgrid
                 sg = sendgrid.SendGridAPIClient(api_key=api_key)
                 from_email = "no-reply@funix.edu.vn"
                 to_email = recipient_email
@@ -29,16 +30,24 @@ class MailServiceSendGrid(models.TransientModel):
                 )
                 response = sg.send(message)
 
-                # Sending mail failed
                 if response.status_code != 202:
                     raise Exception(f"Failed to send email: {response.body}")
 
-                # Write log email
-                # self.log_sent_email(recipient_email, subject, body)
+                # Tạo log chatter
+                self.create_chatter_log(object, subject, body, to_email)
 
             except Exception as e:
-                # Error when sending email
-                print(f"Error sending email: {str(e)}")
+                self.create_chatter_log(object, subject, body, to_email, e)
+
+    # Chatter log func
+    def create_chatter_log(self, object, subject, body, to_email, e=False):
+        # Check error
+        if e:
+            object.message_post(
+                body=f"Email sent to {to_email} with subject '{subject}' has  error {e}"
+            )
         else:
-            print("API Key not found for Mail Service")
-            return False
+            object.message_post(
+                body=f"""Email sent to {to_email} with subject '{subject}':
+                    {body}""",
+            )
