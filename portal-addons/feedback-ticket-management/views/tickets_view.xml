@@ -5,14 +5,25 @@
     <field name="name">Feedback Tickets Management List</field>
     <field name="model">feedback_ticket</field>
     <field name="arch" type="xml">
-      <tree>
+      <tree decoration-danger="warning_ticket == True">
+        <field name="created_at" />
         <field name="ticket_number" />
-        <field name="ticket_category" />
+        <field name="processing_time" widget="badge" decoration-danger="warning_ticket"/>
+        <field name="warning_ticket" invisible="True" />
+        <field name="ticket_status" widget="badge"
+                                    decoration-warning="ticket_status == 'waiting'"
+                                    decoration-info="ticket_status == 'assigned'"
+                                    decoration-primary="ticket_status == 'in_progress'"
+                                    decoration-success="ticket_status == 'done'" />
+        <field name="ticket_category"  widget="badge" decoration-bf="True" />
+        <field name="ticket_requester" />
+        <field name="requester_email" />
+        <field name="ticket_attachment" widget="url"  text="Click here to see" attrs="{'invisible':[('ticket_attachment','=', False)]}" />
+        <field name="course_rel" />
         <field name="ticket_assignee" />
         <field name="assign_to_you" />
-        <field name="created_at" />
-        <field name="ticket_status" />
-        <field name="processing_time" />
+        <field name="write_date" />
+
       </tree>
     </field>
   </record>
@@ -22,35 +33,53 @@
       <field name="model">feedback_ticket</field>
       <field name="arch" type="xml">
         <form>
+          <header>
+              <field name="ticket_status" widget="statusbar" options="{'clickable':1}" />
+          </header>
           <sheet>
-              <h1><field name="ticket_number"/> </h1>
+              <h4 style="color:#66598f">General Information</h4>
+              <hr />
               <group>
                 <group>
-                  <field name="ticket_category" />
+                  <field name="ticket_number"/>
                   <field name="ticket_requester" />
                   <field name="requester_email" />
-                  <field name="ticket_assignee" />
-                  <field name="course_rel" />
-                  <field name="lesson_url" />
-                  <field name="processing_time"   />
-                  <field name="complete_date" />
                 </group>
                 <group>
-                  <field name="ticket_status" attrs="{'readonly':[('ticket_assignee','==',False)]}"/>
                   <field name="created_at" />
-                  <field name="ticket_description"/>
-                  <field name="ticket_response" attrs="{'invisible':[('ticket_status','==','waiting')], 'readonly':[('ticket_status','==','done')]}"/>
-                  <field name="ticket_attachment" string="Attachments" />
+                  <field name="course_rel" />
                 </group>
               </group>
+              <separator />
+              <h4 style="color:#66598f">Feedback Details</h4>
+              <hr/>
               <group>
-
+                <group>
+                  <field name="ticket_category" widget="badge"  />
+                  <field name="ticket_description"/>
+                </group>
+                <group>
+                  <field name="lesson_url"  widget="url" />
+                  <field name="ticket_attachment" widget="url"  text="Click here to open image" attrs="{'invisible':[('ticket_attachment','==', False)]}"/>
+                  <field name="ticket_attachment" widget="url"  attrs="{'invisible':[('ticket_attachment','!=', False)]}"/>
+                  <field name="ticket_assignee" />
+                </group>
+              </group>
+              <separator />
+              <h4 style="color:#66598f">Response</h4>
+              <hr />
+              <group>
+                <field name="ticket_response" attrs="{'invisible':[('ticket_status','==','waiting')]}"/>
               </group>
           </sheet>
+          <div class="oe_chatter">
+              <field name="activity_ids" />
+              <field name="message_follower_ids" groups="base.group_user"/>
+              <field name="message_ids"/>
+          </div>
         </form>
     </field>
   </record>
-
   <!--Ticket search view by number, title, assignee-->
     <record model="ir.ui.view" id="feedback_tickets_management_search">
       <field name="name">Feedback Tickets Management Search</field>
@@ -77,6 +106,6 @@
 
   <!-- Top menu item -->
   <menuitem name="Feedback Ticket" id="feedback_ticket_management_menu_root"/>
-  <menuitem name="All Tickets" id="feedback_ticket_management_list_all" parent="feedback_ticket_management_menu_root"
+    <menuitem name="All Tickets" id="feedback_ticket_management_list_all" parent="feedback_ticket_management_menu_root"
               action="feedback_ticket_management_action_window" />
 </odoo>

@@ -22,6 +22,8 @@
                         <group>
                             <field name="result" string="Result" class="border bg-light" write="false"/>
                             <field name="submission_url" string="Submission URL" class="border bg-light" write="false"/>
+                            <field name="submission_note" string="Submission Note" class="border bg-light" />
+                            <field name="general_response" string="General Response" class="border bg-light" />
                         </group>
 
 
@@ -60,6 +62,8 @@
                 <field name="student" />
                 <field name="submission_url" widget="url" />
                 <field name="result" />
+                <field name="submission_note" />
+                <field name="general_response" />
             </tree>
         </field>
     </record>

@@ -88,17 +88,14 @@ class StudentAPI(http.Controller):
         password_hash = generate_password_hash(password)
 
         # 5. Create student record
-        (
-            http.request.env["portal.student"]
-            .sudo()
-            .create(
-                {
-                    "name": name,
-                    "email": email,
-                    "password_hash": password_hash,
-                }
-            )
+        http.request.env["portal.student"].sudo().create(
+            {
+                "name": name,
+                "email": email,
+                "password_hash": password_hash,
+            }
         )
+        
 
         response = json_success("Student created successfully", 201)
 
