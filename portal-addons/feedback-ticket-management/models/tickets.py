@@ -2,6 +2,7 @@
 
 from odoo import models, fields, api
 from datetime import datetime
+import math
 
 
 class FeedbackTicket(models.Model):
@@ -194,11 +195,11 @@ class FeedbackTicket(models.Model):
             if ticket.ticket_status in ["waiting", "assigned", "in_progress"]:
                 process_time_temp = datetime.now() - ticket.created_at
                 ticket.warning_ticket = process_time_temp.days >= 2
-                ticket.processing_time = f"{process_time_temp.days} days {round(process_time_temp.seconds/3600)} hours"
+                ticket.processing_time = f"{process_time_temp.days} days {math.floor(process_time_temp.seconds/3600)} hours"
             elif ticket.ticket_status == "done" and ticket.complete_date:
                 ticket.warning_ticket = False
                 process_time_temp = ticket.complete_date - ticket.created_at
-                ticket.processing_time = f"{process_time_temp.days} days {round(process_time_temp.seconds/3000)} hours"
+                ticket.processing_time = f"{process_time_temp.days} days {math.floor(process_time_temp.seconds/3600)} hours"
 
     # assign datetime now to complete_date when ticket change status to done.
     @api.onchange("ticket_status")
