@@ -4,17 +4,22 @@ from sendgrid.helpers.mail import Mail, Content
 import datetime
 
 
+# Mail Module Class
 class MailServiceSendGrid(models.AbstractModel):
     _name = "mail_service"
     _description = "Mail Service"
     _inherit = ["mail.thread", "mail.activity.mixin"]
 
+    # Define send mail func
     def send_email_with_sendgrid(
         self, service_key_config, recipient_email, subject, body, object
     ):
+        # Get API key
         api_key = service_key_config.get_api_key_by_service_name(
             "Mail Service"
         )
+
+        # Check API key
         if api_key:
             try:
                 sg = sendgrid.SendGridAPIClient(api_key=api_key)
@@ -34,8 +39,9 @@ class MailServiceSendGrid(models.AbstractModel):
             except Exception as e:
                 self.create_chatter_log(object, subject, body, to_email, e)
 
+    # Chatter log func
     def create_chatter_log(self, object, subject, body, to_email, e=False):
-        # Tạo bản ghi chatter
+        # Check error
         if e:
             object.message_post(
                 body=f"Email sent to {to_email} with subject '{subject}' has  error {e}"
