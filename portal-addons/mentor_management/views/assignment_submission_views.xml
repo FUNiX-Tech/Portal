@@ -7,8 +7,23 @@
         <field name="model">assignment_submission</field>
         <field name="inherit_id" ref="assignment.assignment_submission_view_form" />
         <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <field name="can_submit" invisible="1" />
+            </xpath>
+            <xpath expr="//header/button[@name='submit_grade'][1]" position="attributes">
+                <attribute name="attrs">
+                    {'invisible':[('can_submit','=',True),'&amp;',('has_graded_all_criteria','=',True),('result','=','not_graded')]}
+                </attribute>
+            </xpath>
 
-            <field name="student" position="after">
+            <xpath expr="//header/button[@name='submit_grade'][2]" position="attributes">
+                <attribute name="attrs">
+                    {'invisible':['|','|',('can_submit','=',False),('has_graded_all_criteria','=',False),('result','!=','not_graded')]}
+                </attribute>
+            </xpath>
+
+            <!-- Assign mentor ngay trong form Submission -->
+            <field name="result" position="before">
                 <field name="mentor_id" />
             </field>
 
@@ -22,11 +37,24 @@
         <field name="inherit_id" ref="assignment.assignment_submission_view_tree" />
         <field name="arch" type="xml">
 
+            <!-- Thêm submission_id -->
             <field name="course" position="before">
                 <field name="submission_id"/>
             </field>
 
-            <field name="result" position="after">
+            <!-- Thêm email -->
+            <field name="student" position="after">
+                <field name="student_email"/>
+            </field>
+
+            <!-- thêm Status và Create time của Submission -->
+            <field name="result" position="before">
+                <field name="submission_date"/>
+                <field name="latest_submission_status"/>
+            </field>
+
+            <!-- Thêm thông tin email mentor chấm bài -->
+            <field name="result" position="before">
                 <field name="mentor_id"/>
             </field>
 

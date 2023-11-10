@@ -22,6 +22,7 @@ class AssignmentSubmission(models.Model):
         "mentor_management",
         string="Mentor",
         # groups="mentor_management.group_mentor_management_admin",
+        track_visibility=True,
     )
 
     submission_id = fields.Char(
@@ -30,6 +31,39 @@ class AssignmentSubmission(models.Model):
         copy=False,
         index=True,
         default=lambda self: _("New"),
+    )
+
+    # Tạo 1 computed field để hiển thị email của student
+    student_email = fields.Char(
+        string="Student Email", compute="_compute_student_email"
+    )
+
+    # Tạo 1 computed field để hiển thị thời gian nộp bài
+    submission_date = fields.Datetime(
+        string="Submit time", compute="_compute_submission_date"
+    )
+
+    # Tạo 1 computed field để hiển thị status của submission liên kết với submission_history
+    latest_submission_status = fields.Selection(
+        [
+            ("not_submitted", "Not submitted"),
+            ("submission_failed", "Submission failed"),
+            ("submitted", "Submitted"),
+            ("submission_cancelled", "Submission cancelled"),
+            ("grading", "Grading"),
+            ("graded", "Graded"),
+        ],
+        string="Submission Status",
+        compute="_compute_submission_status",
+    )
+
+    mentor_user_id = fields.Many2one(
+        "res.users", compute="_compute_mentor_user_id", store=True
+    )
+
+    can_submit = fields.Boolean(
+        string="Can Submit",
+        compute="_compute_can_submit",
     )
 
     @api.model
@@ -57,3 +91,55 @@ class AssignmentSubmission(models.Model):
                 }
             )
         return result
+
+    # Tạo 1 computed field để hiển thị email của student
+    @api.depends("student")
+    def _compute_student_email(self):
+        for record in self:
+            record.student_email = record.student.email
+
+    # Tạo 1 computed field để hiển thị thời gian nộp bài
+    @api.depends("create_date")
+    def _compute_submission_date(self):
+        for record in self:
+            record.submission_date = record.create_date
+
+    # Tạo 1 computed field để hiển thị status của submission liên kết với submission_history
+    # @api.depends("submission_history")
+    def _compute_submission_status(self):
+        # tìm status của submission liên kết với submission_history
+        # status có created_at mới nhất
+        # student_id, assignment_id, submission_id giống với submission hiện tại
+        for record in self:
+            submission_history = self.env["submission_history"].search(
+                [
+                    ("student_id", "=", record.student.id),
+                    ("assignment_id", "=", record.assignment.id),
+                    ("submission_id", "=", record.id),
+                ],
+                order="created_at desc",
+                limit=1,
+            )
+            if submission_history:
+                record.latest_submission_status = submission_history.status
+            else:
+                record.latest_submission_status = ""
+
+    @api.depends("mentor_id")
+    def _compute_mentor_user_id(self):
+        for record in self:
+            if record.mentor_id:
+                # Tìm user có email giống với email của mentor
+                user = self.env["res.users"].search(
+                    [("login", "=", record.mentor_id.email)], limit=1
+                )
+                record.mentor_user_id = user.id
+            else:
+                record.mentor_user_id = False
+
+    def _compute_can_submit(self):
+        for record in self:
+            if record.mentor_user_id == self.env.user:
+                record.can_submit = True
+            else:
+                record.can_submit = False

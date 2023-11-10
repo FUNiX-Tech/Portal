@@ -10,12 +10,24 @@
                         <button name="submit_grade" attrs="{'invisible':[('has_graded_all_criteria','=',True),('result','=','not_graded')]}" string="Submit" confirm="Are you sure? You can not re-grade this submission after clicking OK." type="object" class="oe_highlight disabled"/>
                         <button name="submit_grade" attrs="{'invisible':['|',('has_graded_all_criteria','=',False),('result','!=','not_graded')]}" string="Submit" confirm="Are you sure? You can not re-grade this submission after clicking OK." type="object" class="oe_highlight"/>
                     </header>
+
+                    <h3 class="mt-2 mb-2">Genaral Information</h3>
                     <group>
                         <field name="has_graded_all_criteria" invisible="1"/>
-                        <field name="student" string="Student" class="border bg-light" write="false"/>
-                        <field name="result" string="Result" class="border bg-light" write="false"/>
-                        <field name="assignment" string="Assignment" class="border bg-light" write="false"/>
-                        <field name="submission_url" string="Submission URL" class="border bg-light" write="false"/>
+                        <group>
+                            <field name="student" string="Student" class="border bg-light" write="false"/>
+                            <field name="course" string="Course" class="border bg-light" write="false"/>
+                            <field name="assignment" string="Assignment" class="border bg-light" write="false"/>
+                        </group>
+                        <group>
+                            <field name="result" string="Result" class="border bg-light" write="false"/>
+                            <field name="submission_url" string="Submission URL" class="border bg-light" write="false"/>
+                        </group>
+
+
+                        <!-- để nguyên -->
+                        <!-- <label for="criteria_responses" string="Criterion Response" class="mt-2" >Criterion Grading</label> -->
+                        <h3 class="mt-2 mb-2">Criterion Grading</h3>
                         <field attrs="{'readonly':[('result','!=','not_graded')]}" name="criteria_responses" string="Criterion Grading" class="border bg-light">
                             <tree string="Criterion Response" create="false" delete="false">
                                 <field name="number"/>
@@ -27,6 +39,13 @@
                         </field>
                     </group>
                 </sheet>
+
+                    <!-- trace log -->
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
             </form>
         </field>
     </record>
@@ -39,7 +58,7 @@
                 <field name="course" />
                 <field name="assignment" />
                 <field name="student" />
-                <field name="submission_url" />
+                <field name="submission_url" widget="url" />
                 <field name="result" />
             </tree>
         </field>
