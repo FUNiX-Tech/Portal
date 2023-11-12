@@ -73,16 +73,17 @@ class AssignmentSubmissionController(http.Controller):
             }
 
             # create submission history --> submitted status
-
-            request.env["submission_history"].sudo().create(
-                {
-                    "student_id": request_data["student_id"],
-                    "assignment_id": request_data["assignment_id"],
-                    "submission_id": created_submission.id,
-                    "status": "submitted",  # Đặt trạng thái là 'submitted'
-                }
-            )
-
+            try:
+                request.env["submission_history"].sudo().create(
+                    {
+                        "student_id": self.student.id,
+                        "assignment_id": self.assignment.id,
+                        "submission_id": created_submission.id,
+                        "status": "submitted",  # Đặt trạng thái là 'submitted'
+                    }
+                )
+            except Exception as e:
+                logger.error(str(e))
             # end create submission history
 
             return json_response(200, "Submission saved!", response_data)
