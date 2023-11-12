@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 class AssignmentSubmission(models.Model):
     _name = "assignment_submission"
     _description = "assignment_submission"
+    _inherit = ["mail.thread", "mail.activity.mixin"]
 
     MAIL_SENDER = config.get("email_from")
 
@@ -26,7 +27,10 @@ class AssignmentSubmission(models.Model):
     DEFAULT_RESULT = NOT_GRADED[0]
 
     student = fields.Many2one(
-        "portal.student", string="Student", readonly=True
+        "portal.student",
+        string="Student",
+        readonly=True,
+        track_visibility=True,
     )
     assignment = fields.Many2one(
         "assignment", string="Assignment", readonly=True

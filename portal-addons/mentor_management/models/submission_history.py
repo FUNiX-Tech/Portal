@@ -10,7 +10,7 @@ class SubmissionHistory(models.Model):
     )
     assignment_id = fields.Many2one("assignment", string="Assignment")
     submission_id = fields.Many2one(
-        "assignment_submission", string="Submission"
+        "assignment_submission", string="Submission ID"
     )
     created_at = fields.Datetime(
         string="Submission Time", default=fields.Datetime.now, required=True
