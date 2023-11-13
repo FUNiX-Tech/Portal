@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 {
-    "name": "Student Group",
+    "name": "Student Organization",
     "summary": """
-     Student Group module for CRUD Student
+     Student Organization module for CRUD Student
     """,
     "description": """
         Long description of module's purpose
@@ -20,9 +20,8 @@
     "data": [
         "security/security.xml",
         "security/ir.model.access.csv",
-        "views/student_group_views.xml",
-        "views/student_student_group.xml",
-        "views/course_student_group.xml",
+        "views/student_organization_views.xml",
+        "views/student_student_organization.xml",
     ],
     # only loaded in demonstration mode
 }
