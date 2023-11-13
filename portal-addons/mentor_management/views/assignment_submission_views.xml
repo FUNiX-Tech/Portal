@@ -7,6 +7,8 @@
         <field name="model">assignment_submission</field>
         <field name="inherit_id" ref="assignment.assignment_submission_view_form" />
         <field name="arch" type="xml">
+
+            <!-- Xử lý quyền cho nút submit -->
             <xpath expr="//header" position="inside">
                 <field name="can_submit" invisible="1" />
             </xpath>
@@ -22,15 +24,24 @@
                 </attribute>
             </xpath>
 
+            <!-- Thêm latest_submission_status vào sau assignmet -->
+            <field name="assignment" position="after">
+                <field name="latest_submission_status" />
+            </field>
+
+
+
             <!-- Assign mentor ngay trong form Submission -->
             <field name="result" position="before">
                 <field name="mentor_id" />
+                  <!--  -->
+                <field name="mentor_user_id" invisible="1" />
             </field>
 
         </field>
     </record>
 
-    <!-- Thêm trường mentor_id và submission_id vào tree views -->
+    <!-- Thêm các trường vào tree views -->
     <record id="assignment_submission_view_tree" model="ir.ui.view">
         <field name="name">assignment_submission.tree</field>
         <field name="model">assignment_submission</field>
@@ -42,7 +53,7 @@
                 <field name="submission_id"/>
             </field>
 
-            <!-- Thêm email -->
+            <!-- Thêm email student -->
             <field name="student" position="after">
                 <field name="student_email"/>
             </field>
@@ -53,7 +64,7 @@
                 <field name="latest_submission_status"/>
             </field>
 
-            <!-- Thêm thông tin email mentor chấm bài -->
+            <!-- Thêm email mentor chấm bài -->
             <field name="result" position="before">
                 <field name="mentor_id"/>
             </field>

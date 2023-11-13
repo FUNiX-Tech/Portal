@@ -76,9 +76,9 @@ class AssignmentSubmissionController(http.Controller):
 
             request.env["submission_history"].sudo().create(
                 {
-                    "student_id": request_data["student_id"],
-                    "assignment_id": request_data["assignment_id"],
-                    "submission_id": created_submission.id,
+                    "student_id": self.student.id,
+                    "assignment_id": self.assignment.id,
+                    "submission_id": response_data.id,
                     "status": "submitted",  # Đặt trạng thái là 'submitted'
                 }
             )
@@ -98,8 +98,8 @@ class AssignmentSubmissionController(http.Controller):
 
             request.env["submission_history"].sudo().create(
                 {
-                    "student_id": request_data["student_id"],
-                    "assignment_id": request_data["assignment_id"],
+                    "student_id": self.student.id,
+                    "assignment_id": self.assignment.id,
                     "status": "submission_failed",  # Đặt trạng thái là 'submission_failed'
                 }
             )
