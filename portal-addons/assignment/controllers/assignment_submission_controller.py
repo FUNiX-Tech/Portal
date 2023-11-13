@@ -73,16 +73,17 @@ class AssignmentSubmissionController(http.Controller):
             }
 
             # create submission history --> submitted status
-
-            request.env["submission_history"].sudo().create(
-                {
-                    "student_id": self.student.id,
-                    "assignment_id": self.assignment.id,
-                    "submission_id": response_data.id,
-                    "status": "submitted",  # Đặt trạng thái là 'submitted'
-                }
-            )
-
+            try:
+                request.env["submission_history"].sudo().create(
+                    {
+                        "student_id": self.student.id,
+                        "assignment_id": self.assignment.id,
+                        "submission_id": response_data.id,
+                        "status": "submitted",  # Đặt trạng thái là 'submitted'
+                    }
+                )
+            except Exception as e:
+                logger.error(str(e))
             # end create submission history
 
             return json_response(200, "Submission saved!", response_data)
@@ -94,15 +95,16 @@ class AssignmentSubmissionController(http.Controller):
                 logger.info("WRONG RELATIONAL FIELD!")
 
             # create submission history --> submission_failed status
-            request_data = json.loads(request.httprequest.data)
-
-            request.env["submission_history"].sudo().create(
-                {
-                    "student_id": self.student.id,
-                    "assignment_id": self.assignment.id,
-                    "status": "submission_failed",  # Đặt trạng thái là 'submission_failed'
-                }
-            )
+            try:
+                request.env["submission_history"].sudo().create(
+                    {
+                        "student_id": self.student.id,
+                        "assignment_id": self.assignment.id,
+                        "status": "submission_failed",  # Đặt trạng thái là 'submission_failed'
+                    }
+                )
+            except Exception as e:
+                logger.error(str(e))
             # end create submission history
 
             return json_response(500, "Internal Server Error")
