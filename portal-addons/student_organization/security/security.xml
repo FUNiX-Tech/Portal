@@ -1,0 +1,22 @@
+<odoo>
+    <data noupdate="0">
+        <record id="module_category_student_organization" model="ir.module.category">
+            <field name="name">Student Organization</field>
+            <field name="sequence">1</field>
+        </record>
+
+        <!-- Student Organization Admin  -->
+        <record id='group_student_organization_admin' model='res.groups'>
+            <field name="name">Admin</field>
+            <field name="category_id" ref='module_category_student_organization'></field>
+            <field name="implied_ids" eval="[(4,ref('base.group_user'))]"></field>
+        </record>
+
+        <!-- Student Organization User -->
+        <record id='group_student_organization_user' model='res.groups'>
+            <field name="name">User</field>
+            <field name="category_id" ref='module_category_student_organization'></field>
+            <field name="implied_ids" eval="[(4,ref('base.group_user'))]"></field>
+        </record>
+    </data>
+</odoo>
