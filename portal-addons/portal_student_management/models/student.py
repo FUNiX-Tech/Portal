@@ -3,12 +3,17 @@ from odoo import api, fields, models, exceptions
 import random
 import re
 import string
+import requests
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class Student(models.Model):
     _name = "portal.student"
     _description = "Student Information"
     name = fields.Char(string="Student Name", required=True)
+    username = fields.Char(string="Username", required=True, unique=True)
     email = fields.Char(string="Email", required=True, unique=True, index=True)
     student_code = fields.Char(string="Student Code", readonly=True)
     date_of_birth = fields.Date(string="Date of birth")
@@ -116,8 +121,6 @@ class Student(models.Model):
         """
         Update the student information.
         """
-        # Update the 'updated_at' field with the current datetime
-        # student_dict["updated_at"] = fields.Datetime.now()
 
         # !TODO: Refresh student_list before update student
 
@@ -132,14 +135,14 @@ class Student(models.Model):
     @api.model
     def create(self, student_dict):
         """
-        Function is called when creating a new student. Check to see if the student has a student_code yet. If not, create a new one, when creating a new one if it is duplicated, it will create a new student_code until it is not duplicated.
+        Function is called when creating a new student. Validate email duplicate and create new student_code when creating a new one if it is duplicated.
+        Check if student is created by import file or not by context, if not, send request to LMS API.
 
         @params:
             dict: student_dict: Student data sent from the form
             self: Student Object
         """
         # !TODO: Refresh student_list before create new student
-
         student_dict["student_code"] = self._student_code_generator(
             student_dict
         )
@@ -150,4 +153,76 @@ class Student(models.Model):
             raise exceptions.ValidationError("Email already exists")
         self._check_phone()
 
+        if not self.env.context.get("import_file"):
+            headers = {
+                "Content-Type": "application/x-www-form-urlencoded",
+            }
+            data_body = {
+                "name": student_dict["name"],
+                "email": student_dict["email"],
+                "username": student_dict["username"],
+            }
+
+            self.send_api_request(data_body, headers)
+
         return super(Student, self).create(student_dict)
+
+    def send_api_request(self, data, headers):
+        """
+        Function to send API request to LMS Staging
+
+        @params:
+        1. self: Student object
+        2. data: Data to be sent
+        3. headers: Headers to be sent
+        """
+        # Define the URL Register API in LMS Staging
+        url = "https://staging-xseries.funix.edu.vn/api/user/v1/account/registration/"
+
+        # Send the POST request
+        try:
+            response = requests.post(url, json=data, headers=headers)
+            response.raise_for_status()  # This will raise an error for HTTP error codes
+
+            # Log the response
+            _logger.info(f"Data sent successfully: {response.status_code}")
+        except requests.RequestException as e:
+            _logger.error(f"Failed to send data: {e}")
+
+    @api.model
+    def load(self, fields, data):
+        """
+        Function to load data from the import file, then send API request to LMS Staging
+        Function will retrive context to check if it is an import test, if not, it will send API request
+
+        @params:
+        1. self: Student object
+        2. fields: List of fields to be imported
+        3. data: Data to be imported
+
+        """
+        # Perform the import operation
+        result = super(Student, self).load(fields, data)
+
+        # Check if the import was successful and if this is not a test import
+        if result.get("ids") and not self.env.context.get("test_import"):
+            # Fetch the data of the newly imported records
+            imported_records = self.env["portal.student"].browse(result["ids"])
+
+            # Prepare data for the API request
+            headers = {
+                "Content-Type": "application/x-www-form-urlencoded",
+            }
+            data_body = [
+                {
+                    "name": record.name,
+                    "email": record.email,
+                    "username": record.username,
+                }
+                for record in imported_records
+            ]
+
+            # Send the API request with all the data
+            self.send_api_request(data_body, headers)
+
+        return result
