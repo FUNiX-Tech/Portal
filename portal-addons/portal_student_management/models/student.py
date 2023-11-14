@@ -3,22 +3,23 @@ from odoo import api, fields, models, exceptions
 import random
 import re
 import string
-from werkzeug.security import generate_password_hash
 
 
 class Student(models.Model):
     _name = "portal.student"
     _description = "Student Information"
-
     name = fields.Char(string="Student Name", required=True)
     email = fields.Char(string="Email", required=True, unique=True, index=True)
     student_code = fields.Char(string="Student Code", readonly=True)
     date_of_birth = fields.Date(string="Date of birth")
-    # password_hash = fields.Char(string="Password")
     phone = fields.Char(string="Phone")
     gender = fields.Selection(
         string="Gender",
-        selection=[("male", "Male"), ("female", "Female"), ("unknown", "Unknown")],
+        selection=[
+            ("male", "Male"),
+            ("female", "Female"),
+            ("unknown", "Unknown"),
+        ],
         required=True,
         default="unknown",
     )
@@ -28,9 +29,6 @@ class Student(models.Model):
     created_at = fields.Datetime(
         string="Created At", readonly=True, default=fields.Datetime.now()
     )
-    # updated_at = fields.Datetime(
-    #     string="Updated At", readonly=True, default=fields.Datetime.now()
-    # )
 
     @api.model
     def _student_code_generator(self, student_dict):
@@ -116,18 +114,10 @@ class Student(models.Model):
 
     def write(self, student_dict):
         """
-        Update the student information. 
+        Update the student information.
         """
         # Update the 'updated_at' field with the current datetime
         # student_dict["updated_at"] = fields.Datetime.now()
-
-        # if (
-        #     "password_hash" in student_dict
-        #     and len(student_dict["password_hash"]) < 32
-        # ):
-        #     student_dict["password_hash"] = generate_password_hash(
-        #         student_dict["password_hash"]
-        #     )
 
         # !TODO: Refresh student_list before update student
 
@@ -147,19 +137,12 @@ class Student(models.Model):
         @params:
             dict: student_dict: Student data sent from the form
             self: Student Object
-
         """
-        #!TODO: Refresh student_list before create new student
+        # !TODO: Refresh student_list before create new student
 
         student_dict["student_code"] = self._student_code_generator(
             student_dict
         )
-
-        # If the password_hash is not in the student_dict, generate a random password and hash it
-        # if "password_hash" not in student_dict:
-        #     student_dict["password_hash"] = generate_password_hash(
-        #         self._generate_fixed_length_password(8)
-        #     )
 
         if student_dict["email"] and self.env["portal.student"].search(
             [("email", "=", student_dict["email"])]

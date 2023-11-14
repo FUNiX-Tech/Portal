@@ -1,15 +1,10 @@
 # flake8: noqa
 from odoo import http
-from werkzeug.security import generate_password_hash, check_password_hash
-import re
-from ..utils.jwt_encode import JWTEncoder
-from datetime import datetime, timedelta
 from ..utils.api_utils import (
     json_error,
     json_success,
     get_body_json,
 )
-from ..middlewares.middlewares import verify_access_token
 
 
 class StudentAPI(http.Controller):
