@@ -55,6 +55,7 @@ class StudentOrganization_Student(models.Model):
         self._compute_temp_organizations()
 
 
+
 # Add student  into Student Organization table
 class Student_Organization_Student(models.Model):
     _inherit = "student_organization"
