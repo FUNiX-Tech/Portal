@@ -15,7 +15,7 @@
     "category": "Uncategorized",
     "version": "0.1",
     # any module necessary for this one to work correctly
-    "depends": ["base", "portal_student_management", "course_management"],
+    "depends": ["base", "portal_student_management"],
     # always loaded
     "data": [
         "security/security.xml",
