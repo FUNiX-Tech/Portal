@@ -20,6 +20,7 @@ class MailServiceSendGrid(models.AbstractModel):
         external_text,
         ref_model,
         object,
+        email_from,
     ):
         # get api key
         api_key = service_key_config.get_api_key_by_service_name(
@@ -84,7 +85,7 @@ class MailServiceSendGrid(models.AbstractModel):
                         """
                 mail_ref = self.env.ref(ref_model)
                 template_server.write({"subject": subject})
-                template_server.write({"email_from": "no-reply@funix.edu.vn"})
+                template_server.write({"email_from": email_from})
                 template_server.write({"email_to": recipient_email})
                 template_server.write({"body_html": body_html})
                 template_server.write({"description": description})
