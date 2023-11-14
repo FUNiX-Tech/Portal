@@ -20,5 +20,7 @@
     "data": [
         "security/security.xml",
         "security/ir.model.access.csv",
+        "views/custom_email_template.xml",
+        "views/mail_server.xml",
     ],
 }
