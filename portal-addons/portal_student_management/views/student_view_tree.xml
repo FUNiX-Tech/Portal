@@ -14,11 +14,8 @@
                 <field name="phone" />
                 <field name="email_verified_status" />
                 <field name="created_at" />
-                <field name="updated_at" />
-
+                <!-- <field name="updated_at" /> -->
             </tree>
         </field>
     </record>
-
-
 </odoo>

@@ -26,13 +26,8 @@ class StudentAPI(http.Controller):
         Register API - POST /api/student/register
         1. Extract data from request
         2. Validate data
-           a. Check missing input
-           b. Check email format
-           c. Check password format
-           d. Check password and password_confirm
-        3. Check if email is already registered
-        4. Hash password
-        5. Create student record
+        2a. Check missing input
+        3. Create student record
         """
         # 1. Extract data from request
         request_data = get_body_json(http.request)
@@ -40,66 +35,103 @@ class StudentAPI(http.Controller):
         # 2. Validate data
         name = request_data.get("name")
         email = request_data.get("email")
-        password = request_data.get("password")
-        password_confirm = request_data.get("password_confirm")
+        student_code = request_data.get("student_code")
 
         # 2a. Check missing input
-        if not name or not email or not password or not password_confirm:
+        if not name or not email or not student_code:
             return json_error("Missing input data", 400)
 
-        # 2b. Check email format
-        # Regex : https://regex101.com/r/O9oCj8/1
-
-        elif not re.match(
-            r"^[^\.\s][\w\-\.{2,}]+@([\w-]+\.)+[\w-]{2,}$", email
-        ):
-            return json_error("Invalid email", 400)
-
-        # 2c. Kiểm tra password có đúng định dạng không: https://regex101.com/r/7Hpebb/1
-
-        # password must contain 1 number (0-9)
-        # password must contain 1 uppercase letters
-        # password must contain 1 lowercase letters
-        # password must contain 1 non-alpha numeric number
-        # password is 8-32 characters with no space
-
-        elif not re.match(
-            r"^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\w\d\s:])([^\s]){8,32}$",
-            password,
-        ):
-            return json_error("Invalid password", 400)
-
-        # 2d. Check password and password_confirm
-        elif password != password_confirm:
-            return json_error(
-                "Password and confirm password do not match", 400
-            )
-
-        # 3. Check if email is already registered
-        student = (
-            http.request.env["portal.student"]
-            .sudo()
-            .search([("email", "=", email)])
-        )
-        if student:
-            return json_error("Email already registered", 400)
-
-        # 4. Hash password
-        password_hash = generate_password_hash(password)
-
-        # 5. Create student record
+        # 3. Create student record
         http.request.env["portal.student"].sudo().create(
             {
                 "name": name,
                 "email": email,
-                "password_hash": password_hash,
+                "student_code": student_code,
             }
         )
-        
 
         response = json_success("Student created successfully", 201)
 
         return response
+    # def student_register(self, **kwargs):
+    #     """
+    #     Register API - POST /api/student/register
+    #     1. Extract data from request
+    #     2. Validate data
+    #        a. Check missing input
+    #        b. Check email format
+    #        c. Check password format
+    #        d. Check password and password_confirm
+    #     3. Check if email is already registered
+    #     4. Hash password
+    #     5. Create student record
+    #     """
+    #     # 1. Extract data from request
+    #     request_data = get_body_json(http.request)
+
+    #     # 2. Validate data
+    #     name = request_data.get("name")
+    #     email = request_data.get("email")
+    #     password = request_data.get("password")
+    #     password_confirm = request_data.get("password_confirm")
+
+    #     # 2a. Check missing input
+    #     if not name or not email or not password or not password_confirm:
+    #         return json_error("Missing input data", 400)
+
+    #     # 2b. Check email format
+    #     # Regex : https://regex101.com/r/O9oCj8/1
+
+    #     elif not re.match(
+    #         r"^[^\.\s][\w\-\.{2,}]+@([\w-]+\.)+[\w-]{2,}$", email
+    #     ):
+    #         return json_error("Invalid email", 400)
+
+    #     # 2c. Kiểm tra password có đúng định dạng không: https://regex101.com/r/7Hpebb/1
+
+    #     # password must contain 1 number (0-9)
+    #     # password must contain 1 uppercase letters
+    #     # password must contain 1 lowercase letters
+    #     # password must contain 1 non-alpha numeric number
+    #     # password is 8-32 characters with no space
+
+    #     elif not re.match(
+    #         r"^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\w\d\s:])([^\s]){8,32}$",
+    #         password,
+    #     ):
+    #         return json_error("Invalid password", 400)
+
+    #     # 2d. Check password and password_confirm
+    #     elif password != password_confirm:
+    #         return json_error(
+    #             "Password and confirm password do not match", 400
+    #         )
+
+    #     # 3. Check if email is already registered
+    #     student = (
+    #         http.request.env["portal.student"]
+    #         .sudo()
+    #         .search([("email", "=", email)])
+    #     )
+    #     if student:
+    #         return json_error("Email already registered", 400)
+
+    #     # 4. Hash password
+    #     password_hash = generate_password_hash(password)
+
+    #     # 5. Create student record
+    #     http.request.env["portal.student"].sudo().create(
+    #         {
+    #             "name": name,
+    #             "email": email,
+    #             "password_hash": password_hash,
+    #         }
+    #     )
+        
+
+    #     response = json_success("Student created successfully", 201)
+
+    #     return response
 
     @http.route(
         "/api/student/login",

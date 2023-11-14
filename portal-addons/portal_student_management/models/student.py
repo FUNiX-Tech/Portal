@@ -18,9 +18,9 @@ class Student(models.Model):
     phone = fields.Char(string="Phone")
     gender = fields.Selection(
         string="Gender",
-        selection=[("male", "Male"), ("female", "Female"), ("other", "khác")],
+        selection=[("male", "Male"), ("female", "Female"), ("unknown", "Unknown")],
         required=True,
-        default="male",
+        default="unknown",
     )
     email_verified_status = fields.Boolean(
         string="Veriied Email", default=False
@@ -28,9 +28,9 @@ class Student(models.Model):
     created_at = fields.Datetime(
         string="Created At", readonly=True, default=fields.Datetime.now()
     )
-    updated_at = fields.Datetime(
-        string="Updated At", readonly=True, default=fields.Datetime.now()
-    )
+    # updated_at = fields.Datetime(
+    #     string="Updated At", readonly=True, default=fields.Datetime.now()
+    # )
 
     @api.model
     def _student_code_generator(self, student_dict):
@@ -116,10 +116,10 @@ class Student(models.Model):
 
     def write(self, student_dict):
         """
-        Update the student information. Update the 'updated_at' field with the current datetime
+        Update the student information. 
         """
         # Update the 'updated_at' field with the current datetime
-        student_dict["updated_at"] = fields.Datetime.now()
+        # student_dict["updated_at"] = fields.Datetime.now()
 
         # if (
         #     "password_hash" in student_dict
@@ -128,6 +128,8 @@ class Student(models.Model):
         #     student_dict["password_hash"] = generate_password_hash(
         #         student_dict["password_hash"]
         #     )
+
+        # !TODO: Refresh student_list before update student
 
         # Check if the email already exists in the database
         if "email" in student_dict:
@@ -147,6 +149,8 @@ class Student(models.Model):
             self: Student Object
 
         """
+        #!TODO: Refresh student_list before create new student
+
         student_dict["student_code"] = self._student_code_generator(
             student_dict
         )
