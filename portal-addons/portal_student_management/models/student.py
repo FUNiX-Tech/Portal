@@ -14,7 +14,7 @@ class Student(models.Model):
     email = fields.Char(string="Email", required=True, unique=True, index=True)
     student_code = fields.Char(string="Student Code", readonly=True)
     date_of_birth = fields.Date(string="Date of birth")
-    password_hash = fields.Char(string="Password")
+    # password_hash = fields.Char(string="Password")
     phone = fields.Char(string="Phone")
     gender = fields.Selection(
         string="Gender",
@@ -121,13 +121,13 @@ class Student(models.Model):
         # Update the 'updated_at' field with the current datetime
         student_dict["updated_at"] = fields.Datetime.now()
 
-        if (
-            "password_hash" in student_dict
-            and len(student_dict["password_hash"]) < 32
-        ):
-            student_dict["password_hash"] = generate_password_hash(
-                student_dict["password_hash"]
-            )
+        # if (
+        #     "password_hash" in student_dict
+        #     and len(student_dict["password_hash"]) < 32
+        # ):
+        #     student_dict["password_hash"] = generate_password_hash(
+        #         student_dict["password_hash"]
+        #     )
 
         # Check if the email already exists in the database
         if "email" in student_dict:
@@ -152,10 +152,10 @@ class Student(models.Model):
         )
 
         # If the password_hash is not in the student_dict, generate a random password and hash it
-        if "password_hash" not in student_dict:
-            student_dict["password_hash"] = generate_password_hash(
-                self._generate_fixed_length_password(8)
-            )
+        # if "password_hash" not in student_dict:
+        #     student_dict["password_hash"] = generate_password_hash(
+        #         self._generate_fixed_length_password(8)
+        #     )
 
         if student_dict["email"] and self.env["portal.student"].search(
             [("email", "=", student_dict["email"])]
