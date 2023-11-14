@@ -157,14 +157,16 @@ class Student(models.Model):
             headers = {
                 "Content-Type": "application/x-www-form-urlencoded",
             }
-            data_body = {
-                "name": student_dict["name"],
-                "email": student_dict["email"],
-                "username": student_dict["username"],
-                "honor_code": True,
-                "country": "VN",
-                "password": "Password1!",
-            }
+            data_body = [
+                {
+                    "name": student_dict["name"],
+                    "email": student_dict["email"],
+                    "username": student_dict["username"],
+                    "honor_code": True,
+                    "country": "VN",
+                    "password": "Password1!",
+                }
+            ]
 
             self.send_api_request(data_body, headers)
 
