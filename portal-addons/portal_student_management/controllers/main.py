@@ -31,9 +31,10 @@ class StudentAPI(http.Controller):
         name = request_data.get("name")
         email = request_data.get("email")
         student_code = request_data.get("student_code")
+        username = request_data.get("username")
 
         # 2a. Check missing input
-        if not name or not email or not student_code:
+        if not name or not email or not student_code or not username:
             return json_error("Missing input data", 400)
 
         # 3. Create student record
@@ -42,6 +43,7 @@ class StudentAPI(http.Controller):
                 "name": name,
                 "email": email,
                 "student_code": student_code,
+                "username": username,
             }
         )
 
