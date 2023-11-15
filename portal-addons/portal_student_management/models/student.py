@@ -155,7 +155,7 @@ class Student(models.Model):
 
         if not self.env.context.get("import_file"):
             headers = {
-                "Content-Type": "application/x-www-form-urlencoded",
+                "Content-Type": "application/json",
             }
             data_body = [
                 {
@@ -180,7 +180,7 @@ class Student(models.Model):
         3. headers: Headers to be sent
         """
         # Define the URL Register API in LMS Staging
-        url = "https://staging-xseries.funix.edu.vn/api/user/v1/account/registration/"
+        url = "https://test-xseries.funix.edu.vn/api/funix_portal/user/create_user"
 
         # Send the POST request
         try:
@@ -214,7 +214,7 @@ class Student(models.Model):
 
             # Prepare data for the API request
             headers = {
-                "Content-Type": "application/x-www-form-urlencoded",
+                "Content-Type": "application/json",
             }
             data_body = [
                 {
