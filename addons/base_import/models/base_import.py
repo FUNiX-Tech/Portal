@@ -1334,7 +1334,10 @@ class Import(models.TransientModel):
             name_create_enabled_fields=name_create_enabled_fields,
             import_set_empty_fields=options.get('import_set_empty_fields', []),
             import_skip_records=options.get('import_skip_records', []),
-            _import_limit=import_limit)
+            _import_limit=import_limit,
+            test_import=dryrun
+            )
+        
         import_result = model.load(import_fields, merged_data)
         _logger.info('done')
 
