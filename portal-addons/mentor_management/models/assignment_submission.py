@@ -57,6 +57,7 @@ class AssignmentSubmission(models.Model):
         compute="_compute_submission_status",
     )
 
+    # Tạo 1 computed field để check xem user hiện tại có phải là mentor của submission này không
     mentor_user_id = fields.Many2one(
         "res.users", compute="_compute_mentor_user_id", store=True
     )
@@ -105,7 +106,6 @@ class AssignmentSubmission(models.Model):
             record.submission_date = record.create_date
 
     # Tạo 1 computed field để hiển thị status của submission liên kết với submission_history
-    # @api.depends("submission_history")
     def _compute_submission_status(self):
         # tìm status của submission liên kết với submission_history
         # status có created_at mới nhất

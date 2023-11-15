@@ -25,10 +25,12 @@
                             <field name="submission_note" string="Submission Note" class="border bg-light" />
                             <field name="general_response" string="General Response" class="border bg-light" />
                         </group>
+                        <group>
+                            <field name="show_trace_log" string="Show Trace Log"/>
+                        </group>
 
 
                         <!-- để nguyên -->
-                        <!-- <label for="criteria_responses" string="Criterion Response" class="mt-2" >Criterion Grading</label> -->
                         <h3 class="mt-2 mb-2">Criterion Grading</h3>
                         <field attrs="{'readonly':[('result','!=','not_graded')]}" name="criteria_responses" string="Criterion Grading" class="border bg-light">
                             <tree string="Criterion Response" create="false" delete="false">
@@ -42,8 +44,8 @@
                     </group>
                 </sheet>
 
-                    <!-- trace log -->
-                <div class="oe_chatter">
+                <!-- trace log -->
+                <div class="oe_chatter" attrs="{'invisible': [('show_trace_log','=',False)]}">
                     <field name="message_follower_ids"/>
                     <field name="activity_ids"/>
                     <field name="message_ids"/>

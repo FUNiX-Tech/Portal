@@ -56,6 +56,20 @@ class AssignmentSubmission(models.Model):
         compute="_has_graded_all_criteria", store=True
     )
     course = fields.Char(related="assignment.course.course_name")
+    # ẩn hiện log trace
+    show_trace_log = fields.Boolean(string="Show Trace Log")
+
+    @api.onchange("show_trace_log")
+    def onchange_show_trace_log(self):
+        # Xử lý khi checkbox thay đổi
+        if self.show_trace_log:
+            # Nếu checkbox được chọn, hiển thị log trace
+            self.show_trace_log = False
+        else:
+            # Nếu checkbox không được chọn, ẩn log trace
+            self.show_trace_log = True
+
+    # end ẩn hiện log trace
 
     @api.depends("criteria_responses.result", "general_response")
     def _has_graded_all_criteria(self):
