@@ -82,45 +82,51 @@ class StudentGroup(http.Controller):
                 .sudo()
                 .search([("name", "=", organization)])
             )
-            students = data_parse["student"]
-            fail_student = []  # student not found by email
-            success_student = []  # student can search
-            for email in students:
-                student = (
-                    request.env["portal.student"]
-                    .sudo()
-                    .search([("email", "=", email)])
-                )
-                if not student:
-                    fail_student.append(email)
-                else:
-                    success_student.append(student.id)
-            print(fail_student, success_student)
-            if len(fail_student) == 0:
-                organization.write(
-                    {
-                        "student_ids": [  #
-                            [
-                                6,
-                                False,
-                                list(
-                                    set(success_student).union(
-                                        set(organization.student_ids.ids)
-                                    )
-                                ),
+            if organization:
+                students = data_parse["student"]
+                fail_student = []  # student not found by email
+                success_student = []  # student can search
+                for email in students:
+                    student = (
+                        request.env["portal.student"]
+                        .sudo()
+                        .search([("email", "=", email)])
+                    )
+                    if not student:
+                        fail_student.append(email)
+                    else:
+                        success_student.append(student.id)
+                print(fail_student, success_student)
+                if len(fail_student) == 0:
+                    organization.write(
+                        {
+                            "student_ids": [  #
+                                [
+                                    6,
+                                    False,
+                                    list(
+                                        set(success_student).union(
+                                            set(organization.student_ids.ids)
+                                        )
+                                    ),
+                                ]
                             ]
-                        ]
-                    }
-                )
-                return http.request.make_json_response(
-                    data={"message": "Student added successfully!"},
-                    status=200,
-                )
+                        }
+                    )
+                    return http.request.make_json_response(
+                        data={"message": "Student added successfully!"},
+                        status=200,
+                    )
+                else:
+                    return http.request.make_json_response(
+                        data={
+                            "message": f"{(', ').join(fail_student)} were not found!"
+                        },
+                        status=400,
+                    )
             else:
                 return http.request.make_json_response(
-                    data={
-                        "message": f"{(', ').join(fail_student)} were not found!"
-                    },
+                    data={"message": "Organization Was Not Found!"},
                     status=400,
                 )
         else:
