@@ -1,6 +1,6 @@
 <odoo>
     <data>
-         <record id="view_student_form_inherit" model="ir.ui.view">
+        <record id="view_student_form_inherit" model="ir.ui.view">
             <field name="name">portal.student.form.inherit.student_student_organization</field>
             <field name="model">portal.student</field>
             <field name="inherit_id" ref="portal_student_management.student_form" />
