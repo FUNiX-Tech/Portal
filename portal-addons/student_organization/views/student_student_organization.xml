@@ -17,6 +17,7 @@
                             </tree>
                         </field>
                     </group>
+                    <field name="temp_student_orgs" invisible="True" />
                 </xpath>
             </field>
         </record>

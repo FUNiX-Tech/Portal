@@ -21,12 +21,17 @@ class course_management(models.Model):
         readonly=True,
         help="Automatically generated",
     )
-    student_ids = fields.Many2many(
-        "portal.student",
-        relation="courses_enroll_students",
+    organization_ids = fields.Many2many(
+        comodel_name="student_organization",
+        relation="courses_enroll_organizations",
         column1="course_ids",
-        column2="student_ids",
-        string="Courses enrolled to Students",
+        column2="organization_ids",
+        string="Courses enrolled to Organizations",
+    )
+    temp_organization_ids = fields.Many2many(
+        comodel_name="student_organization",
+        computed="_compute_temp_organization_ids",
+        string="Temporary Organizations",
     )
 
     @api.model
@@ -34,3 +39,39 @@ class course_management(models.Model):
         if "created_at" not in vals:
             vals["created_at"] = datetime.now()
         return super(course_management, self).create(vals)
+
+    @api.depends("organization_ids")
+    def _compute_temp_organization_ids(self):
+        self.temp_organization_ids = self.organization_ids
+
+    @api.onchange("organization_ids")
+    def _onchange_organization_ids(self):
+        """
+        This function is an onchange method that is triggered whenever the value of the field "organization_ids" changes.
+        It updates the "student_ids" field based on the changes in the "organization_ids" field.
+        """
+        old_values = self.temp_organization_ids
+        new_values = self.organization_ids
+        added_orgs = list(set(new_values) - set(old_values))
+        removed_orgs = list(set(old_values) - set(new_values))
+        if len(added_orgs) != 0:
+            for org in added_orgs:
+                self.write(
+                    {
+                        "student_ids": [
+                            (4, student_id)
+                            for student_id in org.student_ids.ids
+                        ]
+                    }
+                )
+        if len(removed_orgs) != 0:
+            for org in removed_orgs:
+                self.write(
+                    {
+                        "student_ids": [
+                            (3, student_id)
+                            for student_id in org.student_ids.ids
+                        ]
+                    }
+                )
+        self._compute_temp_organization_ids()
