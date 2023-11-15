@@ -10,15 +10,13 @@
                 <field name="email" />
                 <field name="gender" />
                 <field name="student_code" />
+                <field name="username" />
                 <field name="date_of_birth" />
                 <field name="phone" />
                 <field name="email_verified_status" />
                 <field name="created_at" />
-                <field name="updated_at" />
-
+                <!-- <field name="updated_at" /> -->
             </tree>
         </field>
     </record>
-
-
 </odoo>

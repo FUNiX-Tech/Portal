@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 {
-    "name": "Course Management",
+    "name": "Student Organization",
     "summary": """
-        Course Management Module for CRUD course""",
+     Student Organization module for CRUD Student
+    """,
     "description": """
         Long description of module's purpose
     """,
@@ -14,15 +15,13 @@
     "category": "Uncategorized",
     "version": "0.1",
     # any module necessary for this one to work correctly
-    "depends": ["base", "portal_student_management", "student_organization"],
+    "depends": ["base", "portal_student_management"],
     # always loaded
     "data": [
         "security/security.xml",
         "security/ir.model.access.csv",
-        "views/course_management_views.xml",
+        "views/student_organization_views.xml",
+        "views/student_student_organization.xml",
     ],
     # only loaded in demonstration mode
-    "demo": [
-        "demo/demo.xml",
-    ],
 }

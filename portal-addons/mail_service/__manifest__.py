@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 {
-    "name": "Course Management",
+    "name": "Mail Service",
     "summary": """
-        Course Management Module for CRUD course""",
+    Mail Service With SendGrid Mail Service
+""",
     "description": """
         Long description of module's purpose
     """,
@@ -14,15 +15,12 @@
     "category": "Uncategorized",
     "version": "0.1",
     # any module necessary for this one to work correctly
-    "depends": ["base", "portal_student_management", "student_organization"],
+    "depends": ["base", "service_key", "mail"],
     # always loaded
     "data": [
         "security/security.xml",
         "security/ir.model.access.csv",
-        "views/course_management_views.xml",
-    ],
-    # only loaded in demonstration mode
-    "demo": [
-        "demo/demo.xml",
+        "views/custom_email_template.xml",
+        "views/mail_server.xml",
     ],
 }
