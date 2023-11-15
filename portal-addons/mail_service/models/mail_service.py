@@ -29,13 +29,20 @@ class MailServiceSendGrid(models.AbstractModel):
 
         # check api_key
         if api_key:
-
+            # btn links external place
             def btn_link():
                 if external_link and external_text:
-                    return f"""<div style="margin-top:1rem;width:100%;text-align:center">
-                                        <a style="font-weight:500;text-decoration:none;color:#fff;padding:1rem 0.5rem;background:#875a7b;border-radius:0.25rem;" href="{external_link}">{external_text}</a>
+                    return f"""<div style="margin-top:1rem;text-align:center">
+                                        <a style="display:inline-block;font-weight:500;text-decoration:none;color:#fff;padding:1rem 0.5rem;background-color:#875a7b;border-radius:0.25rem;" href={external_link}>{external_text}</a>
                                     </div>
                                    """
+                else:
+                    return ""
+
+            # get email_cc to log message
+            def email_cc_log_message():
+                if email_cc:
+                    return email_cc
                 else:
                     return ""
 
@@ -57,8 +64,8 @@ class MailServiceSendGrid(models.AbstractModel):
             if template_server:
                 # Create body_html content
                 body_html = f"""
-                        <div style="background:#f1f1f1;width:100%;padding: 2rem 0 0.5rem 0;">
-                            <div style="background:#fff;color:#333;max-width:621px;margin: 0 auto;padding: 2rem 2rem 1rem 2rem;box-shadow: 0 0 5px rgba(0,0,0,0.08);">
+                        <div style="background-color:#f1f1f1;width:100%;padding: 2rem 0 0.5rem 0;">
+                            <div style="background-color:#fff;color:#333;max-width:621px;margin: 0 auto;padding: 2rem 2rem 1rem 2rem;box-shadow: 0 0 5px rgba(0,0,0,0.08);">
                                 <header style="border-bottom:2px solid #ccc;display:flex;align-items:center;">
                                     <h1 style="width:calc(100% - 5rem);font-size:1.5rem;color:#555;font-weight:500;">{title}</h1>
                                    <div style="width:5rem;display:flex;align-items:center;">
@@ -66,9 +73,11 @@ class MailServiceSendGrid(models.AbstractModel):
                                     </div>
 
                                 </header>
-                                <main>
+                                <main style="margin-top:1rem;">
                                     {body}
+
                                     {btn_link()}
+                                    <a
                                 </main>
 
                                 <footer>
@@ -83,6 +92,10 @@ class MailServiceSendGrid(models.AbstractModel):
                         <p  style="color:#333;margin:0;padding-top:0.5rem;text-align:center">&copy; <a style="color:#875a7b;" href="funix.edu.vn">FUNiX</a> - Learn with mentors</p>
                         </div>
                         """
+                # write log mail message
+                object.message_post(
+                    body=f"""Email sent to {recipient_email} {email_cc_log_message()} with subject '{subject}' and content \n{body_html}"""
+                )
                 mail_ref = self.env.ref(ref_model)
                 template_server.write({"subject": subject})
                 template_server.write({"email_from": email_from})
@@ -97,7 +110,3 @@ class MailServiceSendGrid(models.AbstractModel):
 
             # send mail action
             template.send_mail(object.id, force_send=True)
-            # write log mail message
-            object.message_post(
-                body=f"Email sent to {recipient_email} with subject '{subject}' and content \n '{body}' "
-            )
