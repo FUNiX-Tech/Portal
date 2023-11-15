@@ -1,4 +1,5 @@
 from odoo import models, fields, api, exceptions
+import re
 
 
 # Service Key Config
@@ -65,3 +66,33 @@ class ServiceKeyConfiguration(models.Model):
             values["api_key"] = ""
 
         return super(ServiceKeyConfiguration, self).write(values)
+
+    # Name of key validation
+    @api.constrains("name")
+    def _check_name_length(self):
+        for record in self:
+            if record.name and len(record.name) < 6:
+                raise exceptions.ValidationError(
+                    "Name must be at least 6 characters long!"
+                )
+            if (
+                record.name
+                and self.search_count([("name", "=", record.name)]) > 1
+            ):
+                raise exceptions.ValidationError(
+                    "Already exists, name must be unique!"
+                )
+            if record.name and re.search(r"[^a-zA-Z0-9\s]", record.name):
+                raise exceptions.ValidationError(
+                    "Name cannot contain special characters, except space letters!"
+                )
+            if not record.name[0].isupper() or re.search(
+                r"\s([a-z])", record.name
+            ):
+                raise exceptions.ValidationError(
+                    "The first letter of a word, whether it is followed by a space or not, must be uppercase!"
+                )
+            if re.search(r"\s{2,}", record.name):
+                raise exceptions.ValidationError(
+                    "Only one space is allowed between words!"
+                )
