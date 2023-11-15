@@ -66,8 +66,8 @@ class MailServiceSendGrid(models.AbstractModel):
                 body_html = f"""
                         <div style="background-color:#f1f1f1;width:100%;padding: 2rem 0 0.5rem 0;">
                             <div style="background-color:#fff;color:#333;max-width:621px;margin: 0 auto;padding: 2rem 2rem 1rem 2rem;box-shadow: 0 0 5px rgba(0,0,0,0.08);">
-                                <header style="border-bottom:2px solid #ccc;display:flex;align-items:center;">
-                                    <h1 style="width:calc(100% - 5rem);font-size:1.5rem;color:#555;font-weight:500;">{title}</h1>
+                                <header style="border-bottom:2px solid #ccc;display:flex;align-items:center">
+                                    <h1 style="width:calc(100% - 5rem);font-size:1.5rem;color:#555;font-weight:500;margin:8px 0 0 0!important;">{title}</h1>
                                    <div style="width:5rem;display:flex;align-items:center;">
                                         <img alt="funix_mail_logo" style="display:block;width:100%;" src="https://static.ladipage.net/5b1605af9066d9507109d716/220131218_logo-funix-chuan-20220919050027-dszo_.png" />
                                     </div>
