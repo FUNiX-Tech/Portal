@@ -162,8 +162,6 @@ class Student(models.Model):
                     "name": student_dict["name"],
                     "email": student_dict["email"],
                     "username": student_dict["username"],
-                    "honor_code": True,
-                    "country": "VN",
                     "password": "Password1!",
                 }
             ]
@@ -223,8 +221,6 @@ class Student(models.Model):
                     "name": record.name,
                     "email": record.email,
                     "username": record.username,
-                    "honor_code": True,
-                    "country": "VN",
                     "password": "Password1!",
                 }
                 for record in imported_records
