@@ -11,6 +11,29 @@ class StudentOrganization(models.Model):
         string="Courses Enrolled",
     )
 
+    @api.model
+    def create(self, vals):
+        """
+        override create method, in case of create organization have list course and student at the same time,
+        Logic will be handle to make students and course link each other
+        """
+        org = super(StudentOrganization, self).create(vals)
+        course_ids = org.course_ids.ids
+        student_ids = org.student_ids.ids
+        if course_ids != [] and student_ids != []:
+            for course in org.course_ids:
+                course.write(
+                    {
+                        "student_ids": [
+                            (4, student_id) for student_id in student_ids
+                        ]
+                    }
+                )
+                course._compute_temp_organization_ids()
+            for student in org.student_ids:
+                student._compute_temp_organizations()
+        return org
+
     def write(self, vals):
         old_courses = self.course_ids.ids
         new_courses = (
@@ -27,8 +50,14 @@ class StudentOrganization(models.Model):
         result = super(StudentOrganization, self).write(vals)
         if old_courses != new_courses:
             self._onchange_course_ids(old_courses, new_courses)
+            for course in self.course_ids:
+                if course.id in new_courses:
+                    course._compute_temp_organization_ids()
         if old_students != new_students:
             self._onchange_student_ids(old_students, new_students)
+            for student in self.student_ids:
+                if student.id in new_students:
+                    student._compute_temp_organizations()
         return result
 
     def _onchange_course_ids(self, old_values, new_values):
