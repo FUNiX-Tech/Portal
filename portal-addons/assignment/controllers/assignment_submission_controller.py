@@ -78,7 +78,7 @@ class AssignmentSubmissionController(http.Controller):
                     {
                         "student_id": self.student.id,
                         "assignment_id": self.assignment.id,
-                        "submission_id": response_data.id,
+                        "submission_id": created_submission.id,
                         "status": "submitted",  # Đặt trạng thái là 'submitted'
                     }
                 )

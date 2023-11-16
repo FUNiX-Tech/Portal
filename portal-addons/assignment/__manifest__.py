@@ -16,6 +16,9 @@
         "email_server_config",
         "portal_student_management",
         "course_management",
+        "mail",
+        "mail_service",
+        "service_key",
     ],
     # always loaded
     "data": [
