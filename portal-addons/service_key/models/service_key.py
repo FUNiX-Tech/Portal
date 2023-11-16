@@ -90,7 +90,7 @@ class ServiceKeyConfiguration(models.Model):
                 r"\s([a-z])", record.name
             ):
                 raise exceptions.ValidationError(
-                    "The first letter of a word, whether it is followed by a space or not, must be uppercase!"
+                    "The first letter of a word must be uppercase!"
                 )
             if re.search(r"\s{2,}", record.name):
                 raise exceptions.ValidationError(
