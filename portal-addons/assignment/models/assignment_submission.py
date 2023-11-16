@@ -82,18 +82,75 @@ class AssignmentSubmission(models.Model):
         """
         for record in self:
             if record.has_graded_all_criteria:
+                # Xác định kết quả và gửi mail tương ứng
+                # Nếu có bất kỳ criteria nào là 'Unable to review' thì kết quả là 'Unable to review'
+                student_email = record.student.email
+                assignment_title = record.assignment.title
+                course_name = record.assignment.course.course_name
+                course_code = record.assignment.course.course_code
+                submission_url = record.submission_url
+
                 if any(
                     response.result == self.UNABLE_TO_REVIEW[0]
                     for response in record.criteria_responses
                 ):
                     record.result = self.UNABLE_TO_REVIEW[0]
+                    email_body = f"""<div>
+                    <h2>Hello {record.student.name}</h2>
+                    <h3>Notification of Learning Project Submission result</h3>
+                    <p>Assignment: {assignment_title}</p>
+                    <p>Course name: {course_name}</p>
+                    <p>Course code: {course_code}</p>
+                    <p>Result: Learning Project Submission is unable to review</p>
+                    <p>Submission Note: {record.submission_note}</p>
+                    <p>General Response: {record.general_response}</p>
+                    <p>Submission Url: {submission_url}</p>
+                    <strong>Thank you!</strong>
+                    </div>"""
+
                 elif any(
                     response.result == self.DID_NOT_PASS[0]
                     for response in record.criteria_responses
                 ):
                     record.result = self.DID_NOT_PASS[0]
+                    email_body = f"""<div>
+                    <h2>Hello {record.student.name}</h2>
+                    <h3>Notification of Learning Project Submission result</h3>
+                    <p>Assignment: {assignment_title}</p>
+                    <p>Course name: {course_name}</p>
+                    <p>Course code: {course_code}</p>
+                    <p>Result: Learning Project Submission did not pass</p>
+                    <p>Submission Note: {record.submission_note}</p>
+                    <p>General Response: {record.general_response}</p>
+                    <p>Submission Url: {submission_url}</p>
+                    <strong>Thank you!</strong>
+                    </div>"""
                 else:
                     record.result = self.PASSED[0]
+                    email_body = f"""<div>
+                    <h2>Hello {record.student.name}</h2>
+                    <h3>Notification of Learning Project Submission result</h3>
+                    <p>Assignment: {assignment_title}</p>
+                    <p>Course name: {course_name}</p>
+                    <p>Course code: {course_code}</p>
+                    <p>Result: Learning Project Submission passed</p>
+                    <p>Submission Note: {record.submission_note}</p>
+                    <p>General Response: {record.general_response}</p>
+                    <p>Submission Url: {submission_url}</p>
+                    <strong>Thank you!</strong>
+                    </div>"""
+
+                # send notification email to student
+                self.send_email(
+                    self,
+                    student_email,
+                    "Notification of Learning Project Submission result",
+                    "Notification of Learning Project Submission result",
+                    email_body,
+                    "Your description",
+                    submission_url,
+                    "Go to submission",
+                )
 
                 # create submission history --> graded status
                 record.env["submission_history"].sudo().create(
@@ -181,3 +238,32 @@ class AssignmentSubmission(models.Model):
                     f"[Assignment Submission]: Failed to send notification to LMS: {str(e)}"
                 )
                 return f"ERROR: Failed to send notification to LMS: {str(e)}"
+
+    # method sends email inherits from mail_service
+    def send_email(
+        self,
+        instance_model,
+        to_email,
+        title,
+        subject,
+        body,
+        description,
+        external_link,
+        external_text,
+        ref_model="assignment.model_assignment_submission",
+        email_from="no-reply@funix.edu.vn",
+    ):
+        self.env["mail_service"].send_email_with_sendgrid(
+            self.env["service_key_configuration"],
+            to_email,
+            "",
+            title,
+            subject,
+            body,
+            description,
+            external_link,
+            external_text,
+            ref_model,
+            instance_model,
+            email_from,
+        )

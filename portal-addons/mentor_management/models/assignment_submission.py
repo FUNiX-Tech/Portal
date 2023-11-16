@@ -120,41 +120,19 @@ class AssignmentSubmission(models.Model):
             else:
                 record.mentor_user_id = False
 
+    @api.depends("mentor_user_id")
     def _compute_can_submit(self):
         for record in self:
+            print("record.mentor_user_id", record.mentor_user_id)
+            print("self.env.user", self.env.user)
+
+            # kiểm tra xem user đang đăng nhập có trùng với mentor_user_id không
             if record.mentor_user_id == self.env.user:
                 record.can_submit = True
+                print("record.can_submit", record.can_submit)
             else:
                 record.can_submit = False
-
-    # method sends email inherits from mail_service
-    def send_email(
-        self,
-        instance_model,
-        to_email,
-        title,
-        subject,
-        body,
-        description,
-        external_link,
-        external_text,
-        ref_model="assignment.model_assignment_submission",
-        email_from="no-reply@funix.edu.vn",
-    ):
-        self.env["mail_service"].send_email_with_sendgrid(
-            self.env["service_key_configuration"],
-            to_email,
-            "",
-            title,
-            subject,
-            body,
-            description,
-            external_link,
-            external_text,
-            ref_model,
-            instance_model,
-            email_from,
-        )
+                print("record.can_submit", record.can_submit)
 
     def write(self, vals):
         # Gọi phương thức 'write' của lớp cơ sở trước để đảm bảo rằng mentor được cập nhật đúng cách.
@@ -197,7 +175,7 @@ class AssignmentSubmission(models.Model):
                 body,
                 "Your description",
                 submission_url,
-                "Go to Learning Project Submission",
+                "Go to Learning Project Submission",  # Button text
             )
 
             # Tạo một bản ghi mới trong SubmissionHistory với trạng thái 'grading'.
