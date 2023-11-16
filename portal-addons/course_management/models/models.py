@@ -2,6 +2,8 @@
 
 from odoo import models, fields, api
 from datetime import datetime
+from odoo.exceptions import UserError
+import requests
 
 
 # Model course
@@ -40,8 +42,58 @@ class course_management(models.Model):
             vals["created_at"] = datetime.now()
         course = super(course_management, self).create(vals)
         if len(course.student_ids.ids) != 0:
-            pass
-        return course
+            data_call_api = {
+                "identifiers": (",").join(course.student_ids.mapped("email")),
+                "course_code": course.course_code,
+                "action": "enroll",
+            }
+            try:
+                response = self.api_call(data_call_api)
+                if response.get("status_code") != 200:
+                    raise UserError(response.get("message"))
+                else:
+                    return course
+            except UserError as e:
+                raise UserError(f"{e}. Please contact administrator for help.")
+
+        else:
+            return course
+
+    def write(self, vals):
+        old_students = self.student_ids
+        success = super(course_management, self).write(vals)
+        new_students = self.student_ids
+        if old_students != new_students:
+            try:
+                added_students = list(set(new_students) - set(old_students))
+                remove_students = list(set(old_students) - set(new_students))
+                if len(added_students) != 0:
+                    data_call_api = {
+                        "identifiers": (",").join(
+                            map(lambda s: s.email, added_students)
+                        ),
+                        "course_code": self.course_code,
+                        "action": "enroll",
+                    }
+                    response = self.api_call(data_call_api)
+                    if response.get("status_code") != 200:
+                        raise UserError(response.get("message"))
+                if len(remove_students) != 0:
+                    data_call_api = {
+                        "identifiers": (",").join(
+                            map(lambda s: s.email, remove_students)
+                        ),
+                        "course_code": self.course_code,
+                        "action": "unenroll",
+                    }
+                    response = self.api_call(data_call_api)
+                    if response.get("status_code") != 200:
+                        raise UserError(response.get("message"))
+                return success
+            except UserError as e:
+                raise UserError(f"{e}. Please contact administrator for help.")
+        else:
+            return success
 
     @api.depends("organization_ids")
     def _compute_temp_organization_ids(self):
@@ -78,3 +130,35 @@ class course_management(models.Model):
                     }
                 )
         self._compute_temp_organization_ids()
+
+    def api_call(self, values):
+        api_url = (
+            "https://test-xseries.funix.edu.vn/api/bulk_enroll/v1/bulk_enroll"
+        )
+        headers = {
+            "Content-Type": "application/json",
+        }
+        payload = {
+            "identifiers": values.get("identifiers"),
+            "courses": values.get("course_code"),
+            "auto_enroll": True,
+            "email_students": False,
+            "action": values.get("action"),
+        }
+        try:
+            response = requests.post(api_url, json=payload, headers=headers)
+            print(response)
+            # Check the status code of the response
+            if response.status_code == 200:
+                return {"message": "API call successful", "status_code": 200}
+            else:
+                return {
+                    "message": f"API call failed with status code {response.status_code}, {response.json()}",
+                    "status_code": response.status_code,
+                }
+
+        except requests.exceptions.RequestException as e:
+            return {
+                "message": f"Error during API call: {e}",
+                "status_code": response.status_code,
+            }
