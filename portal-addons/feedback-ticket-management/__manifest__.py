@@ -15,7 +15,12 @@
     "category": "Uncategorized",
     "version": "0.1",
     # any module necessary for this one to work correctly
-    "depends": ["base", "mail", "portal_student_management"],
+    "depends": [
+        "base",
+        "mail",
+        "portal_student_management",
+        "course_management",
+    ],
     # always loaded
     "data": [
         "security/security.xml",
