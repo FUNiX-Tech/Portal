@@ -15,7 +15,6 @@ logger = logging.getLogger(__name__)
 
 
 class AssignmentSubmission(models.Model):
-    # _inherit = ["assignment_submission", "mail.thread", "mail.activity.mixin"]
     _inherit = "assignment_submission"
     _rec_name = "submission_id"
 
@@ -128,7 +127,7 @@ class AssignmentSubmission(models.Model):
             else:
                 record.can_submit = False
 
-    # method sends email
+    # method sends email inherits from mail_service
     def send_email(
         self,
         instance_model,
@@ -169,12 +168,14 @@ class AssignmentSubmission(models.Model):
             mentor = self.env["mentor_management"].search(
                 [("id", "=", mentor_id)], limit=1
             )
+
             # lấy thông tin về AssignmentSubmission như submission_url, course, assignment title, student email
             submission_url = self.submission_url
             print("submission_url", self.submission_url)
             course = self.assignment.course
             assignment_title = self.assignment.title
             student_email = self.student_email
+
             # Tạo nội dung email
             body = f"""<div>
             <h2>Hello {mentor.full_name}</h2>
@@ -186,6 +187,7 @@ class AssignmentSubmission(models.Model):
             <p>I hope you happy with that</p>
             <strong>Thank you!</strong>
             <div>"""
+
             # Gửi email
             self.send_email(
                 self,
@@ -209,7 +211,7 @@ class AssignmentSubmission(models.Model):
             )
         # nếu không có 'mentor_id' trong các giá trị được cập nhật
         # Tạo một bản ghi mới trong SubmissionHistory với trạng thái 'submitted'
-        # --> khi reassign mentor sẽ trả về trạng thái 'submitted'
+        # --> khi reassign mentor về trống sẽ trả về trạng thái 'submitted'
         else:
             self.env["submission_history"].sudo().create(
                 {

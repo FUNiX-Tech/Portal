@@ -8,7 +8,7 @@
         <field name="inherit_id" ref="assignment.assignment_submission_view_form" />
         <field name="arch" type="xml">
 
-            <!-- Xử lý quyền cho nút submit -->
+            <!-- Xử lý quyền cho nút submit mentor được phân chấm bài mới có thể bấm nút -->
             <xpath expr="//header" position="inside">
                 <field name="can_submit" invisible="1" />
             </xpath>
@@ -28,8 +28,6 @@
             <field name="assignment" position="after">
                 <field name="latest_submission_status" />
             </field>
-
-
 
             <!-- Assign mentor ngay trong form Submission -->
             <field name="result" position="before">
