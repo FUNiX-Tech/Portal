@@ -50,14 +50,8 @@ class StudentOrganization(models.Model):
         result = super(StudentOrganization, self).write(vals)
         if old_courses != new_courses:
             self._onchange_course_ids(old_courses, new_courses)
-            for course in self.course_ids:
-                if course.id in new_courses:
-                    course._compute_temp_organization_ids()
         if old_students != new_students:
             self._onchange_student_ids(old_students, new_students)
-            for student in self.student_ids:
-                if student.id in new_students:
-                    student._compute_temp_organizations()
         return result
 
     def _onchange_course_ids(self, old_values, new_values):
@@ -77,6 +71,10 @@ class StudentOrganization(models.Model):
                         ]
                     }
                 )
+            self.update_computed_organization(
+                "course_management", added_courses
+            )
+
         if len(removed_courses) != 0:
             for student in self.student_ids:
                 student.write(
@@ -86,6 +84,9 @@ class StudentOrganization(models.Model):
                         ]
                     }
                 )
+            self.update_computed_organization(
+                "course_management", removed_courses
+            )
 
     def _onchange_student_ids(self, old_values, new_values):
         added_students = list(set(new_values) - set(old_values))
@@ -99,6 +100,8 @@ class StudentOrganization(models.Model):
                         ]
                     }
                 )
+            self.update_computed_organization("portal.student", added_students)
+
         if len(removed_students) != 0:
             for course in self.course_ids:
                 course.write(
@@ -108,3 +111,16 @@ class StudentOrganization(models.Model):
                         ]
                     }
                 )
+            self.update_computed_organization(
+                "portal.student", removed_students
+            )
+
+    def update_computed_organization(self, model, lists):
+        if model == "course_management":
+            courses = self.env["course_management"].browse(lists)
+            for course in courses:
+                course._compute_temp_organization_ids()
+        elif model == "portal.student":
+            students = self.env["portal.student"].browse(lists)
+            for student in students:
+                student._compute_temp_organizations()

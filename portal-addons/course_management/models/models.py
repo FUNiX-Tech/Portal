@@ -38,7 +38,10 @@ class course_management(models.Model):
     def create(self, vals):
         if "created_at" not in vals:
             vals["created_at"] = datetime.now()
-        return super(course_management, self).create(vals)
+        course = super(course_management, self).create(vals)
+        if len(course.student_ids.ids) != 0:
+            pass
+        return course
 
     @api.depends("organization_ids")
     def _compute_temp_organization_ids(self):
