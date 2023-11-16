@@ -24,6 +24,8 @@ def verify_access_token(func):
         if response.status_code > 300:
             return json_error("Something went wrong", status=500)
 
+        kwargs["user_info"] = response.json()
+
         # ==================== CALL CONTROLLER METHOD ====================
 
         result = func(*args, **kwargs)
