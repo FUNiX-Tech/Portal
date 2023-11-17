@@ -25,7 +25,11 @@ def check_url(url_field):
 
             regex = "^https?:\\/\\/(?:www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b(?:[-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*)$"
 
-            if not re.match(regex, url, re.IGNORECASE):
+            localhost_regex = "^http:\\/\\/localhost.*$"
+
+            if not re.match(regex, url, re.IGNORECASE) and not re.match(
+                localhost_regex, url, re.IGNORECASE
+            ):
                 return json_response(
                     400, _invalid_field_template(url_field, url)
                 )
