@@ -166,11 +166,15 @@ class Student(models.Model):
                 }
             ]
 
-            self.send_api_request(data_body, headers)
+            self.send_api_request(
+                data_body,
+                headers,
+                endpoint="api/funix_portal/user/create_user",
+            )
 
         return super(Student, self).create(student_dict)
 
-    def send_api_request(self, data, headers):
+    def send_api_request(self, data, headers, endpoint):
         """
         Function to send API request to LMS Staging
 
@@ -179,8 +183,11 @@ class Student(models.Model):
         2. data: Data to be sent
         3. headers: Headers to be sent
         """
+
+        base_url = self._extract_base_url()
+
         # Define the URL Register API in LMS Staging
-        url = "https://test-xseries.funix.edu.vn/api/funix_portal/user/create_user"
+        url = f"{base_url}{endpoint}"
 
         # Send the POST request
         try:
@@ -188,9 +195,12 @@ class Student(models.Model):
             response.raise_for_status()  # This will raise an error for HTTP error codes
 
             # Log the response
-            _logger.info(f"Data sent successfully: {response.status_code}")
+            _logger.info(f"Request sent successfully: {response.status_code}")
+
+            return response
         except requests.RequestException as e:
-            _logger.error(f"Failed to send data: {e}")
+            _logger.error(f"Failed to send request: {e}")
+            return response
 
     @api.model
     def load(self, fields, data):
@@ -227,6 +237,57 @@ class Student(models.Model):
             ]
 
             # Send the API request with all the data
-            self.send_api_request(data_body, headers)
+            self.send_api_request(
+                data_body,
+                headers,
+                endpoint="api/funix_portal/user/create_user",
+            )
 
         return result
+
+    def _extract_base_url(self):
+        service_key_config = self.env["service_key_configuration"]
+
+        base_url = service_key_config.get_api_key_by_service_name("LMS_BASE")
+
+        return base_url
+
+    def reset_password(self):
+        """
+        Function to call API to reset password
+        """
+
+        headers = {
+            "Content-Type": "application/json",
+        }
+
+        data = {
+            "email": self.email,
+            "password": "Password1!",
+            "new_password": "Password1!",
+        }
+
+        response = self.send_api_request(
+            data, headers, endpoint="api/funix_portal/user/update_password"
+        )
+
+        if response.status_code >= 200 and response.status_code < 300:
+            return {
+                "type": "ir.actions.client",
+                "tag": "display_notification",
+                "params": {
+                    "title": "Success",
+                    "message": "Password reset successful",
+                    "sticky": False,
+                },
+            }
+        else:
+            return {
+                "type": "ir.actions.client",
+                "tag": "display_notification",
+                "params": {
+                    "title": "Error",
+                    "message": "Password reset failed",
+                    "sticky": False,
+                },
+            }
