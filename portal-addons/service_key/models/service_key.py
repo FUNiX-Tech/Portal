@@ -82,17 +82,11 @@ class ServiceKeyConfiguration(models.Model):
                 raise exceptions.ValidationError(
                     "Already exists, name must be unique!"
                 )
-            if record.name and re.search(r"[^a-zA-Z0-9\s]", record.name):
+            if record.name and re.search(r"[^A-Z0-9_]", record.name):
                 raise exceptions.ValidationError(
-                    "Name cannot contain special characters, except space letters!"
+                    "All letters in the name must be uppercase and it cannot contain special characters, except underscore (_)"
                 )
-            if not record.name[0].isupper() or re.search(
-                r"\s([a-z])", record.name
-            ):
+            if re.search(r"\_{2,}", record.name):
                 raise exceptions.ValidationError(
-                    "The first letter of a word must be uppercase!"
-                )
-            if re.search(r"\s{2,}", record.name):
-                raise exceptions.ValidationError(
-                    "Only one space is allowed between words!"
+                    "Only one undrscore (_) is allowed between words!"
                 )
