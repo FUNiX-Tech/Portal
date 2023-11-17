@@ -34,6 +34,11 @@
     "external_dependencies": {
         "python": ["secrets", "pyjwt", "uuid"],
     },
+    "assets": {
+        "web.assets_backend": [
+            "portal_student_management/static/src/css/custom_styles.css",
+        ],
+    },
     # Khác:
     "auto_install": False,
     "installable": True,

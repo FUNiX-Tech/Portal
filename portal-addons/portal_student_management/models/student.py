@@ -230,3 +230,42 @@ class Student(models.Model):
             self.send_api_request(data_body, headers)
 
         return result
+
+    def reset_password(self):
+        """
+        Function to call API to reset password
+        """
+        url = "https://test-xseries.funix.edu.vn/api/funix_portal/user/update_password"
+
+        headers = {
+            "Content-Type": "application/json",
+        }
+
+        data = {
+            "email": self.email,
+            "password": "Password1!",
+            "new_password": "Password1!",
+        }
+
+        response = requests.post(url, json=data, headers=headers)
+
+        if response.status_code >= 200 and response.status_code < 300:
+            return {
+                "type": "ir.actions.client",
+                "tag": "display_notification",
+                "params": {
+                    "title": "Success",
+                    "message": "Password reset successful",
+                    "sticky": False,
+                },
+            }
+        else:
+            return {
+                "type": "ir.actions.client",
+                "tag": "display_notification",
+                "params": {
+                    "title": "Error",
+                    "message": "Password reset failed",
+                    "sticky": False,
+                },
+            }
