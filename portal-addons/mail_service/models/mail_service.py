@@ -24,7 +24,7 @@ class MailServiceSendGrid(models.AbstractModel):
     ):
         # get api key
         api_key = service_key_config.get_api_key_by_service_name(
-            "Mail Service"
+            "MAIL_SERVICE"
         )
 
         # check api_key
