@@ -28,9 +28,7 @@
     ],
     # Các dependencies :
     # 1. base : module cơ bản của odoo
-    "depends": [
-        "base",
-    ],
+    "depends": ["base", "service_key"],
     "external_dependencies": {
         "python": ["secrets", "pyjwt", "uuid"],
     },
