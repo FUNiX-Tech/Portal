@@ -7,15 +7,25 @@ def verify_access_token(func):
     def wrapper(*args, **kwargs):
         # ==================== VERIFY API KEY ====================
         # 1. Extract access token from cookie
+
+        # Access Odoo environment
+        env = http.request.env
+
+        # Access the service_key_configuration model
+        service_key_config = env["service_key_configuration"].sudo()
+
         access_token = http.request.httprequest.cookies.get("accessToken")
 
-        print("accessToken", access_token)
         # 2. Check access token exists
         if not access_token:
             return json_error("Access token not found", status=400)
 
         # 3. Construct API request
-        url = "https://test-xseries.funix.edu.vn/api/user/v1/user-info"
+        # Retrieve the base URL
+        base_url = service_key_config.get_api_key_by_service_name("LMS_BASE")
+        endpoint = "api/user/v1/user-info"
+
+        url = f"{base_url}{endpoint}"
 
         # 4. Send API request
         data = {"token": access_token}
