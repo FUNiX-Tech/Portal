@@ -15,7 +15,14 @@
     "category": "Uncategorized",
     "version": "0.1",
     # any module necessary for this one to work correctly
-    "depends": ["base", "assignment", "course_management"],
+    "depends": [
+        "base",
+        "assignment",
+        "course_management",
+        "mail",
+        "mail_service",
+        "service_key",
+    ],
     # always loaded
     "data": [
         "security/mentor_security.xml",

@@ -26,9 +26,7 @@
                             <field name="general_response" string="General Response" class="border bg-light" />
                         </group>
 
-
                         <!-- để nguyên -->
-                        <!-- <label for="criteria_responses" string="Criterion Response" class="mt-2" >Criterion Grading</label> -->
                         <h3 class="mt-2 mb-2">Criterion Grading</h3>
                         <field attrs="{'readonly':[('result','!=','not_graded')]}" name="criteria_responses" string="Criterion Grading" class="border bg-light">
                             <tree string="Criterion Response" create="false" delete="false">
@@ -42,11 +40,11 @@
                     </group>
                 </sheet>
 
-                    <!-- trace log -->
+                <!-- trace log -->
                 <div class="oe_chatter">
-                    <field name="message_follower_ids"/>
                     <field name="activity_ids"/>
-                    <field name="message_ids"/>
+                    <field name="message_follower_ids" groups="base.group_user"/>
+                    <field name="message_ids" widget="mail_thread"/>
                 </div>
             </form>
         </field>
@@ -56,7 +54,7 @@
         <field name="name">assignment_submission.tree</field>
         <field name="model">assignment_submission</field>
         <field name="arch" type="xml">
-            <tree limit="20" string="Assignment Submission Group" edit="false" class="text-center">
+            <tree limit="100" string="Assignment Submission Group" edit="false" class="text-center">
                 <field name="course" />
                 <field name="assignment" />
                 <field name="student" />

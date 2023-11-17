@@ -57,6 +57,7 @@ class AssignmentSubmission(models.Model):
         compute="_compute_submission_status",
     )
 
+    # Tạo 1 computed field để check xem user hiện tại có phải là mentor của submission này không
     mentor_user_id = fields.Many2one(
         "res.users", compute="_compute_mentor_user_id", store=True
     )
@@ -75,23 +76,6 @@ class AssignmentSubmission(models.Model):
         result = super(AssignmentSubmission, self).create(vals)
         return result
 
-    def write(self, vals):
-        # Gọi phương thức 'write' của lớp cơ sở trước để đảm bảo rằng mentor được cập nhật đúng cách.
-        result = super(AssignmentSubmission, self).write(vals)
-
-        # Kiểm tra xem 'mentor_id' có trong các giá trị được cập nhật không.
-        if "mentor_id" in vals and vals["mentor_id"]:
-            # Tạo một bản ghi mới trong SubmissionHistory với trạng thái 'grading'.
-            self.env["submission_history"].sudo().create(
-                {
-                    "student_id": self.student.id,
-                    "assignment_id": self.assignment.id,
-                    "submission_id": self.id,  # Hoặc 'submission_id' nếu đó là trường liên kết bạn muốn sử dụng
-                    "status": "grading",
-                }
-            )
-        return result
-
     # Tạo 1 computed field để hiển thị email của student
     @api.depends("student")
     def _compute_student_email(self):
@@ -105,7 +89,6 @@ class AssignmentSubmission(models.Model):
             record.submission_date = record.create_date
 
     # Tạo 1 computed field để hiển thị status của submission liên kết với submission_history
-    # @api.depends("submission_history")
     def _compute_submission_status(self):
         # tìm status của submission liên kết với submission_history
         # status có created_at mới nhất
@@ -137,9 +120,83 @@ class AssignmentSubmission(models.Model):
             else:
                 record.mentor_user_id = False
 
+    @api.depends("mentor_user_id")
     def _compute_can_submit(self):
         for record in self:
+            print("record.mentor_user_id", record.mentor_user_id)
+            print("self.env.user", self.env.user)
+
+            # kiểm tra xem user đang đăng nhập có trùng với mentor_user_id không
             if record.mentor_user_id == self.env.user:
                 record.can_submit = True
+                print("record.can_submit", record.can_submit)
             else:
                 record.can_submit = False
+                print("record.can_submit", record.can_submit)
+
+    def write(self, vals):
+        # Gọi phương thức 'write' của lớp cơ sở trước để đảm bảo rằng mentor được cập nhật đúng cách.
+        result = super(AssignmentSubmission, self).write(vals)
+
+        # Kiểm tra xem 'mentor_id' có trong các giá trị được cập nhật không.
+        if "mentor_id" in vals and vals["mentor_id"]:
+            # Lấy mentor_id từ các giá trị được cập nhật
+            mentor_id = vals["mentor_id"]
+            # Tìm mentor có id giống với mentor_id
+            mentor = self.env["mentor_management"].search(
+                [("id", "=", mentor_id)], limit=1
+            )
+
+            # lấy thông tin về AssignmentSubmission như submission_url, course, assignment title, student email
+            submission_url = self.submission_url
+            print("submission_url", self.submission_url)
+            course = self.assignment.course
+            assignment_title = self.assignment.title
+            student_email = self.student_email
+
+            # Tạo nội dung email
+            body = f"""<div>
+            <h2>Hello {mentor.full_name}</h2>
+            <h3>You have an Learning Project Submission to grade</h3>
+            <p>Assignment: {assignment_title}</p>
+            <p>Course name: {course.course_name}</p>
+            <p>Couse code: {course.course_code}</p>
+            <p>Student email: {student_email}</p>
+            <p>I hope you happy with that</p>
+            <strong>Thank you!</strong>
+            <div>"""
+
+            # Gửi email
+            self.send_email(
+                self,
+                mentor.email,
+                "Assignment Submission Notification",
+                "Assignment Submission Notification",
+                body,
+                "Your description",
+                submission_url,
+                "Go to Learning Project Submission",  # Button text
+            )
+
+            # Tạo một bản ghi mới trong SubmissionHistory với trạng thái 'grading'.
+            self.env["submission_history"].sudo().create(
+                {
+                    "student_id": self.student.id,
+                    "assignment_id": self.assignment.id,
+                    "submission_id": self.id,
+                    "status": "grading",
+                }
+            )
+        # nếu không có 'mentor_id' trong các giá trị được cập nhật
+        # Tạo một bản ghi mới trong SubmissionHistory với trạng thái 'submitted'
+        # --> khi reassign mentor về trống sẽ trả về trạng thái 'submitted'
+        else:
+            self.env["submission_history"].sudo().create(
+                {
+                    "student_id": self.student.id,
+                    "assignment_id": self.assignment.id,
+                    "submission_id": self.id,
+                    "status": "submitted",
+                }
+            )
+        return result

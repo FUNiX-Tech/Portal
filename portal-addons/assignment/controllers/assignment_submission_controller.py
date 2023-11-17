@@ -82,6 +82,39 @@ class AssignmentSubmissionController(http.Controller):
                         "status": "submitted",  # Đặt trạng thái là 'submitted'
                     }
                 )
+
+                # send mail to student
+                # lấy thông tin AssignmentSubmission và student như:
+                # student email, assignment title, course name, course code, submission_url
+                student_email = self.student.email
+                assignment_title = self.assignment.title
+                course_name = self.assignment.course.course_name
+                course_code = self.assignment.course.course_code
+                submission_url = created_submission.submission_url
+
+                # Tạo nội dung email
+                body = f"""<div>
+                <h2>Hello {self.student.name}</h2>
+                <h3>You had submitted Learning Project Submission successfully </h3>
+                <p>Assignment: {assignment_title}</p>
+                <p>Course name: {course_name}</p>
+                <p>Couse code: {course_code}</p>
+                <p>I hope you happy with that</p>
+                <strong>Thank you!</strong>
+                <div>"""
+
+                # Gửi email
+                created_submission.send_email(
+                    created_submission,
+                    student_email,
+                    "Learning Project Submission Submitted Successfully",
+                    "Notification of Learning Project Submission Module",
+                    body,
+                    "Your description",
+                    submission_url,
+                    "Go to Learning Project Submission",
+                )
+
             except Exception as e:
                 logger.error(str(e))
             # end create submission history
@@ -95,15 +128,16 @@ class AssignmentSubmissionController(http.Controller):
                 logger.info("WRONG RELATIONAL FIELD!")
 
             # create submission history --> submission_failed status
-            request_data = json.loads(request.httprequest.data)
-
-            request.env["submission_history"].sudo().create(
-                {
-                    "student_id": request_data["student_id"],
-                    "assignment_id": request_data["assignment_id"],
-                    "status": "submission_failed",  # Đặt trạng thái là 'submission_failed'
-                }
-            )
+            try:
+                request.env["submission_history"].sudo().create(
+                    {
+                        "student_id": self.student.id,
+                        "assignment_id": self.assignment.id,
+                        "status": "submission_failed",  # Đặt trạng thái là 'submission_failed'
+                    }
+                )
+            except Exception as e:
+                logger.error(str(e))
             # end create submission history
 
             return json_response(500, "Internal Server Error")
