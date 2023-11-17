@@ -46,13 +46,15 @@ class StudentOrganization(models.Model):
             return org
 
     def write(self, vals):
-        old_courses = self.course_ids.ids
+        list_old_courses = self.course_ids
+        old_courses = self.course_ids.ids  # list ids of old courses
         new_courses = (
             vals.get("course_ids")[0][2]
             if "course_ids" in vals
             else self.course_ids.ids
         )
-        old_students = self.student_ids.ids
+        list_old_students = self.student_ids
+        old_students = self.student_ids.ids  # list ids of old students
         new_students = (
             vals.get("student_ids")[0][2]
             if "student_ids" in vals
@@ -60,12 +62,16 @@ class StudentOrganization(models.Model):
         )
         result = super(StudentOrganization, self).write(vals)
         if old_courses != new_courses:
-            self._onchange_course_ids(old_courses, new_courses)
+            self._onchange_course_ids(
+                old_courses, new_courses, list_old_students
+            )
         if old_students != new_students:
-            self._onchange_student_ids(old_students, new_students)
+            self._onchange_student_ids(
+                old_students, new_students, list_old_courses
+            )
         return result
 
-    def _onchange_course_ids(self, old_values, new_values):
+    def _onchange_course_ids(self, old_values, new_values, old_students):
         """
         A function that is called when the `course_ids` field of the current record is changed.
         param old_values: A list of the previous values of the `course_ids` field.
@@ -98,7 +104,7 @@ class StudentOrganization(models.Model):
             self.api_call(data_call_api)
 
         if len(removed_courses) != 0:
-            for student in self.student_ids:
+            for student in old_students:
                 student.write(
                     {
                         "course_ids": [
@@ -111,7 +117,7 @@ class StudentOrganization(models.Model):
             )
             print(removed_courses)
             data_call_api = {
-                "identifiers": (",").join(self.student_ids.mapped("email")),
+                "identifiers": (",").join(old_students.mapped("email")),
                 "course_code": (",").join(
                     self.env["course_management"]
                     .browse(removed_courses)
@@ -122,7 +128,7 @@ class StudentOrganization(models.Model):
             print(data_call_api)
             self.api_call(data_call_api)
 
-    def _onchange_student_ids(self, old_values, new_values):
+    def _onchange_student_ids(self, old_values, new_values, old_courses):
         added_students = list(set(new_values) - set(old_values))
         removed_students = list(set(old_values) - set(new_values))
         if len(added_students) != 0:
@@ -150,7 +156,7 @@ class StudentOrganization(models.Model):
             self.api_call(data_call_api)
 
         if len(removed_students) != 0:
-            for course in self.course_ids:
+            for course in old_courses:
                 course.write(
                     {
                         "student_ids": [
@@ -167,9 +173,7 @@ class StudentOrganization(models.Model):
                     .browse(removed_students)
                     .mapped("email")
                 ),
-                "course_code": (",").join(
-                    self.course_ids.mapped("course_code")
-                ),
+                "course_code": (",").join(old_courses.mapped("course_code")),
                 "action": "unenroll",
             }
             print(data_call_api)
