@@ -110,7 +110,7 @@ class AssignmentSubmissionController(http.Controller):
                     "Learning Project Submission Submitted Successfully",
                     "Notification of Learning Project Submission Module",
                     body,
-                    "Your description",
+                    "Project Submission Submitted Successfully",
                     submission_url,
                     "Go to Learning Project Submission",
                 )

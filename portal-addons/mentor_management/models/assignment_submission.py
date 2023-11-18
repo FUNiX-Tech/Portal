@@ -150,6 +150,7 @@ class AssignmentSubmission(models.Model):
             # lấy thông tin về AssignmentSubmission như submission_url, course, assignment title, student email
             submission_url = self.submission_url
             print("submission_url", self.submission_url)
+            print("vals[mentor_id]", vals["mentor_id"])
             course = self.assignment.course
             assignment_title = self.assignment.title
             student_email = self.student_email
@@ -173,7 +174,7 @@ class AssignmentSubmission(models.Model):
                 "Assignment Submission Notification",
                 "Assignment Submission Notification",
                 body,
-                "Your description",
+                "Your description assign mentor to grade",
                 submission_url,
                 "Go to Learning Project Submission",  # Button text
             )

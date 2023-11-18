@@ -104,7 +104,6 @@ class AssignmentSubmission(models.Model):
                     <p>Result: Learning Project Submission is unable to review</p>
                     <p>Submission Note: {record.submission_note}</p>
                     <p>General Response: {record.general_response}</p>
-                    <p>Submission Url: {submission_url}</p>
                     <strong>Thank you!</strong>
                     </div>"""
 
@@ -122,7 +121,6 @@ class AssignmentSubmission(models.Model):
                     <p>Result: Learning Project Submission did not pass</p>
                     <p>Submission Note: {record.submission_note}</p>
                     <p>General Response: {record.general_response}</p>
-                    <p>Submission Url: {submission_url}</p>
                     <strong>Thank you!</strong>
                     </div>"""
                 else:
@@ -136,7 +134,6 @@ class AssignmentSubmission(models.Model):
                     <p>Result: Learning Project Submission passed</p>
                     <p>Submission Note: {record.submission_note}</p>
                     <p>General Response: {record.general_response}</p>
-                    <p>Submission Url: {submission_url}</p>
                     <strong>Thank you!</strong>
                     </div>"""
 
@@ -147,7 +144,7 @@ class AssignmentSubmission(models.Model):
                     "Notification of Learning Project Submission result",
                     "Notification of Learning Project Submission result",
                     email_body,
-                    "Your description",
+                    "Result Notification of Learning Project Submission",
                     submission_url,
                     "Go to submission",
                 )
