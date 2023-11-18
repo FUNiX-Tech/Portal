@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Need to set the following variables to config file:
-- lms_submission_notification: the lms url to send submission result notification.
+- lms_grade_assignment_url: the lms url to push assignment grading result.
 - email_from: sender email (e.g. notification@example.com)
 """
 
@@ -161,7 +161,7 @@ class AssignmentSubmission(models.Model):
                 # end create submission history
 
                 email_error = self._send_notification_email_to_student()
-                lms_error = self._send_notification_request_to_lms()
+                lms_error = self._push_grade_result_to_lms()
 
                 error_message = ""
                 if email_error != "":
@@ -203,38 +203,34 @@ class AssignmentSubmission(models.Model):
                 )
                 return f"ERROR: Failed to send notification email to '{record.student.email}'"
 
-    def _send_notification_request_to_lms(self):
+    def _push_grade_result_to_lms(self):
         for record in self:
             headers = {"Content-Type": "application/json"}
             payload = {
-                "data": {
-                    "submission_id": record.id,
-                    "student_id": record.student.id,
-                    "result": record.result,
-                },
-                "message": "Submission has been graded",
+                "assignment_name": record.assignment.title,
+                "course_code": record.assignment.course.course_code,
+                "email": record.student.email,
+                "result": record.result,
             }
 
             try:
-                url = config.get("lms_submission_notification")
+                url = config.get("lms_grade_assignment_url")
                 response = requests.post(url, headers=headers, json=payload)
 
                 if response.status_code == 200:
-                    logger.info(
-                        "[Assignment Submission]: Sent notification to LMS"
-                    )
+                    logger.info("Pushed assignment grading result to LMS")
                     return ""
                 else:
                     logger.error(
-                        f"[Assignment Submission]: Failed to send notification to LMS: {response.text}"
-                    )
-                    return f"ERROR: Failed to send notification to LMS: {response.text}"
+                        f"Failed to push assignment grading result to LMS: {response.text}"
+                    )  # uuuuv TODO: response.text or message?
+                    return f"ERROR:Failed to push assignment grading result to LMS: {response.text}"
 
             except Exception as e:
                 logger.error(
-                    f"[Assignment Submission]: Failed to send notification to LMS: {str(e)}"
+                    f"Failed to push assignment grading result to LMS: {str(e)}"
                 )
-                return f"ERROR: Failed to send notification to LMS: {str(e)}"
+                return f"ERROR:Failed to push assignment grading result to LMS: {str(e)}"
 
     # method sends email inherits from mail_service
     def send_email(

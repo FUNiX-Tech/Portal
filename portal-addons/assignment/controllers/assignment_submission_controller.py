@@ -19,7 +19,7 @@ class AssignmentSubmissionController(http.Controller):
     )
     @request_validators.check_fields_presence(
         "submission_url",
-        "username",
+        "email",
         "assignment_name",
         "submission_note",
         "course_code",
@@ -61,8 +61,6 @@ class AssignmentSubmissionController(http.Controller):
                 except Exception as e:
                     logger.error(str(e))
                     # uuuv need to handle this exception
-
-            assignment = self.assignment
 
             response_data = {
                 "id": created_submission.id,
@@ -152,7 +150,7 @@ class AssignmentSubmissionController(http.Controller):
     )
     @assignment_validators.skip_authentication()
     @request_validators.check_fields_presence(
-        "course_code", "assignment_name", "username"
+        "course_code", "assignment_name", "email"
     )
     @assignment_validators.check_has_course()
     @assignment_validators.check_has_assignment()

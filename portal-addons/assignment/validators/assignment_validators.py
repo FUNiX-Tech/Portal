@@ -164,14 +164,17 @@ def check_student_has_enrolled_course():
                             ("id", "=", course_id),
                             ("student_ids", "in", [student_id]),
                         ]
-                    )
+                    )[0]
                 )
                 return origin_function(self, *args, **kwargs)
 
             except IndexError:
+                logger.info(
+                    f"Student {self.student.email} has not enrolled the course{self.assignment.course.course_code}"
+                )
                 return json_response(
                     400,
-                    f"Student with id {student_id} has not enrolled the course with id {course_id}",
+                    "You haven't enrolled this course.",
                 )
 
             except Exception as e:
@@ -229,22 +232,22 @@ def check_allowed_to_submit():
 def skip_authentication():
     def decorator(origin_function):
         def wrapper(self, *args, **kwargs):
-            payload_username = json.loads(request.httprequest.data)["username"]
+            request_data = json.loads(request.httprequest.data)
+            email = request_data.get("email")
 
             try:
                 student = (
                     request.env["portal.student"]
                     .sudo()
-                    .search([("email", "ilike", f"{payload_username}@")])[0]
+                    .search([("email", "=", email)])[0]
                 )
-
                 self.student = student
                 return origin_function(self, *args, **kwargs)
             except IndexError as e:
                 logger.info(str(e))
                 return json_response(
                     400,
-                    f"Not found student with username {payload_username}",
+                    f"Not found student with email {email}",
                 )
             except Exception as e:
                 logger.error(str(e))

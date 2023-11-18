@@ -7,7 +7,10 @@
                 <sheet>
                     <group>
                         <field name="name"/>
-                        <field name="api_key"/>
+
+                         <field name="api_key" />
+                         <field name="_original_api_key"  invisible="1"/>
+                        <field name="private"/>
                     </group>
                 </sheet>
             </form>
@@ -16,13 +19,13 @@
 
 
     <record id="action_service_key_configuration" model="ir.actions.act_window">
-        <field name="name">Service Key Configuration</field>
+        <field name="name">Setting Config</field>
         <field name="res_model">service_key_configuration</field>
         <field name="view_mode">tree,form</field>
     </record>
 
 
 
-    <menuitem id="menu_service_key_configuration" name="Service Key Configuration" groups="group_service_key_admin,group_service_key_user" />
-    <menuitem id="menu_service_key_configuration_list" name="Service Keys" parent="menu_service_key_configuration" action="action_service_key_configuration"  groups="group_service_key_admin,group_service_key_user" />
+    <menuitem id="menu_service_key_configuration" name="Setting Config" groups="group_service_key_admin,group_service_key_user" />
+    <menuitem id="menu_service_key_configuration_list" name="Setting Config" parent="menu_service_key_configuration" action="action_service_key_configuration"  groups="group_service_key_admin,group_service_key_user" />
 </odoo>
