@@ -31,28 +31,49 @@ class SubmissionHistory(models.Model):
     )
 
     def _get_submissions_for_reminder(self):
-        # time_to_remind = fields.Datetime.now() - datetime.timedelta(days=2)
-        time_to_remind = fields.Datetime.now() - datetime.timedelta(minutes=1)
-        submission_histories = self.search(
-            [("status", "=", "grading"), ("created_at", "<=", time_to_remind)]
+        time_to_remind = fields.Datetime.now() - datetime.timedelta(days=2)
+
+        # Lấy tất cả các bản ghi
+        all_histories = self.search([])
+
+        # Lọc ra danh sách các submission_id duy nhất
+        unique_submission_ids = set(
+            [history.submission_id.id for history in all_histories]
         )
-        return submission_histories
+        print("all_histories", all_histories)
+        print("unique_submission_ids", unique_submission_ids)
+
+        # Lọc ra những submissions cần nhắc nhở
+        submissions_for_reminder = []
+        for submission_id in unique_submission_ids:
+            # Lấy ra submission_history mới nhất cho mỗi submission_id
+            latest_history = self.search(
+                [("submission_id", "=", submission_id)],
+                order="created_at desc",
+                limit=1,
+            )
+            print("latest_history.created_at", latest_history.created_at)
+            if (
+                latest_history
+                and latest_history.status == "grading"
+                and latest_history.created_at <= time_to_remind
+            ):
+                submissions_for_reminder.append(latest_history)
+
+        print("submissions_for_reminder", submissions_for_reminder)
+
+        return submissions_for_reminder
 
     def send_reminder_emails(self):
-        submissions = self._get_submissions_for_reminder()
-        for submission in submissions:
-            # send mail to mentor, remind mentor to grade the assignment
-            # mentor email
-            # if "mentor_id" in submission:
-            #     to_email = submission.mentor_id.email
-            # title
-            title = "Reminder: Assignment Submission Grading"
+        list_submissions_for_reminder = self._get_submissions_for_reminder()
+        for submission in list_submissions_for_reminder:
+            title = "Reminder: Learning Project Submission Grading"
             # subject
-            subject = "Please Grade the Assignment Submission"
+            subject = "Please Grade the Learning Project Submission"
             # tạo nội dung mail
             body = f"""<div>
-            <h2>Hello mentor</h2>
-            <h3>You have an Learning Project Submission to grade</h3>
+            <h2>Hello {submission.submission_id.mentor_id.full_name},</h2>
+            <h3>You have an Learning Project Submission to evaluate</h3>
             <p>Assignment: {submission.assignment_id.title}</p>
             <p>Course name: {submission.assignment_id.course.course_name}</p>
             <p>Couse code: {submission.assignment_id.course.course_code}</p>
@@ -64,11 +85,11 @@ class SubmissionHistory(models.Model):
             # external_link
             external_link = submission.submission_id.submission_url
             # external_text
-            external_text = "View Submission"
+            external_text = "Go to Learning Project Submission"
             # gửi mail
             submission.submission_id.send_email(
                 instance_model=submission.submission_id,
-                to_email="hajime3419@gmail.com",
+                to_email=submission.submission_id.mentor_id.email,
                 title=title,
                 subject=subject,
                 body=body,
@@ -76,11 +97,3 @@ class SubmissionHistory(models.Model):
                 external_link=external_link,
                 external_text=external_text,
             )
-
-            # tại sao ở đoạn code trên lúc truyền vào instance_model=submission.id
-            # mà không phải là instance_model=submission
-            # vì khi gọi hàm send_email trong models.py
-            # hàm send_email đã được gọi trong một vòng lặp
-            # nên instance_model phải là một id
-            # nếu không sẽ bị lỗi
-            # TypeError: 'submission_history' model does not exist
