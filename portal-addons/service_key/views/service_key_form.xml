@@ -26,6 +26,6 @@
 
 
 
-    <menuitem id="menu_service_key_configuration" name="Setting Config" groups="group_service_key_admin,group_service_key_user" />
-    <menuitem id="menu_service_key_configuration_list" name="Setting Config" parent="menu_service_key_configuration" action="action_service_key_configuration"  groups="group_service_key_admin,group_service_key_user" />
+    <menuitem id="menu_service_key_configuration" name="Setting Config" groups="group_service_key_admin,group_service_key_user,group_service_key_super_user" />
+    <menuitem id="menu_service_key_configuration_list" name="Setting Config" parent="menu_service_key_configuration" action="action_service_key_configuration"  groups="group_service_key_admin,group_service_key_user,group_service_key_super_user" />
 </odoo>
