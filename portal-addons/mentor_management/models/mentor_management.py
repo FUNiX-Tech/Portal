@@ -19,7 +19,7 @@ class Mentor(models.Model):
         string="Courses active for mentor",
     )
     submission_ids = fields.One2many(
-        "assignment_submission", "mentor_id", string="Submissions"
+        "project_submission", "mentor_id", string="Submissions"
     )
     create_date = fields.Datetime(
         string="Create at", default=fields.Datetime.now, readonly=True

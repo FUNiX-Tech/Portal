@@ -8,9 +8,9 @@ class SubmissionHistory(models.Model):
     student_id = fields.Many2one(
         "portal.student", string="Student", required=True
     )
-    assignment_id = fields.Many2one("assignment", string="Assignment")
+    project_id = fields.Many2one(comodel_name="project", string="Project")
     submission_id = fields.Many2one(
-        "assignment_submission", string="Submission ID"
+        "project_submission", string="Submission ID"
     )
     created_at = fields.Datetime(
         string="Submission Time", default=fields.Datetime.now, required=True

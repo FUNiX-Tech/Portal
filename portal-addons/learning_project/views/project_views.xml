@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="project_view_form" model="ir.ui.view">
+        <field name="name">project.form</field>
+        <field name="model">project</field>
+        <field name="arch" type="xml">
+            <form string="Project">
+                <sheet>
+                    <group>
+                        <field name="title" string="Project Name" class="border bg-light"/>
+                        <field name="course" string="Course" class="border bg-light"/>
+                        <field name="number" string="Number" class="border bg-light"/>
+                        <field name="criteria" string="Criteria" class="border bg-light"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="project_view_tree" model="ir.ui.view">
+        <field name="name">project.tree</field>
+        <field name="model">project</field>
+        <field name="arch" type="xml">
+            <tree limit="20" string="Project" edit="false" class="text-center">
+                <field name="title"/>
+                <field name="course"/>
+                <field name="number"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="project_action" model="ir.actions.act_window">
+        <field name="name">Projects</field>
+        <field name="res_model">project</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_project_root" name="Project">
+        <menuitem id="menu_action_project" name="Project" action="project_action"/>
+        <menuitem id="menu_action_project_submission" name="Submission" action="project_submission_action"/>
+    </menuitem>
+</odoo>

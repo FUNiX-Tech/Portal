@@ -14,8 +14,8 @@ from odoo.tools import config
 logger = logging.getLogger(__name__)
 
 
-class AssignmentSubmission(models.Model):
-    _inherit = "assignment_submission"
+class ProjectSubmission(models.Model):
+    _inherit = "project_submission"
     _rec_name = "submission_id"
 
     mentor_id = fields.Many2one(
@@ -71,9 +71,9 @@ class AssignmentSubmission(models.Model):
     def create(self, vals):
         if vals.get("submission_id", _("New")) == _("New"):
             vals["submission_id"] = self.env["ir.sequence"].next_by_code(
-                "assignment.assignment_submission"
+                "learning_project.project_submission"
             ) or _("New")
-        result = super(AssignmentSubmission, self).create(vals)
+        result = super(ProjectSubmission, self).create(vals)
         return result
 
     # Tạo 1 computed field để hiển thị email của student
@@ -92,12 +92,12 @@ class AssignmentSubmission(models.Model):
     def _compute_submission_status(self):
         # tìm status của submission liên kết với submission_history
         # status có created_at mới nhất
-        # student_id, assignment_id, submission_id giống với submission hiện tại
+        # student_id, project_id, submission_id giống với submission hiện tại
         for record in self:
             submission_history = self.env["submission_history"].search(
                 [
                     ("student_id", "=", record.student.id),
-                    ("assignment_id", "=", record.assignment.id),
+                    ("project_id", "=", record.project.id),
                     ("submission_id", "=", record.id),
                 ],
                 order="created_at desc",
@@ -136,7 +136,7 @@ class AssignmentSubmission(models.Model):
 
     def write(self, vals):
         # Gọi phương thức 'write' của lớp cơ sở trước để đảm bảo rằng mentor được cập nhật đúng cách.
-        result = super(AssignmentSubmission, self).write(vals)
+        result = super(ProjectSubmission, self).write(vals)
 
         # Kiểm tra xem 'mentor_id' có trong các giá trị được cập nhật không.
         if "mentor_id" in vals and vals["mentor_id"]:
@@ -147,18 +147,18 @@ class AssignmentSubmission(models.Model):
                 [("id", "=", mentor_id)], limit=1
             )
 
-            # lấy thông tin về AssignmentSubmission như submission_url, course, assignment title, student email
+            # lấy thông tin về ProjectSubmission như submission_url, course, project title, student email
             submission_url = self.submission_url
             print("submission_url", self.submission_url)
-            course = self.assignment.course
-            assignment_title = self.assignment.title
+            course = self.project.course
+            project_title = self.project.title
             student_email = self.student_email
 
             # Tạo nội dung email
             body = f"""<div>
             <h2>Hello {mentor.full_name}</h2>
-            <h3>You have an Learning Project Submission to grade</h3>
-            <p>Assignment: {assignment_title}</p>
+            <h3>You have an Project Submission to grade</h3>
+            <p>Project: {project_title}</p>
             <p>Course name: {course.course_name}</p>
             <p>Couse code: {course.course_code}</p>
             <p>Student email: {student_email}</p>
@@ -170,19 +170,19 @@ class AssignmentSubmission(models.Model):
             self.send_email(
                 self,
                 mentor.email,
-                "Assignment Submission Notification",
-                "Assignment Submission Notification",
+                "Project Submission Notification",
+                "Project Submission Notification",
                 body,
                 "Your description",
                 submission_url,
-                "Go to Learning Project Submission",  # Button text
+                "Go to Project Submission",  # Button text
             )
 
             # Tạo một bản ghi mới trong SubmissionHistory với trạng thái 'grading'.
             self.env["submission_history"].sudo().create(
                 {
                     "student_id": self.student.id,
-                    "assignment_id": self.assignment.id,
+                    "project_id": self.project.id,
                     "submission_id": self.id,
                     "status": "grading",
                 }
@@ -194,7 +194,7 @@ class AssignmentSubmission(models.Model):
             self.env["submission_history"].sudo().create(
                 {
                     "student_id": self.student.id,
-                    "assignment_id": self.assignment.id,
+                    "project_id": self.project.id,
                     "submission_id": self.id,
                     "status": "submitted",
                 }

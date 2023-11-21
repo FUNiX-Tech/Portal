@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from . import (
-    assignment_submission,
+    project_submission,
     mentor_management,
-    assignment,
+    project,
     submission_history,
 )

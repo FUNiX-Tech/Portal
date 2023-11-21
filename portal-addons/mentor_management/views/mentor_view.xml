@@ -45,13 +45,13 @@
 
     <!-- Start block Menu những submission chưa chấm điểm -->
         <!-- View tree -->
-    <record id="assignment_submission_view_tree" model="ir.ui.view">
-        <field name="name">assignment_submission.tree</field>
-        <field name="model">assignment_submission</field>
+    <record id="project_submission_view_tree" model="ir.ui.view">
+        <field name="name">project_submission.tree</field>
+        <field name="model">project_submission</field>
         <field name="arch" type="xml">
-            <tree string="Assignment Submission Group" edit="false" class="text-center">
+            <tree string="Project Submission Group" edit="false" class="text-center">
                 <field name="course" />
-                <field name="assignment" />
+                <field name="project" />
                 <field name="student" />
                 <field name="submission_url" />
                 <field name="result"/>
@@ -62,9 +62,9 @@
         <!-- action window -->
     <record id="action_mentor_2" model="ir.actions.act_window">
         <field name="name">Waiting Submission</field>
-        <field name="res_model">assignment_submission</field>
+        <field name="res_model">project_submission</field>
         <field name="view_mode">tree,form</field>
-        <field name="view_id" ref="assignment_submission_view_tree"/>
+        <field name="view_id" ref="project_submission_view_tree"/>
         <field name="domain">[('result', '=', 'not_graded')]</field>
     </record>
     <!-- End Block Menu những submission chưa chấm điểm -->
@@ -77,7 +77,7 @@
         <field name="arch" type="xml">
             <tree string="Submission History Group" edit="false" class="text-center">
                 <field name="student_id" />
-                <field name="assignment_id" />
+                <field name="project_id" />
                 <field name="submission_id" />
                 <field name="created_at" />
                 <field name="status"/>
