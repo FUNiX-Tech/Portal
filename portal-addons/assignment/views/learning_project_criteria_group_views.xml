@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="learning_project_criteria_group_view_form" model="ir.ui.view">
+        <field name="name">learning_project_criteria_group.form</field>
+        <field name="model">learning_project_criteria_group</field>
+        <field name="arch" type="xml">
+            <form string="Learning Project Criteria Group">
+                <sheet>
+                    <group>
+                        <field name="title" string="Criteria Group Name" class="border bg-light"/>
+                        <field name="number" string="Group Number" class="border bg-light"/>
+                        <field name="project" string="Assignment" class="border bg-light" invisible="1" />
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="learning_project_criteria_group_view_tree" model="ir.ui.view">
+        <field name="name">learning_project_criteria_group.tree</field>
+        <field name="model">learning_project_criteria_group</field>
+        <field name="arch" type="xml">
+            <tree string="Learning Project Group" edit="false" class="text-center">
+                <field name="number" />
+                <field name="title" />
+                <field name="project" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="learning_project_criteria_group_action" model="ir.actions.act_window">
+        <field name="name">Learning Project Criteria Group</field>
+        <field name="res_model">learning_project_criteria_group</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>

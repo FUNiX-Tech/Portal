@@ -29,7 +29,8 @@
                         <!-- để nguyên -->
                         <h3 class="mt-2 mb-2">Criterion Grading</h3>
                         <field attrs="{'readonly':[('result','!=','not_graded')]}" name="criteria_responses" string="Criterion Grading" class="border bg-light">
-                            <tree string="Criterion Response" create="false" delete="false">
+                            <tree string="Criterion Response" create="false" delete="false" default_order="criteria_group">
+                                <field name="criteria_group"/>
                                 <field name="number"/>
                                 <field name="submission"/>
                                 <field name="criterion"/>

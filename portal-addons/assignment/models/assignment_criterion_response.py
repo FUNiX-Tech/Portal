@@ -41,6 +41,9 @@ class AssignmentCriterionResponse(models.Model):
             "Duplicated criteria in a submission.",
         )
     ]
+    criteria_group = fields.Many2one(
+        related="criterion.criteria_group", store=True
+    )  # store=True để có thể sort
 
     @api.constrains("submission", "criterion")
     def _check_the_same_assignment(self):

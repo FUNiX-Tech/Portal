@@ -27,5 +27,10 @@ class Assignment(models.Model):
     criteria = fields.One2many(
         "assignment_criterion", inverse_name="assignment", string="Criteria"
     )
+    criteria_groups = fields.One2many(
+        "learning_project_criteria_group",
+        inverse_name="project",
+        string="Criteria Groups",
+    )
 
     _sql_constraints = [UNIQUE_ASSIGNMENT_NAME, UNIQUE_ASSIGNMENT_ORDER]

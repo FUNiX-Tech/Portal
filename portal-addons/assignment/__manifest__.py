@@ -24,6 +24,7 @@
     "data": [
         "security/security.xml",
         "security/ir.model.access.csv",
+        "views/learning_project_criteria_group_views.xml",
         "views/assignment_criterion_response_views.xml",
         "views/assignment_criterion_views.xml",
         "views/assignment_submission_views.xml",
