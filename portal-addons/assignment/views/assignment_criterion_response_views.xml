@@ -4,22 +4,26 @@
         <field name="name">assignment_criterion_response.form</field>
         <field name="model">assignment_criterion_response</field>
         <field name="arch" type="xml">
-            <form string="Assignment Criterion Response">
-                <sheet>
-                   <group>
-                        <group>
-                            <field name="submission" string="Submission" class="border bg-light" editable="false"/>
-                            <field name="criterion" string="Criterion" class="border bg-light" editable="false"/>
-                            <field name="result" string="Result" class="border bg-light"/>
-                             <field name="submission_result"  string="Submission Result" invisible="1"/>
-                        </group>
-                        <notebook>
-                            <page string="Feedback">
-                                <field attrs="{'readonly':[('submission_result','!=','not_graded')]}" name="feed_back" widget="html" string="Feedback"/>
-                            </page>
-                        </notebook>
-                   </group>
-                </sheet>
+            <form string="Assignment Criterion Response" class="w-100">
+                <group>
+                    <field name="submission" string="Submission" class="border bg-light" editable="false"/>
+                    <field name="criterion" string="Criterion" class="border bg-light" editable="false"/>
+                    <field name="result" string="Result" class="border bg-light"/>
+                    <field name="submission_result" string="Submission Result" invisible="1"/>
+                    <field name="feedback_components" string="Feedback" class="row">
+                        <tree create="false" delete="false" editable="top">
+                            <field class="col-1" name="name" string="Name" readonly="1" attrs="{'invisible': [('is_show', '=', False)]}" />
+                            <field class="col-11" name="content" string="Content" attrs="{'invisible': [('is_show', '=', False)]}" />
+                            <field name="criterion_response_result" string="Result" invisible="1" />
+                            <field name="is_show" string="Is Show" invisible="1" />
+                        </tree>
+                    </field>
+                </group>
+                <notebook>
+                    <page string="Preview">
+                        <field name="feed_back" widget="html" string="Preview"/>
+                    </page>
+                </notebook>
             </form>
         </field>
     </record>

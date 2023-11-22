@@ -2,6 +2,7 @@
 
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
+from .response_component import ResponseComponent
 
 
 class AssignmentCriterionResponse(models.Model):
@@ -13,6 +14,7 @@ class AssignmentCriterionResponse(models.Model):
     PASSED = ("passed", "Passed")
     DID_NOT_PASS = ("did_not_pass", "Did Not Pass")
     UNABLE_TO_REVIEW = ("unable_to_review", "Unable to Review")
+    INCOMPLETE = ("incomplete", "Incomplete")
     DEFAULT_RESULT = NOT_GRADED[0]
 
     submission = fields.Many2one(
@@ -21,9 +23,15 @@ class AssignmentCriterionResponse(models.Model):
     criterion = fields.Many2one(
         "assignment_criterion", required=True, readonly=True
     )
-    feed_back = fields.Html(string="Feedback", default="")
+    feed_back = fields.Html(string="Feedback", compute="_compute_feedback")
+    feedback_components = fields.One2many(
+        "response_component",
+        inverse_name="criterion_response",
+        string="Feedback Components",
+    )
+
     result = fields.Selection(
-        [NOT_GRADED, PASSED, DID_NOT_PASS, UNABLE_TO_REVIEW],
+        [NOT_GRADED, PASSED, DID_NOT_PASS, INCOMPLETE],
         required=True,
         string="Result",
         default=DEFAULT_RESULT,
@@ -45,6 +53,16 @@ class AssignmentCriterionResponse(models.Model):
         related="criterion.criteria_group", store=True
     )  # store=True để có thể sort
 
+    @api.depends("feedback_components", "result")
+    def _compute_feedback(self):
+        for record in self:
+            html = ""
+            for component in record.feedback_components:
+                if component.is_show:
+                    html += component.content
+
+            record.feed_back = html
+
     @api.constrains("submission", "criterion")
     def _check_the_same_assignment(self):
         for record in self:
@@ -55,3 +73,19 @@ class AssignmentCriterionResponse(models.Model):
                 raise ValidationError(
                     "Criterion and submission must belong to an assignment"
                 )
+
+    @api.model
+    def create(self, vals):
+        types = ResponseComponent.TYPES
+
+        for type in types:
+            component = self.env["response_component"].create(
+                {
+                    "name": type[0],
+                    "is_optional": type[1],
+                    "number": type[2],
+                }
+            )
+            vals.setdefault("feedback_components", []).append(component.id)
+
+        return super(AssignmentCriterionResponse, self).create(vals)

@@ -9,6 +9,7 @@ import logging
 import requests
 from odoo import models, fields, api
 from odoo.tools import config
+from odoo.addons.website.tools import text_from_html
 
 logger = logging.getLogger(__name__)
 
@@ -24,6 +25,7 @@ class AssignmentSubmission(models.Model):
     PASSED = ("passed", "Passed")
     DID_NOT_PASS = ("did_not_pass", "Did Not Pass")
     UNABLE_TO_REVIEW = ("unable_to_review", "Unable to Review")
+    INCOMPLETE = ("incomplete", "Incomplete")
     DEFAULT_RESULT = NOT_GRADED[0]
 
     student = fields.Many2one(
@@ -51,6 +53,7 @@ class AssignmentSubmission(models.Model):
 
     submission_note = fields.Text("Submission Note", readonly=True, default="")
     general_response = fields.Html(string="General Response", default="")
+    annotation = fields.Html(string="Annotation", default="")
 
     has_graded_all_criteria = fields.Boolean(
         compute="_has_graded_all_criteria", store=True
@@ -80,8 +83,21 @@ class AssignmentSubmission(models.Model):
             - Send notification email to the student.
             - Send notification request to lms.
         """
+
         for record in self:
-            if record.has_graded_all_criteria:
+            if text_from_html(record.general_response).strip() == "":
+                return {
+                    "type": "ir.actions.client",
+                    "tag": "display_notification",
+                    "params": {
+                        "title": "Error",
+                        "message": "General response must not be empty!",
+                        "sticky": True,
+                    },
+                }
+
+            is_unable_to_review = self.env.context.get("unable_to_review")
+            if record.has_graded_all_criteria or is_unable_to_review:
                 # Xác định kết quả và gửi mail tương ứng
                 # Nếu có bất kỳ criteria nào là 'Unable to review' thì kết quả là 'Unable to review'
                 student_email = record.student.email
@@ -90,10 +106,7 @@ class AssignmentSubmission(models.Model):
                 course_code = record.assignment.course.course_code
                 submission_url = record.submission_url
 
-                if any(
-                    response.result == self.UNABLE_TO_REVIEW[0]
-                    for response in record.criteria_responses
-                ):
+                if is_unable_to_review:
                     record.result = self.UNABLE_TO_REVIEW[0]
                     email_body = f"""<div>
                     <h2>Hello {record.student.name}</h2>
@@ -109,7 +122,8 @@ class AssignmentSubmission(models.Model):
                     </div>"""
 
                 elif any(
-                    response.result == self.DID_NOT_PASS[0]
+                    response.result
+                    in [self.DID_NOT_PASS[0], self.INCOMPLETE[0]]
                     for response in record.criteria_responses
                 ):
                     record.result = self.DID_NOT_PASS[0]

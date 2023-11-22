@@ -29,7 +29,7 @@ class AssignmentSubmissionController(http.Controller):
     @assignment_validators.check_has_course()
     @assignment_validators.check_has_assignment()
     @assignment_validators.check_student_has_enrolled_course()
-    @assignment_validators.check_allowed_to_submit()
+    # @assignment_validators.check_allowed_to_submit() # uuuuv
     def submit_submission(self):
         try:
             # raise Exception("Test Exception")
