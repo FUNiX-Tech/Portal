@@ -64,7 +64,6 @@ class ServiceKeyConfiguration(models.Model):
         ):
             values["_original_api_key"] = values["api_key"]
             values["api_key"] = ""
-
         return super(ServiceKeyConfiguration, self).write(values)
 
     # Name of key validation
@@ -90,3 +89,39 @@ class ServiceKeyConfiguration(models.Model):
                 raise exceptions.ValidationError(
                     "Only one undrscore (_) is allowed between words!"
                 )
+
+    def check_key_existing(self, key_name):
+        key = self.search([("name", "=", key_name)])
+        if key:
+            return True
+        else:
+            return False
+
+    @api.model
+    def set_default_key(self):
+        key_lists = [
+            {
+                "name": "LMS_BASE",
+                "api_key": "https://test-xseries.funix.edu.vn/",
+                "private": False,
+            },
+            {
+                "name": "LMS_API",
+                "api_key": "https://test-xseries.funix.edu.vn/api/asd",
+            },
+            {"name": "TICKET_REMINDER_TIME_IN_DAY", "api_key": 2},
+        ]
+        for key in key_lists:
+            if not self.check_key_existing(key["name"]):  # if key not existing
+                if key.get("private"):
+                    super(ServiceKeyConfiguration, self).create(
+                        {
+                            "name": key.get("name"),
+                            "private": True,
+                            "_original_api_key": key.get("api_key"),
+                        }
+                    )
+                else:
+                    super(ServiceKeyConfiguration, self).create(
+                        key | {"private": False}
+                    )

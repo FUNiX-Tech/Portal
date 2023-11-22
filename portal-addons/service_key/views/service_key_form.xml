@@ -7,7 +7,6 @@
                 <sheet>
                     <group>
                         <field name="name"/>
-
                          <field name="api_key" />
                          <field name="_original_api_key"  invisible="1"/>
                         <field name="private"/>
