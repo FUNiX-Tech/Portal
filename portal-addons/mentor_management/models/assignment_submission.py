@@ -108,6 +108,7 @@ class AssignmentSubmission(models.Model):
             else:
                 record.latest_submission_status = ""
 
+    # Tạo 1 computed field để check xem user hiện tại có phải là mentor của submission này không
     @api.depends("mentor_id")
     def _compute_mentor_user_id(self):
         for record in self:
@@ -120,6 +121,7 @@ class AssignmentSubmission(models.Model):
             else:
                 record.mentor_user_id = False
 
+    # Tạo 1 computed field để check xem user hiện tại có được phép chấm bài hay không
     @api.depends("mentor_user_id")
     def _compute_can_submit(self):
         for record in self:
@@ -149,7 +151,6 @@ class AssignmentSubmission(models.Model):
 
             # lấy thông tin về AssignmentSubmission như submission_url, course, assignment title, student email
             submission_url = self.submission_url
-            print("submission_url", self.submission_url)
             course = self.assignment.course
             assignment_title = self.assignment.title
             student_email = self.student_email
@@ -166,14 +167,14 @@ class AssignmentSubmission(models.Model):
             <strong>Thank you!</strong>
             <div>"""
 
-            # Gửi email
+            # Gửi email thông báo cho mentor cần chấm bài
             self.send_email(
                 self,
                 mentor.email,
-                "Assignment Submission Notification",
-                "Assignment Submission Notification",
+                "Notification: Learning Project Submission Awaiting Evaluation",
+                "Notification: Learning Project Submission Awaiting Evaluation",
                 body,
-                "Your description",
+                "Your description assign mentor to grade",
                 submission_url,
                 "Go to Learning Project Submission",  # Button text
             )
@@ -187,10 +188,9 @@ class AssignmentSubmission(models.Model):
                     "status": "grading",
                 }
             )
-        # nếu không có 'mentor_id' trong các giá trị được cập nhật
         # Tạo một bản ghi mới trong SubmissionHistory với trạng thái 'submitted'
         # --> khi reassign mentor về trống sẽ trả về trạng thái 'submitted'
-        else:
+        elif "mentor_id" in vals and not vals["mentor_id"]:
             self.env["submission_history"].sudo().create(
                 {
                     "student_id": self.student.id,

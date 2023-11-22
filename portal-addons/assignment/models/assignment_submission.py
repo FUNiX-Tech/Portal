@@ -56,8 +56,6 @@ class AssignmentSubmission(models.Model):
         compute="_has_graded_all_criteria", store=True
     )
     course = fields.Char(related="assignment.course.course_name")
-    # ẩn hiện log trace
-    # is_show_log_trace = fields.Boolean(string="Show Trace Log", default=False)
 
     @api.depends("criteria_responses.result", "general_response")
     def _has_graded_all_criteria(self):
@@ -96,15 +94,13 @@ class AssignmentSubmission(models.Model):
                 ):
                     record.result = self.UNABLE_TO_REVIEW[0]
                     email_body = f"""<div>
-                    <h2>Hello {record.student.name}</h2>
-                    <h3>Notification of Learning Project Submission result</h3>
+                    <h2>Hello {record.student.name},</h2>
                     <p>Assignment: {assignment_title}</p>
                     <p>Course name: {course_name}</p>
                     <p>Course code: {course_code}</p>
-                    <p>Result: Learning Project Submission is unable to review</p>
+                    <p>Result: Unable to review</p>
                     <p>Submission Note: {record.submission_note}</p>
                     <p>General Response: {record.general_response}</p>
-                    <p>Submission Url: {submission_url}</p>
                     <strong>Thank you!</strong>
                     </div>"""
 
@@ -114,29 +110,25 @@ class AssignmentSubmission(models.Model):
                 ):
                     record.result = self.DID_NOT_PASS[0]
                     email_body = f"""<div>
-                    <h2>Hello {record.student.name}</h2>
-                    <h3>Notification of Learning Project Submission result</h3>
+                    <h2>Hello {record.student.name},</h2>
                     <p>Assignment: {assignment_title}</p>
                     <p>Course name: {course_name}</p>
                     <p>Course code: {course_code}</p>
-                    <p>Result: Learning Project Submission did not pass</p>
+                    <p>Result: Did not pass</p>
                     <p>Submission Note: {record.submission_note}</p>
                     <p>General Response: {record.general_response}</p>
-                    <p>Submission Url: {submission_url}</p>
                     <strong>Thank you!</strong>
                     </div>"""
                 else:
                     record.result = self.PASSED[0]
                     email_body = f"""<div>
-                    <h2>Hello {record.student.name}</h2>
-                    <h3>Notification of Learning Project Submission result</h3>
+                    <h2>Hello {record.student.name},</h2>
                     <p>Assignment: {assignment_title}</p>
                     <p>Course name: {course_name}</p>
                     <p>Course code: {course_code}</p>
-                    <p>Result: Learning Project Submission passed</p>
+                    <p>Result: Passed</p>
                     <p>Submission Note: {record.submission_note}</p>
                     <p>General Response: {record.general_response}</p>
-                    <p>Submission Url: {submission_url}</p>
                     <strong>Thank you!</strong>
                     </div>"""
 
@@ -144,12 +136,12 @@ class AssignmentSubmission(models.Model):
                 self.send_email(
                     self,
                     student_email,
-                    "Notification of Learning Project Submission result",
-                    "Notification of Learning Project Submission result",
+                    "Notification: Learning Project Submission Results Available",
+                    "Notification: Learning Project Submission Results Available",
                     email_body,
-                    "Your description",
+                    "Notification: Learning Project Submission Results Available",
                     submission_url,
-                    "Go to submission",
+                    "Go to Learning Project Submission",
                 )
 
                 # create submission history --> graded status
@@ -163,12 +155,12 @@ class AssignmentSubmission(models.Model):
                 )
                 # end create submission history
 
-                email_error = self._send_notification_email_to_student()
+                # email_error = self._send_notification_email_to_student()
                 lms_error = self._push_grade_result_to_lms()
 
                 error_message = ""
-                if email_error != "":
-                    error_message += email_error
+                # if email_error != "":
+                #     error_message += email_error
 
                 if lms_error != "":
                     error_message += lms_error
@@ -186,25 +178,25 @@ class AssignmentSubmission(models.Model):
 
             return True
 
-    def _send_notification_email_to_student(self):
-        for record in self:
-            try:
-                mail_template = self.env.ref(
-                    "assignment.submission_result_notification_email_template"
-                )
-                mail_template.send_mail(
-                    self.id, force_send=True, raise_exception=True
-                )
-                logger.info(
-                    f"[Assignment Submission]: Sent notification email to '{record.student.email}'"
-                )
-                return ""
-            except Exception as e:
-                logger.error(str(e))
-                logger.error(
-                    f"[Assignment Submission]: Failed to send notification email to '{record.student.email}'"
-                )
-                return f"ERROR: Failed to send notification email to '{record.student.email}'"
+    # def _send_notification_email_to_student(self):
+    #     for record in self:
+    #         try:
+    #             mail_template = self.env.ref(
+    #                 "assignment.submission_result_notification_email_template"
+    #             )
+    #             mail_template.send_mail(
+    #                 self.id, force_send=True, raise_exception=True
+    #             )
+    #             logger.info(
+    #                 f"[Assignment Submission]: Sent notification email to '{record.student.email}'"
+    #             )
+    #             return ""
+    #         except Exception as e:
+    #             logger.error(str(e))
+    #             logger.error(
+    #                 f"[Assignment Submission]: Failed to send notification email to '{record.student.email}'"
+    #             )
+    #             return f"ERROR: Failed to send notification email to '{record.student.email}'"
 
     def _push_grade_result_to_lms(self):
         for record in self:

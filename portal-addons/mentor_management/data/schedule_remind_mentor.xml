@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data noupdate="0">
+      <record id="ir_cron_schedule_remind_assignee_action" model="ir.cron">
+        <field name="name">Scheduling remind Mentor grading</field>
+        <field name="model_id" ref="model_submission_history"/>
+        <field name="state">code</field>
+        <field name="code">model.send_reminder_emails()</field>
+        <field name="active" eval="True" />
+        <field name="user_id" ref="base.user_root"/>
+        <field name="nextcall" eval="(DateTime.now() - timedelta(hours=0)).replace(hour=11, minute=00, second=0).strftime('%Y-%m-%d %H:%M:%S')" />
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+      </record>
+  </data>
+</odoo>

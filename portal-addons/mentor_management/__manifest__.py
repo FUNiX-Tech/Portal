@@ -31,6 +31,7 @@
         "views/assignment_submission_views.xml",
         "views/assignment_views.xml",
         "data/mentor_management_extension_sequence.xml",
+        "data/schedule_remind_mentor.xml",
     ],
     # only loaded in demonstration mode
     "demo": [
