@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="project_criterion_response_view_form" model="ir.ui.view">
+        <field name="name">project_criterion_response.form</field>
+        <field name="model">project_criterion_response</field>
+        <field name="arch" type="xml">
+            <form string="Project Criterion Response">
+                <sheet>
+                   <group>
+                        <group>
+                            <field name="submission" string="Submission" editable="false"/>
+                            <field name="criterion" string="Criterion"  editable="false"/>
+                            <field name="result" string="Result" />
+                             <field name="submission_result"  string="Submission Result" invisible="1"/>
+                        </group>
+                        <notebook>
+                            <page string="Feedback">
+                                <field attrs="{'readonly':[('submission_result','!=','not_graded')]}" name="feed_back" widget="html" string="Feedback"/>
+                            </page>
+                        </notebook>
+                   </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="project_criterion_response_action" model="ir.actions.act_window">
+        <field name="name">Project Criterion Response</field>
+        <field name="res_model">project_criterion_response</field>
+        <field name="view_mode">form</field>
+    </record>
+</odoo>

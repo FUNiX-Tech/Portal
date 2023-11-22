@@ -1,0 +1,16 @@
+<odoo>
+
+    <!-- Thêm trường project_id vào tree -->
+    <record id="project_view_tree" model="ir.ui.view">
+        <field name="name">project.tree</field>
+        <field name="model">project</field>
+        <field name="inherit_id" ref="learning_project.project_view_tree" />
+
+        <field name="arch" type="xml">
+            <field name="title" position="before">
+                <field name="project_id"/>
+            </field>
+        </field>
+    </record>
+
+</odoo>

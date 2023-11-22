@@ -2,10 +2,10 @@
 <odoo>
 
     <!-- Thêm trường mentor_id vào form -->
-    <record id="assignment_submission_view_form" model="ir.ui.view">
-        <field name="name">assignment_submission.form</field>
-        <field name="model">assignment_submission</field>
-        <field name="inherit_id" ref="assignment.assignment_submission_view_form" />
+    <record id="project_submission_view_form" model="ir.ui.view">
+        <field name="name">project_submission.form</field>
+        <field name="model">project_submission</field>
+        <field name="inherit_id" ref="learning_project.project_submission_view_form" />
         <field name="arch" type="xml">
 
             <!-- Xử lý quyền cho nút submit mentor được phân chấm bài mới có thể bấm nút -->
@@ -28,9 +28,9 @@
             </xpath> -->
 
             <!-- Thêm latest_submission_status vào sau assignmet -->
-            <field name="assignment" position="after">
-                <field name="latest_submission_status" />
-            </field>
+            <xpath expr="//header" position="inside">
+                <field name="latest_submission_status" widget="statusbar"/>
+            </xpath>
 
             <!-- Assign mentor ngay trong form Submission -->
             <field name="result" position="before">
@@ -42,10 +42,10 @@
     </record>
 
     <!-- Thêm các trường vào tree views -->
-    <record id="assignment_submission_view_tree" model="ir.ui.view">
-        <field name="name">assignment_submission.tree</field>
-        <field name="model">assignment_submission</field>
-        <field name="inherit_id" ref="assignment.assignment_submission_view_tree" />
+    <record id="project_submission_view_tree" model="ir.ui.view">
+        <field name="name">project_submission.tree</field>
+        <field name="model">project_submission</field>
+        <field name="inherit_id" ref="learning_project.project_submission_view_tree" />
         <field name="arch" type="xml">
 
             <!-- Thêm submission_id -->
@@ -56,13 +56,22 @@
             <!-- Thêm email student -->
             <field name="student" position="after">
                 <field name="student_email"/>
+                <field name="latest_submission_status" widget="badge"
+                                        decoration-success="latest_submission_status == 'graded'"
+                                        decoration-info="latest_submission_status == 'submitted'"
+                                        decoration-danger="latest_submission_status == 'submission_failed' or latest_submission_status == 'submission_cancelled'"
+                                        decoration-warning="latest_submission_status == 'grading'" />
             </field>
 
             <!-- thêm Status và Create time của Submission -->
             <field name="result" position="before">
-                <field name="submission_date"/>
-                <field name="latest_submission_status"/>
+                <field name="submission_date" />
+
             </field>
+
+
+
+
 
             <!-- Thêm email mentor chấm bài -->
             <field name="result" position="before">

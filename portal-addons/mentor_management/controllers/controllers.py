@@ -25,17 +25,16 @@ from odoo.http import request
 
 
 class MentorManagementAPI(http.Controller):
-
     # Lấy thông tin của một submission
     @http.route(
-        "/api/assignment/submission/<int:submission_id>",
+        "/api/project/submission/<int:submission_id>",
         type="http",
         auth="none",
         methods=["GET"],
     )
     def get_submission_status(self, submission_id):
         submission = (
-            request.env["assignment_submission"]
+            request.env["project_submission"]
             .sudo()
             .search([("id", "=", submission_id)], limit=1)
         )
@@ -50,7 +49,7 @@ class MentorManagementAPI(http.Controller):
             data={
                 "submission_id": submission.id,
                 "student": submission.student.name,
-                "assignment": submission.assignment.title,
+                "project": submission.project.title,
                 "submission_url": submission.submission_url,
                 "result": "submission.result",
                 "has_graded_all_criteria": submission.has_graded_all_criteria,
@@ -60,7 +59,7 @@ class MentorManagementAPI(http.Controller):
         )
 
     # Lấy danh sách các submissions theo course id
-    @http.route("/api/assignment", type="http", auth="none", methods=["GET"])
+    @http.route("/api/project", type="http", auth="none", methods=["GET"])
     def get_submissions(self, **kw):
         # Lấy giá trị từ query string. Ví dụ: /api/submissions/?course_id=1
         course_id = kw.get("course_id")
@@ -86,13 +85,13 @@ class MentorManagementAPI(http.Controller):
 
         # Thực hiện tìm kiếm các submissions cho khóa học đó
         submissions = (
-            request.env["assignment_submission"]
+            request.env["project_submission"]
             .sudo()
             .search_read(
-                [("assignment.course", "=", course_id)],
+                [("project.course", "=", course_id)],
                 fields=[
                     "student",
-                    "assignment",
+                    "project",
                     "submission_url",
                     "result",
                     "course",
