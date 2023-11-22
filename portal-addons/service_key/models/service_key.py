@@ -70,10 +70,6 @@ class ServiceKeyConfiguration(models.Model):
     @api.constrains("name")
     def _check_name_length(self):
         for record in self:
-            if record.name and len(record.name) < 6:
-                raise exceptions.ValidationError(
-                    "Name must be at least 6 characters long!"
-                )
             if (
                 record.name
                 and self.search_count([("name", "=", record.name)]) > 1

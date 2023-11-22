@@ -1,5 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 
-
-access_setting_config_admin,setting_config_admin,model_service_key_configuration,group_service_key_admin,1,1,1,1
+access_setting_config_super_user,setting_config_super_user,model_service_key_configuration,group_service_key_super_user,1,1,1,1
+access_setting_config_admin,setting_config_admin,model_service_key_configuration,group_service_key_admin,1,0,0,0
 access_setting_config_user,setting_config_user,model_service_key_configuration,group_service_key_user,1,0,0,0
