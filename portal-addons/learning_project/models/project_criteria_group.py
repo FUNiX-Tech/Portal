@@ -35,15 +35,6 @@ class ProjectCriteriaGroup(models.Model):
 
     @api.model
     def create(self, vals):
-        print("######################################")
-        print("######################################")
-        print("######################################")
-        print(vals)
-        print(self.env.context.get("default_project"))
-        print("######################################")
-        print("######################################")
-        print("######################################")
-        print("######################################")
         largest_group = self.env["project_criteria_group"].search(
             [("project", "=", self.env.context.get("default_project"))],
             order="number DESC",
