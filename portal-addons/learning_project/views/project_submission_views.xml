@@ -11,6 +11,8 @@
 
                     <button name="submit_grade" attrs="{'invisible':[('result','!=','not_graded')]}" context="{'unable_to_review': True}" type="object" class="mx-2 btn-danger oe_highlight" string="Unable To Review" confirm="Are you sure? You can not re-grade this submission after clicking OK."/>
                     <button attrs="{'invisible':[('result','=','not_graded')]}" class="disabled mx-2 btn-danger oe_highlight" string="Unable To Review" />
+
+                    <button name="re_update_lms_grade" attrs="{'invisible':['|',('lms_grade_update_status','=','Updated'),('lms_grade_update_status','=','Idle')]}" class="mx-2 oe_highlight" string="Re-update LMS Grade" type="object" />
                 </header>
                 <sheet>
                     <h3 style="color:#66598f">Genaral Information</h3>
@@ -27,6 +29,10 @@
                             <field name="result" string="Result" widget="badge" write="false" decoration-success="result == 'passed'" decoration-danger="result == 'did_not_pass'" decoration-warning="result == 'unable_to_review'" />
                             <field name="submission_url" string="Submission URL" write="false" text="View File" widget="url" attrs="{'invisible':[('submission_url','==',False)]}"/>
                             <field name="submission_url" string="Submission URL" write="false" attrs="{'invisible':[('submission_url','!=',False)]}"/>
+
+                            <field name="lms_grade_update_status" string="LMS Status" class="text-danger" attrs="{'invisible': ['|',('lms_grade_update_status','=','Idle'),('lms_grade_update_status','=','Updated')],'readonly': True}" />
+                            <field name="lms_grade_update_status" string="LMS Status" class="text-success" attrs="{'invisible': ['|',('lms_grade_update_status','=','Idle'),('lms_grade_update_status','=like','Error%')],'readonly': True}" />
+                            <field name="lms_grade_update_status" string="LMS Status" attrs="{'invisible': ['|',('lms_grade_update_status','=','Updated'),('lms_grade_update_status','=like','Error%')],'readonly': True}" />
                         </group>
                     </group>
 
@@ -35,13 +41,6 @@
                     <hr />
                     <group>
                         <field name="general_response" string="General Response" attrs="{'readonly': [('result', '!=', 'not_graded')]}"/>
-                    </group>
-                    <separator />
-
-                    <h3 style="color:#66598f">Annotation</h3>
-                    <hr />
-                    <group>
-                        <field name="annotation" string="Annotation" attrs="{'readonly': [('result', '!=', 'not_graded')]}"/>
                     </group>
                     <separator />
 

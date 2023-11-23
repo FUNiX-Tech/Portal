@@ -51,11 +51,13 @@ class ProjectSubmission(models.Model):
 
     submission_note = fields.Text("Submission Note", readonly=True, default="")
     general_response = fields.Html(string="General Response", default="")
-    annotation = fields.Html(string="Annotation", default="")
     has_graded_all_criteria = fields.Boolean(
         compute="_has_graded_all_criteria", store=True
     )
     course = fields.Char(related="project.course.course_name")
+    lms_grade_update_status = fields.Char(
+        string="LMS Grade Update LMS", default="Idle"
+    )
     # ẩn hiện log trace
     # is_show_log_trace = fields.Boolean(string="Show Trace Log", default=False)
 
@@ -185,7 +187,6 @@ class ProjectSubmission(models.Model):
                 # end create submission history
 
                 error_message = self._push_grade_result_to_lms()
-
                 if error_message != "":
                     return {
                         "type": "ir.actions.client",
@@ -200,19 +201,20 @@ class ProjectSubmission(models.Model):
             return True
 
     def _push_grade_result_to_lms(self):
-        # Dành cho local dev
-        # nếu odoo config DEBUG == True và SKIP_PUSH_GRADE_TO_LMS == True thì bỏ qua bước này
-        should_skip = (
-            config.get("skip_push_grade_to_lms") is True
-            and config.get("debug_mode") is True
-        )
-        if should_skip:
-            logger.info(
-                "DEBUG MODE: skip PUSH GRADE TO LMS error because of debug_mode is True and skip_push_grade_to_lms is True"
-            )
-            return ""
-
         for record in self:
+            # Dành cho local dev
+            # nếu odoo config DEBUG == True và SKIP_PUSH_GRADE_TO_LMS == True thì bỏ qua bước này
+            should_skip = (
+                config.get("skip_push_grade_to_lms") is True
+                and config.get("debug_mode") is True
+            )
+            if should_skip:
+                record.lms_grade_update_status = "Updated"
+                logger.info(
+                    "DEBUG MODE: skip PUSH GRADE TO LMS error because of debug_mode is True and skip_push_grade_to_lms is True"
+                )
+                return ""
+
             headers = {"Content-Type": "application/json"}
             payload = {
                 "project_name": record.project.title,
@@ -226,9 +228,11 @@ class ProjectSubmission(models.Model):
                 response = requests.post(url, headers=headers, json=payload)
 
                 if response.status_code == 200:
+                    record.lms_grade_update_status = "Updated"
                     logger.info("Pushed project grading result to LMS")
                     return ""
                 else:
+                    record.lms_grade_update_status = f"Error: {response.text}"
                     logger.error(
                         f"Failed to push project grading result to LMS: {response.text}"
                     )
@@ -236,6 +240,7 @@ class ProjectSubmission(models.Model):
                     return f"ERROR:Failed to push project grading result to LMS: {response.text}"
 
             except Exception as e:
+                record.lms_grade_update_status = f"Error: {str(e)}"
                 logger.error(
                     f"Failed to push project grading result to LMS: {str(e)}"
                 )
@@ -269,3 +274,17 @@ class ProjectSubmission(models.Model):
             instance_model,
             email_from,
         )
+
+    def re_update_lms_grade(self):
+        error_message = self._push_grade_result_to_lms()
+
+        if error_message != "":
+            return {
+                "type": "ir.actions.client",
+                "tag": "display_notification",
+                "params": {
+                    "title": "Error",
+                    "message": error_message,
+                    "sticky": True,
+                },
+            }

@@ -8,12 +8,12 @@ class ResponseComponent(models.Model):
     _description = "response_component"
     _rec_name = "name"
 
-    # name, required, order
+    # name, is_optional_passed, is_optional_not_pass, order
     TYPES = [
-        ("Lead*", False, 1),
-        ("Errors*", False, 2),
-        ("Corrects*", False, 2),
-        ("Suggestions", True, 3),
+        ("Errors*", False, 1),
+        ("Corrects*", False, 1),
+        ("Annotations*", True, 2),
+        ("Suggestions*", True, 3),
         ("Internal Documents/Videos", True, 4),
         ("Additional Reading", True, 5),
     ]
@@ -46,7 +46,12 @@ class ResponseComponent(models.Model):
     def _compute_is_show(self):
         for record in self:
             if record.criterion_response_result == "passed":
-                if record.name in ["Errors*", "Internal Documents/Videos"]:
+                if record.name in [
+                    "Errors*",
+                    "Internal Documents/Videos",
+                    "Annotations*",
+                    "Suggestions*",
+                ]:
                     record.is_show = False
                 else:
                     record.is_show = True
