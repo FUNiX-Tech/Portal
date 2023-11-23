@@ -11,6 +11,9 @@ class ServiceKeyConfiguration(models.Model):
     api_key = fields.Char(string="Setting Value", default="")
     private = fields.Boolean(string="Private")
     _original_api_key = fields.Char(string="Original API Key")
+    check_group = fields.Boolean(
+        string="Check Group Super User", compute="_compute_check_group"
+    )  # If user not included in group super user, field name and private will be read-only
 
     # Method get api key by name of service
     def get_api_key_by_service_name(self, service_name):
@@ -101,11 +104,8 @@ class ServiceKeyConfiguration(models.Model):
                 "api_key": "https://test-xseries.funix.edu.vn/",
                 "private": False,
             },
-            {
-                "name": "LMS_API",
-                "api_key": "https://test-xseries.funix.edu.vn/api/asd",
-            },
-            {"name": "TICKET_REMINDER_TIME_IN_DAY", "api_key": 2},
+            {"name": "SLA_TICKET_REMINDER_TIME_IN_DAY", "api_key": 3},
+            {"name": "SLA_MENTOR_REMINDER_TIME_IN_DAY", "api_key": 3},
         ]
         for key in key_lists:
             if not self.check_key_existing(key["name"]):  # if key not existing
@@ -121,3 +121,9 @@ class ServiceKeyConfiguration(models.Model):
                     super(ServiceKeyConfiguration, self).create(
                         key | {"private": False}
                     )
+
+    @api.depends_context("uid")
+    def _compute_check_group(self):
+        self.check_group = self.env.user.has_group(
+            "service_key.group_service_key_super_user"
+        )

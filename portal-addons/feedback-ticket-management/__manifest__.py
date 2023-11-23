@@ -33,6 +33,6 @@
         "data/response_email_template.xml",
         "data/email_assignee_reminder_template.xml",
         "data/schedule_remind_assignee.xml",
-        "views/setting_remind_assignee_ticket_time.xml",
+        "views/setting_config_key.xml",
     ],
 }

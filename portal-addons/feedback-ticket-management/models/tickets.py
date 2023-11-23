@@ -123,11 +123,16 @@ class FeedbackTicket(models.Model):
 
     # Scheduled send email action as assignee reminder
     def assignee_reminder(self):
+        sla_reminder_day = int(
+            self.env["service_key_configuration"].get_api_key_by_service_name(
+                "SLA_TICKET_REMINDER_TIME_IN_DAY"
+            )
+        )
         for ticket in self.env["feedback_ticket"].search(
             [("ticket_status", "in", ["assigned", "in_progress"])]
         ):
             diff_days = (datetime.now() - ticket.created_at).days
-            if diff_days != 0 and diff_days % 3 == 0:
+            if diff_days != 0 and diff_days % sla_reminder_day == 0:
                 ticket.action_send_mail(ticket.id, "reminder")
 
     # Override create method

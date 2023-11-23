@@ -32,6 +32,7 @@
         "views/project_views.xml",
         "data/mentor_management_extension_sequence.xml",
         "data/schedule_remind_mentor.xml",
+        "views/setting_config_key.xml",
     ],
     # only loaded in demonstration mode
     "demo": [

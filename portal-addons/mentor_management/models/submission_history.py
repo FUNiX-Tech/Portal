@@ -31,7 +31,12 @@ class SubmissionHistory(models.Model):
     )
 
     def _get_submissions_for_reminder(self):
-        time_to_remind = fields.Datetime.now() - datetime.timedelta(days=2)
+        # get interval sla time reminder from config key module
+        sla_reminder_interval = int(
+            self.env["service_key_configuration"].get_api_key_by_service_name(
+                "SLA_MENTOR_REMINDER_TIME_IN_DAY"
+            )
+        )
 
         # Lấy tất cả các bản ghi
         all_histories = self.search([])
@@ -53,10 +58,13 @@ class SubmissionHistory(models.Model):
                 limit=1,
             )
             print("latest_history.created_at", latest_history.created_at)
+            diff_day = (fields.Datetime.now() - latest_history.created_at).days
+            print(diff_day)
             if (
                 latest_history
                 and latest_history.status == "grading"
-                and latest_history.created_at <= time_to_remind
+                and diff_day != 0
+                and diff_day % sla_reminder_interval == 0
             ):
                 submissions_for_reminder.append(latest_history)
 
