@@ -201,20 +201,46 @@ class ProjectSubmissionController(http.Controller):
                                 "title": response.criterion.title,
                                 "result": response.result,
                                 "feedback": response.feed_back,
+                                "number": response.number,
+                                "criteria_group": response.criteria_group.title,
+                                "group_number": response.criteria_group.number,
                             }
                         )
 
                 response_data["submission"] = {
                     "date": last_submission.create_date.timestamp(),
                     "general_response": general_response,
-                    "responses": responses,
+                    "responses": ProjectSubmissionController._serialize_criteria(
+                        responses
+                    ),
                     "result": last_submission.result,
                     "url": last_submission.submission_url,
                 }
             else:
                 response_data["submission"] = None
 
+            print(response_data)
             return json_response(200, "ok", response_data)
         except Exception as e:
             logger.error(str(e))
             return json_response(500, "Internal Server Error")
+
+    @classmethod
+    def _serialize_criteria(cls, criteria):
+        groups = {}
+
+        criteria.sort(key=lambda e: e["group_number"])
+        for item in criteria:
+            print(item.get("group_number"))
+            if groups.get(item.get("criteria_group")) is None:
+                groups[item.get("criteria_group")] = []
+
+            groups[item.get("criteria_group")].append(item)
+
+        output = []
+
+        for key in groups.keys():
+            groups[key].sort(key=lambda e: e["number"])
+            output.append({"group_name": key, "criteria": groups[key]})
+
+        return output

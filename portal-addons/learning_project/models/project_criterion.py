@@ -8,8 +8,8 @@ UNIQUE_PROJECT_CRITERION_NAME = (
     "The criteria in an project must not have the same names.",
 )
 UNIQUE_PROJECT_CRITERION_ORDER = (
-    "unique_project_criterion_order",
-    "unique(number, project)",
+    "unique_project_criterion_order_group",
+    "unique(number, criteria_group)",
     "Criterion numbers conflict.",
 )
 

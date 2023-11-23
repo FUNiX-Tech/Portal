@@ -25,7 +25,7 @@ class ProjectCriteriaGroup(models.Model):
         inverse_name="criteria_group",
         string="Criteria",
     )
-    number = fields.Integer(string="Number", required=True)
+    number = fields.Integer(string="Number", required=True, default=1)
     project = fields.Many2one("project", required=True, ondelete="cascade")
 
     _sql_constraints = [
@@ -45,5 +45,7 @@ class ProjectCriteriaGroup(models.Model):
             vals["number"] = largest_group.number + 1
         else:
             vals["number"] = 1
+
+        vals["project"] = self.env.context.get("default_project")
 
         return super(ProjectCriteriaGroup, self).create(vals)
