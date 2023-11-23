@@ -12,7 +12,9 @@ class ServiceKeyConfiguration(models.Model):
     private = fields.Boolean(string="Private")
     _original_api_key = fields.Char(string="Original API Key")
     check_group = fields.Boolean(
-        string="Check Group Super User", compute="_compute_check_group"
+        string="Check Group Super User",
+        compute="_compute_check_group",
+        default=True,
     )  # If user not included in group super user, field name and private will be read-only
 
     # Method get api key by name of service
@@ -106,6 +108,10 @@ class ServiceKeyConfiguration(models.Model):
             },
             {"name": "SLA_TICKET_REMINDER_TIME_IN_DAY", "api_key": 3},
             {"name": "SLA_MENTOR_REMINDER_TIME_IN_DAY", "api_key": 3},
+            {
+                "name": "MAIL_SERVICE",
+                "api_key": "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",
+            },
         ]
         for key in key_lists:
             if not self.check_key_existing(key["name"]):  # if key not existing
