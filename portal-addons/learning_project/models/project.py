@@ -27,5 +27,9 @@ class Project(models.Model):
     criteria = fields.One2many(
         "project_criterion", inverse_name="project", string="Criteria"
     )
-
+    criteria_groups = fields.One2many(
+        "project_criteria_group",
+        inverse_name="project",
+        string="Criteria Groups",
+    )
     _sql_constraints = [UNIQUE_PROJECT_NAME, UNIQUE_PROJECT_ORDER]
