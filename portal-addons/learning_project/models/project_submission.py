@@ -9,6 +9,7 @@ import logging
 import requests
 from odoo import models, fields, api
 from odoo.tools import config
+from odoo.addons.website.tools import text_from_html
 
 logger = logging.getLogger(__name__)
 
@@ -24,6 +25,7 @@ class ProjectSubmission(models.Model):
     PASSED = ("passed", "Passed")
     DID_NOT_PASS = ("did_not_pass", "Did Not Pass")
     UNABLE_TO_REVIEW = ("unable_to_review", "Unable to Review")
+    INCOMPLETE = ("incomplete", "Incomplete")
     DEFAULT_RESULT = NOT_GRADED[0]
 
     student = fields.Many2one(
@@ -49,11 +51,13 @@ class ProjectSubmission(models.Model):
 
     submission_note = fields.Text("Submission Note", readonly=True, default="")
     general_response = fields.Html(string="General Response", default="")
-
     has_graded_all_criteria = fields.Boolean(
         compute="_has_graded_all_criteria", store=True
     )
     course = fields.Char(related="project.course.course_name")
+    lms_grade_update_status = fields.Char(
+        string="LMS Grade Update LMS", default="Idle"
+    )
     # ẩn hiện log trace
     # is_show_log_trace = fields.Boolean(string="Show Trace Log", default=False)
 
@@ -65,6 +69,16 @@ class ProjectSubmission(models.Model):
                 if repsonse.result == self.NOT_GRADED[0]:
                     graded_all = False
                     break
+
+                for component in repsonse.feedback_components:
+                    if (
+                        component.is_show is True
+                        and component.is_optional is False
+                        and text_from_html(component.content).strip() == ""
+                    ):
+                        graded_all = False
+                        break
+
             logger.info(record.general_response)
             record.has_graded_all_criteria = (
                 graded_all and record.general_response.strip() != ""
@@ -79,7 +93,20 @@ class ProjectSubmission(models.Model):
             - Send notification request to lms.
         """
         for record in self:
-            if record.has_graded_all_criteria:
+            # Chưa nhập nhận xét tổng thì không cho submit + thông báo
+            if text_from_html(record.general_response).strip() == "":
+                return {
+                    "type": "ir.actions.client",
+                    "tag": "display_notification",
+                    "params": {
+                        "title": "Error",
+                        "message": "General response must not be empty!",
+                        "sticky": True,
+                    },
+                }
+
+            is_unable_to_review = self.env.context.get("unable_to_review")
+            if record.has_graded_all_criteria or is_unable_to_review:
                 # Xác định kết quả và gửi mail tương ứng
                 # Nếu có bất kỳ criteria nào là 'Unable to review' thì kết quả là 'Unable to review'
                 student_email = record.student.email
@@ -88,10 +115,7 @@ class ProjectSubmission(models.Model):
                 course_code = record.project.course.course_code
                 submission_url = record.submission_url
 
-                if any(
-                    response.result == self.UNABLE_TO_REVIEW[0]
-                    for response in record.criteria_responses
-                ):
+                if is_unable_to_review:
                     record.result = self.UNABLE_TO_REVIEW[0]
                     email_body = f"""<div>
                     <h2>Hello {record.student.name}</h2>
@@ -107,7 +131,8 @@ class ProjectSubmission(models.Model):
                     </div>"""
 
                 elif any(
-                    response.result == self.DID_NOT_PASS[0]
+                    response.result
+                    in [self.DID_NOT_PASS[0], self.INCOMPLETE[0]]
                     for response in record.criteria_responses
                 ):
                     record.result = self.DID_NOT_PASS[0]
@@ -161,16 +186,7 @@ class ProjectSubmission(models.Model):
                 )
                 # end create submission history
 
-                email_error = self._send_notification_email_to_student()
-                lms_error = self._push_grade_result_to_lms()
-
-                error_message = ""
-                if email_error != "":
-                    error_message += email_error
-
-                if lms_error != "":
-                    error_message += lms_error
-
+                error_message = self._push_grade_result_to_lms()
                 if error_message != "":
                     return {
                         "type": "ir.actions.client",
@@ -184,28 +200,21 @@ class ProjectSubmission(models.Model):
 
             return True
 
-    def _send_notification_email_to_student(self):
-        for record in self:
-            try:
-                mail_template = self.env.ref(
-                    "project.submission_result_notification_email_template"
-                )
-                mail_template.send_mail(
-                    self.id, force_send=True, raise_exception=True
-                )
-                logger.info(
-                    f"[Project Submission]: Sent notification email to '{record.student.email}'"
-                )
-                return ""
-            except Exception as e:
-                logger.error(str(e))
-                logger.error(
-                    f"[Project Submission]: Failed to send notification email to '{record.student.email}'"
-                )
-                return f"ERROR: Failed to send notification email to '{record.student.email}'"
-
     def _push_grade_result_to_lms(self):
         for record in self:
+            # Dành cho local dev
+            # nếu odoo config DEBUG == True và SKIP_PUSH_GRADE_TO_LMS == True thì bỏ qua bước này
+            should_skip = (
+                config.get("skip_push_grade_to_lms") is True
+                and config.get("debug_mode") is True
+            )
+            if should_skip:
+                record.lms_grade_update_status = "Updated"
+                logger.info(
+                    "DEBUG MODE: skip PUSH GRADE TO LMS error because of debug_mode is True and skip_push_grade_to_lms is True"
+                )
+                return ""
+
             headers = {"Content-Type": "application/json"}
             payload = {
                 "project_name": record.project.title,
@@ -219,15 +228,19 @@ class ProjectSubmission(models.Model):
                 response = requests.post(url, headers=headers, json=payload)
 
                 if response.status_code == 200:
+                    record.lms_grade_update_status = "Updated"
                     logger.info("Pushed project grading result to LMS")
                     return ""
                 else:
+                    record.lms_grade_update_status = f"Error: {response.text}"
                     logger.error(
                         f"Failed to push project grading result to LMS: {response.text}"
-                    )  # uuuuv TODO: response.text or message?
+                    )
+
                     return f"ERROR:Failed to push project grading result to LMS: {response.text}"
 
             except Exception as e:
+                record.lms_grade_update_status = f"Error: {str(e)}"
                 logger.error(
                     f"Failed to push project grading result to LMS: {str(e)}"
                 )
@@ -261,3 +274,17 @@ class ProjectSubmission(models.Model):
             instance_model,
             email_from,
         )
+
+    def re_update_lms_grade(self):
+        error_message = self._push_grade_result_to_lms()
+
+        if error_message != "":
+            return {
+                "type": "ir.actions.client",
+                "tag": "display_notification",
+                "params": {
+                    "title": "Error",
+                    "message": error_message,
+                    "sticky": True,
+                },
+            }

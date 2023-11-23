@@ -23,7 +23,12 @@ class ProjectCriterion(models.Model):
     specifications = fields.Html(string="Specifications", required=True)
     number = fields.Integer(string="Number", required=True)
     project = fields.Many2one("project", required=True)
-
+    criteria_group = fields.Many2one(
+        "project_criteria_group", required=True, ondelete="cascade"
+    )
+    criteria_group_number = fields.Integer(
+        string="Group Number", related="criteria_group.number"
+    )
     _sql_constraints = [
         UNIQUE_PROJECT_CRITERION_NAME,
         UNIQUE_PROJECT_CRITERION_ORDER,

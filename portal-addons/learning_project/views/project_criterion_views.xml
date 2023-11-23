@@ -6,18 +6,20 @@
         <field name="arch" type="xml">
             <form string="Project Criterion">
                 <sheet>
-                   <group>
+                    <group>
                         <group>
                             <field name="title" string="Criterion Name" class="border bg-light"/>
                             <field name="number" string="Number" class="border bg-light"/>
                             <field name="project" string="Project" class="border bg-light" invisible="1"/>
+                            <field name="criteria_group" string="Criteria Group" class="border bg-light" context="{'default_project': project}" domain="[('project', '=', project)]" />
+                            <field name="criteria_group_number" class="border bg-light"/>
                         </group>
                         <notebook>
                             <page string="Specifications">
                                 <field name="specifications" widget="html" string="Specifications"/>
                             </page>
                         </notebook>
-                   </group>
+                    </group>
                 </sheet>
             </form>
         </field>
@@ -28,6 +30,7 @@
         <field name="model">project_criterion</field>
         <field name="arch" type="xml">
             <tree string="Project Criterion" edit="false" class="text-center">
+                <field name="criteria_group" />
                 <field name="number" />
                 <field name="title" />
                 <field name="specifications" />

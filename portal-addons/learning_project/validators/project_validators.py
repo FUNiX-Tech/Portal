@@ -2,6 +2,7 @@ import jwt
 import json
 import logging
 from odoo.http import request
+from odoo.tools import config
 from ..utils.utils import json_response
 from ...portal_student_management.utils.jwt_encode import JWTEncoder
 
@@ -205,7 +206,12 @@ def check_allowed_to_submit():
                     submissions[-1] if len(submissions) > 0 else None
                 )
 
-                if last_submission:
+                should_skip = (
+                    config.get("allow_to_submit_freely_multiple_times") is True
+                    and config.get("debug_mode") is True
+                )
+
+                if last_submission and not should_skip:
                     if last_submission.result == "passed":
                         return json_response(
                             403,
