@@ -93,7 +93,7 @@ class ProjectSubmissionController(http.Controller):
                 # Tạo nội dung email
                 body = f"""<div>
                 <h2>Hello {self.student.name}</h2>
-                <h3>You had submitted Project Submission successfully </h3>
+                <h3>You had successfully submitted Project Submission  </h3>
                 <p>Project: {project_title}</p>
                 <p>Course name: {course_name}</p>
                 <p>Couse code: {course_code}</p>
@@ -105,10 +105,10 @@ class ProjectSubmissionController(http.Controller):
                 created_submission.send_email(
                     created_submission,
                     student_email,
-                    "Project Submission Submitted Successfully",
-                    "Notification of Project Submission Module",
+                    "Notification:  Project Submission Successfully Submitted",
+                    "Notification:  Project Submission Successfully Submitted",
                     body,
-                    "Your description",
+                    "Project Submission Submitted Successfully",
                     submission_url,
                     "Go to Project Submission",
                 )

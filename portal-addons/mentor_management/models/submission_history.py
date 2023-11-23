@@ -75,13 +75,13 @@ class SubmissionHistory(models.Model):
     def send_reminder_emails(self):
         list_submissions_for_reminder = self._get_submissions_for_reminder()
         for submission in list_submissions_for_reminder:
-            title = "Reminder: Learning Project Submission Grading"
+            title = "Reminder: Project Submission Grading"
             # subject
-            subject = "Please Grade the Learning Project Submission"
+            subject = "Please Grade the Project Submission"
             # tạo nội dung mail
             body = f"""<div>
             <h2>Hello {submission.submission_id.mentor_id.full_name},</h2>
-            <h3>You have an Learning Project Submission to evaluate</h3>
+            <h3>You have an Project Submission to evaluate</h3>
             <p>Assignment: {submission.assignment_id.title}</p>
             <p>Course name: {submission.assignment_id.course.course_name}</p>
             <p>Couse code: {submission.assignment_id.course.course_code}</p>
@@ -93,7 +93,7 @@ class SubmissionHistory(models.Model):
             # external_link
             external_link = submission.submission_id.submission_url
             # external_text
-            external_text = "Go to Learning Project Submission"
+            external_text = "Go to Project Submission"
             # gửi mail
             submission.submission_id.send_email(
                 instance_model=submission.submission_id,
