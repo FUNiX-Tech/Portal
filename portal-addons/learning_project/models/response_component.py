@@ -8,14 +8,18 @@ class ResponseComponent(models.Model):
     _description = "response_component"
     _rec_name = "name"
 
-    # name, is_optional_passed, is_optional_not_pass, order
+    # name, is_optional, order
     TYPES = [
-        ("Errors*", False, 1),
-        ("Corrects*", False, 1),
-        ("Annotations*", True, 2),
-        ("Suggestions*", True, 3),
-        ("Internal Documents/Videos", True, 4),
-        ("Additional Reading", True, 5),
+        ("General*", False, 0),  # Nhận xét chung
+        ("Errors*", False, 1),  # Đang sai như thế nào
+        ("Annotations*", False, 2),  # Đang sai ở chỗ nào
+        ("Suggestions*", False, 3),  # Gợi ý chỉnh sửa
+        (
+            "Internal Documents/Videos",
+            True,
+            4,
+        ),  # Gợi ý xem lại bài học, video nào để chỉnh sửa
+        ("Additional Reading", True, 5),  # Tài liệu đọc thêm
     ]
 
     NOT_GRADED = ("not_graded", "Not Graded")
@@ -46,23 +50,18 @@ class ResponseComponent(models.Model):
     def _compute_is_show(self):
         for record in self:
             if record.criterion_response_result == "passed":
-                if record.name in [
-                    "Errors*",
-                    "Internal Documents/Videos",
-                    "Annotations*",
-                    "Suggestions*",
-                ]:
-                    record.is_show = False
-                else:
-                    record.is_show = True
+                record.is_show = record.name in [
+                    "General*",
+                    "Additional Reading",
+                ]
 
-            elif record.criterion_response_result in [
-                "did_not_pass",
-                "incomplete",
-            ]:
-                if record.name in ["Corrects*"]:
-                    record.is_show = False
-                else:
-                    record.is_show = True
+            elif record.criterion_response_result == "did_not_pass":
+                record.is_show = True
+
+            elif record.criterion_response_result == "incomplete":
+                record.is_show = record.name in [
+                    "General*",
+                    "Internal Documents/Videos",
+                ]
             else:
                 record.is_show = False

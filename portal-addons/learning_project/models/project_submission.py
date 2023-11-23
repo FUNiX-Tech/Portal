@@ -81,8 +81,9 @@ class ProjectSubmission(models.Model):
 
             logger.info(record.general_response)
             record.has_graded_all_criteria = (
-                graded_all and record.general_response.strip() != ""
-            )  # TODO: check empty html general_response
+                graded_all
+                and text_from_html(record.general_response).strip() != ""
+            )
 
     def submit_grade(self):
         """

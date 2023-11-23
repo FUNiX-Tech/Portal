@@ -3,6 +3,7 @@
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
 from .response_component import ResponseComponent
+from odoo.addons.website.tools import text_from_html
 
 
 class ProjectCriterionResponse(models.Model):
@@ -43,6 +44,9 @@ class ProjectCriterionResponse(models.Model):
     criteria_group = fields.Many2one(
         related="criterion.criteria_group", store=True
     )  # store=True để có thể sort
+    is_missing_required_feedback = fields.Boolean(
+        compute="_check_missing_required_feedback", store=True
+    )
 
     _sql_constraints = [
         (
@@ -85,3 +89,18 @@ class ProjectCriterionResponse(models.Model):
                     html += component.content
 
             record.feed_back = html
+
+    @api.depends("feedback_components.content", "result", "feed_back")
+    def _check_missing_required_feedback(self):
+        for record in self:
+            is_missing = False
+            for component in record.feedback_components:
+                if (
+                    component.is_show
+                    and not component.is_optional
+                    and text_from_html(component.content).strip() == ""
+                ):
+                    is_missing = True
+                    break
+
+            record.is_missing_required_feedback = is_missing
