@@ -13,6 +13,7 @@
                     <button attrs="{'invisible':[('result','=','not_graded')]}" class="disabled mx-2 btn-danger oe_highlight" string="Unable To Review" />
 
                     <button name="re_update_lms_grade" attrs="{'invisible':['|',('lms_grade_update_status','=','Updated'),('lms_grade_update_status','=','Idle')]}" class="mx-2 oe_highlight" string="Re-update LMS Grade" type="object" />
+                    <button attrs="{'invisible':[('lms_grade_update_status','=like','Error%')]}" class="disabled mx-2 oe_highlight" string="Re-update LMS Grade" />
                 </header>
                 <sheet>
                     <h3 style="color:#66598f">Genaral Information</h3>
