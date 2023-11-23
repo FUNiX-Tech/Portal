@@ -168,16 +168,34 @@ class ProjectSubmissionController(http.Controller):
                 )
             ).sorted("id")
 
+            submission = None
+
+            request_data = json.loads(request.httprequest.data)
+            submission_id = request_data.get("submission_id")
+
             last_submission = submissions[-1] if len(submissions) > 0 else None
+
+            if submission_id is None:
+                submission = last_submission
+            else:
+                filtered_submission = submissions.filtered(
+                    lambda s: s.id == submission_id
+                )
+
+                if filtered_submission:
+                    submission = filtered_submission[0]
+                else:
+                    return json_response(
+                        400, f"Not found submsision with id {submission_id}"
+                    )
+
             status = (
                 "has_not_submitted"
-                if last_submission is None
-                else last_submission.result
+                if submission is None
+                else submission.result
             )
             general_response = (
-                ""
-                if last_submission is None
-                else last_submission.general_response
+                "" if submission is None else submission.general_response
             )
 
             response_submissions = []
@@ -190,12 +208,13 @@ class ProjectSubmissionController(http.Controller):
             response_data = {
                 "status": status,
                 "submissions": response_submissions,
+                "is_last_submission": submission.id == last_submission.id,
             }
 
-            if last_submission:
+            if submission:
                 responses = []
-                if last_submission.result in ["passed", "did_not_pass"]:
-                    for response in last_submission.criteria_responses:
+                if submission.result in ["passed", "did_not_pass"]:
+                    for response in submission.criteria_responses:
                         responses.append(
                             {
                                 "title": response.criterion.title,
@@ -208,18 +227,17 @@ class ProjectSubmissionController(http.Controller):
                         )
 
                 response_data["submission"] = {
-                    "date": last_submission.create_date.timestamp(),
+                    "date": submission.create_date.timestamp(),
                     "general_response": general_response,
                     "responses": ProjectSubmissionController._serialize_criteria(
                         responses
                     ),
-                    "result": last_submission.result,
-                    "url": last_submission.submission_url,
+                    "result": submission.result,
+                    "url": submission.submission_url,
                 }
             else:
                 response_data["submission"] = None
 
-            print(response_data)
             return json_response(200, "ok", response_data)
         except Exception as e:
             logger.error(str(e))
