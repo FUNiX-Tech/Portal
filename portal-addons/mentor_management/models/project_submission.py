@@ -122,6 +122,7 @@ class ProjectSubmission(models.Model):
                 record.mentor_user_id = False
 
     # Tạo 1 computed field để check xem user hiện tại có được phép chấm bài hay không
+
     @api.depends("mentor_user_id")
     def _compute_can_submit(self):
         for record in self:
@@ -151,7 +152,7 @@ class ProjectSubmission(models.Model):
 
             # lấy thông tin về ProjectSubmission như submission_url, course, project title, student email
             submission_url = self.submission_url
-            course = self.assignment.course
+            course = self.project.course
             project_title = self.project.title
             student_email = self.student_email
 
@@ -171,8 +172,8 @@ class ProjectSubmission(models.Model):
             self.send_email(
                 self,
                 mentor.email,
-                "Notification:  Project Submission Awaiting Evaluation",
-                "Notification:  Project Submission Awaiting Evaluation",
+                "Notification: Project Submission Awaiting Evaluation",
+                "Notification: Project Submission Awaiting Evaluation",
                 body,
                 "Your description assign mentor to grade",
                 submission_url,

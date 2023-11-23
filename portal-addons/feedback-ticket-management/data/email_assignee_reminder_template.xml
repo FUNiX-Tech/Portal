@@ -7,7 +7,7 @@
             <field name="model_id" ref="model_feedback_ticket"/>
             <field name="mail_server_id" ref="feedback-ticket-management.out_going_mailserver_data" />
             <field name="auto_delete">True</field>
-            <field name="subject">Your Ticket Is Pending For {{(ctx.get("datenow") - object.created_at).days}} days - {{object.ticket_number}}</field>
+            <field name="subject">Your Ticket Is Pending For {{ctx.get("date_diff")}} days - {{object.ticket_number}}</field>
             <field name="email_from">portal.funix@funix.edu.vn</field>
             <field name="email_to">{{object.ticket_assignee.email}}</field>
             <field name="description">The ticket is assigned for days, please check and handle it</field>

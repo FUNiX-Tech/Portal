@@ -20,6 +20,7 @@
         "mail",
         "portal_student_management",
         "course_management",
+        "service_key",
     ],
     # always loaded
     "data": [
@@ -32,5 +33,6 @@
         "data/response_email_template.xml",
         "data/email_assignee_reminder_template.xml",
         "data/schedule_remind_assignee.xml",
+        "views/setting_config_key.xml",
     ],
 }

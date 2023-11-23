@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
+- lms_grade_project_url: the lms url to push project grading result retrieve from config key module
 Need to set the following variables to config file:
-- lms_grade_project_url: the lms url to push project grading result.
 - email_from: sender email (e.g. notification@example.com)
 """
 
@@ -58,8 +58,6 @@ class ProjectSubmission(models.Model):
     lms_grade_update_status = fields.Char(
         string="LMS Grade Update LMS", default="Idle"
     )
-    # ẩn hiện log trace
-    # is_show_log_trace = fields.Boolean(string="Show Trace Log", default=False)
 
     @api.depends("criteria_responses.result", "general_response")
     def _has_graded_all_criteria(self):
@@ -119,15 +117,13 @@ class ProjectSubmission(models.Model):
                 if is_unable_to_review:
                     record.result = self.UNABLE_TO_REVIEW[0]
                     email_body = f"""<div>
-                    <h2>Hello {record.student.name}</h2>
-                    <h3>Notification of Project Submission result</h3>
+                    <h2>Hello {record.student.name},</h2>
                     <p>Project: {project_title}</p>
                     <p>Course name: {course_name}</p>
                     <p>Course code: {course_code}</p>
-                    <p>Result: Project Submission is unable to review</p>
+                    <p>Result: Unable to review</p>
                     <p>Submission Note: {record.submission_note}</p>
                     <p>General Response: {record.general_response}</p>
-                    <p>Submission Url: {submission_url}</p>
                     <strong>Thank you!</strong>
                     </div>"""
 
@@ -138,26 +134,23 @@ class ProjectSubmission(models.Model):
                 ):
                     record.result = self.DID_NOT_PASS[0]
                     email_body = f"""<div>
-                    <h2>Hello {record.student.name}</h2>
-                    <h3>Notification of Project Submission result</h3>
+                    <h2>Hello {record.student.name},</h2>
                     <p>Project: {project_title}</p>
                     <p>Course name: {course_name}</p>
                     <p>Course code: {course_code}</p>
-                    <p>Result: Project Submission did not pass</p>
+                    <p>Result: Did not pass</p>
                     <p>Submission Note: {record.submission_note}</p>
                     <p>General Response: {record.general_response}</p>
-                    <p>Submission Url: {submission_url}</p>
                     <strong>Thank you!</strong>
                     </div>"""
                 else:
                     record.result = self.PASSED[0]
                     email_body = f"""<div>
-                    <h2>Hello {record.student.name}</h2>
-                    <h3>Notification of Project Submission result</h3>
+                    <h2>Hello {record.student.name},</h2>
                     <p>Project: {project_title}</p>
                     <p>Course name: {course_name}</p>
                     <p>Course code: {course_code}</p>
-                    <p>Result: Project Submission passed</p>
+                    <p>Result: Passed</p>
                     <p>Submission Note: {record.submission_note}</p>
                     <p>General Response: {record.general_response}</p>
                     <p>Submission Url: {submission_url}</p>
@@ -168,12 +161,12 @@ class ProjectSubmission(models.Model):
                 self.send_email(
                     self,
                     student_email,
-                    "Notification of Project Submission result",
-                    "Notification of Project Submission result",
+                    "Notification: Project Submission Results Available",
+                    "Notification: Project Submission Results Available",
                     email_body,
-                    "Your description",
+                    "Notification: Project Submission Results Available",
                     submission_url,
-                    "Go to submission",
+                    "Go to Project Submission",
                 )
 
                 # create submission history --> graded status
@@ -186,8 +179,13 @@ class ProjectSubmission(models.Model):
                     }
                 )
                 # end create submission history
-
-                error_message = self._push_grade_result_to_lms()
+                # email_error = self._send_notification_email_to_student()
+                lms_error = self._push_grade_result_to_lms()
+                error_message = ""
+                # if email_error != "":
+                #     error_message += email_error
+                if lms_error != "":
+                    error_message += lms_error
                 if error_message != "":
                     return {
                         "type": "ir.actions.client",
@@ -198,13 +196,31 @@ class ProjectSubmission(models.Model):
                             "sticky": True,
                         },
                     }
-
             return True
 
+    # def _send_notification_email_to_student(self):
+    #     for record in self:
+    #         try:
+    #             mail_template = self.env.ref(
+    #                 "project.submission_result_notification_email_template"
+    #             )
+    #             mail_template.send_mail(
+    #                 self.id, force_send=True, raise_exception=True
+    #             )
+    #             logger.info(
+    #                 f"[Project Submission]: Sent notification email to '{record.student.email}'"
+    #             )
+    #             return ""
+    #         except Exception as e:
+    #             logger.error(str(e))
+    #             logger.error(
+    #                 f"[Project Submission]: Failed to send notification email to '{record.student.email}'"
+    #             )
+    #             return f"ERROR: Failed to send notification email to '{record.student.email}'"
     def _push_grade_result_to_lms(self):
         for record in self:
             # Dành cho local dev
-            # nếu odoo config DEBUG == True và SKIP_PUSH_GRADE_TO_LMS == True thì bỏ qua bước này
+            # nếu odoo config DEBUG_MODE == True và SKIP_PUSH_GRADE_TO_LMS == True thì bỏ qua bước này
             should_skip = (
                 config.get("skip_push_grade_to_lms") is True
                 and config.get("debug_mode") is True
@@ -215,7 +231,6 @@ class ProjectSubmission(models.Model):
                     "DEBUG MODE: skip PUSH GRADE TO LMS error because of debug_mode is True and skip_push_grade_to_lms is True"
                 )
                 return ""
-
             headers = {"Content-Type": "application/json"}
             payload = {
                 "project_name": record.project.title,
@@ -225,7 +240,12 @@ class ProjectSubmission(models.Model):
             }
 
             try:
-                url = config.get("lms_grade_project_url")
+                url = (
+                    self.env[
+                        "service_key_configuration"
+                    ].get_api_key_by_service_name("LMS_BASE")
+                    + "api/funix_portal/assignment/grade_assignment"
+                )
                 response = requests.post(url, headers=headers, json=payload)
 
                 if response.status_code == 200:

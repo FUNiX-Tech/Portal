@@ -11,6 +11,11 @@ class ServiceKeyConfiguration(models.Model):
     api_key = fields.Char(string="Setting Value", default="")
     private = fields.Boolean(string="Private")
     _original_api_key = fields.Char(string="Original API Key")
+    check_group = fields.Boolean(
+        string="Check Group Super User",
+        compute="_compute_check_group",
+        default=True,
+    )  # If user not included in group super user, field name and private will be read-only
 
     # Method get api key by name of service
     def get_api_key_by_service_name(self, service_name):
@@ -64,7 +69,6 @@ class ServiceKeyConfiguration(models.Model):
         ):
             values["_original_api_key"] = values["api_key"]
             values["api_key"] = ""
-
         return super(ServiceKeyConfiguration, self).write(values)
 
     # Name of key validation
@@ -86,3 +90,46 @@ class ServiceKeyConfiguration(models.Model):
                 raise exceptions.ValidationError(
                     "Only one undrscore (_) is allowed between words!"
                 )
+
+    def check_key_existing(self, key_name):
+        key = self.search([("name", "=", key_name)])
+        if key:
+            return True
+        else:
+            return False
+
+    @api.model
+    def set_default_key(self):
+        key_lists = [
+            {
+                "name": "LMS_BASE",
+                "api_key": "https://test-xseries.funix.edu.vn/",
+                "private": False,
+            },
+            {"name": "SLA_TICKET_REMINDER_TIME_IN_DAY", "api_key": 3},
+            {"name": "SLA_MENTOR_REMINDER_TIME_IN_DAY", "api_key": 3},
+            {
+                "name": "MAIL_SERVICE",
+                "api_key": "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",
+            },
+        ]
+        for key in key_lists:
+            if not self.check_key_existing(key["name"]):  # if key not existing
+                if key.get("private"):
+                    super(ServiceKeyConfiguration, self).create(
+                        {
+                            "name": key.get("name"),
+                            "private": True,
+                            "_original_api_key": key.get("api_key"),
+                        }
+                    )
+                else:
+                    super(ServiceKeyConfiguration, self).create(
+                        key | {"private": False}
+                    )
+
+    @api.depends_context("uid")
+    def _compute_check_group(self):
+        self.check_group = self.env.user.has_group(
+            "service_key.group_service_key_super_user"
+        )

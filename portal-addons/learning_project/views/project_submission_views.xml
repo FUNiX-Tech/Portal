@@ -24,6 +24,7 @@
                             <field name="student" string="Student" write="false"/>
                             <field name="course" string="Course" write="false"/>
                             <field name="project" string="Project" write="false"/>
+                            <separator />
                             <field name="submission_note" string="Submission Note" widget="text" colspan="3" />
                         </group>
                         <group>

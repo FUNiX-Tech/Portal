@@ -21,6 +21,7 @@
         "security/security.xml",
         "security/ir.model.access.csv",
         "views/service_key_form.xml",
+        "data/set_default_key.xml",
     ],
     # only loaded in demonstration mode
 }

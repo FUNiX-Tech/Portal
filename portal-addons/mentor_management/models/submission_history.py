@@ -31,7 +31,12 @@ class SubmissionHistory(models.Model):
     )
 
     def _get_submissions_for_reminder(self):
-        time_to_remind = fields.Datetime.now() - datetime.timedelta(days=2)
+        # get interval sla time reminder from config key module
+        sla_reminder_interval = int(
+            self.env["service_key_configuration"].get_api_key_by_service_name(
+                "SLA_MENTOR_REMINDER_TIME_IN_DAY"
+            )
+        )
 
         # Lấy tất cả các bản ghi
         all_histories = self.search([])
@@ -53,10 +58,13 @@ class SubmissionHistory(models.Model):
                 limit=1,
             )
             print("latest_history.created_at", latest_history.created_at)
+            diff_day = (fields.Datetime.now() - latest_history.created_at).days
+            print(diff_day)
             if (
                 latest_history
                 and latest_history.status == "grading"
-                and latest_history.created_at <= time_to_remind
+                and diff_day != 0
+                and diff_day % sla_reminder_interval == 0
             ):
                 submissions_for_reminder.append(latest_history)
 
@@ -67,13 +75,13 @@ class SubmissionHistory(models.Model):
     def send_reminder_emails(self):
         list_submissions_for_reminder = self._get_submissions_for_reminder()
         for submission in list_submissions_for_reminder:
-            title = "Reminder: Learning Project Submission Grading"
+            title = "Reminder: Project Submission Grading"
             # subject
-            subject = "Please Grade the Learning Project Submission"
+            subject = "Please Grade the Project Submission"
             # tạo nội dung mail
             body = f"""<div>
             <h2>Hello {submission.submission_id.mentor_id.full_name},</h2>
-            <h3>You have an Learning Project Submission to evaluate</h3>
+            <h3>You have an Project Submission to evaluate</h3>
             <p>Assignment: {submission.assignment_id.title}</p>
             <p>Course name: {submission.assignment_id.course.course_name}</p>
             <p>Couse code: {submission.assignment_id.course.course_code}</p>
@@ -85,7 +93,7 @@ class SubmissionHistory(models.Model):
             # external_link
             external_link = submission.submission_id.submission_url
             # external_text
-            external_text = "Go to Learning Project Submission"
+            external_text = "Go to Project Submission"
             # gửi mail
             submission.submission_id.send_email(
                 instance_model=submission.submission_id,

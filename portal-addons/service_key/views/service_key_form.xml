@@ -6,11 +6,11 @@
             <form>
                 <sheet>
                     <group>
-                        <field name="name"/>
-
-                         <field name="api_key" />
-                         <field name="_original_api_key"  invisible="1"/>
-                        <field name="private"/>
+                        <field name="check_group" invisible="1" />
+                        <field name="name" attrs="{'readonly': [('check_group', '=', False)]}" />
+                        <field name="api_key" />
+                        <field name="_original_api_key"  invisible="1"/>
+                        <field name="private" attrs="{'readonly': [('check_group', '=', False)]}" />
                     </group>
                 </sheet>
             </form>
