@@ -236,6 +236,7 @@ class ProjectSubmissionController(http.Controller):
                     ),
                     "result": submission.result,
                     "url": submission.submission_url,
+                    "id": submission.id,
                 }
             else:
                 response_data["submission"] = None
