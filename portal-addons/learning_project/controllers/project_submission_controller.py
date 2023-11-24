@@ -208,7 +208,9 @@ class ProjectSubmissionController(http.Controller):
             response_data = {
                 "status": status,
                 "submissions": response_submissions,
-                "is_last_submission": submission.id == last_submission.id,
+                "is_last_submission": submission.id == last_submission.id
+                if submission is not None
+                else False,
             }
 
             if submission:
@@ -234,6 +236,7 @@ class ProjectSubmissionController(http.Controller):
                     ),
                     "result": submission.result,
                     "url": submission.submission_url,
+                    "id": submission.id,
                 }
             else:
                 response_data["submission"] = None
