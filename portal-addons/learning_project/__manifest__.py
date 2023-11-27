@@ -20,6 +20,11 @@
         "mail_service",
         "service_key",
     ],
+    "assets": {
+        "web.assets_backend": [
+            "learning_project/static/src/js/override_fileselector.js",
+        ]
+    },
     # always loaded
     "data": [
         "security/security.xml",
