@@ -118,6 +118,25 @@ class ProjectSubmissionController(http.Controller):
                 logger.error(str(e))
             # end create submission history
 
+            # assign to mentor
+            try:
+                last_submission = (
+                    request.env["project_submission"]
+                    .sudo()
+                    .search(
+                        [
+                            ("student", "=", self.student.id),
+                            ("project", "=", self.project.id),
+                            ("result", "!=", "submission_canceled"),
+                        ]
+                    )
+                ).sorted("id")[0]
+                created_submission.mentor_id = last_submission.mentor_id
+            except IndexError:
+                pass
+            except Exception as e:
+                logger.error(str(e))
+
             return json_response(200, "Submission saved!", response_data)
 
         except Exception as e:
