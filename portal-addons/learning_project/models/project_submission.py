@@ -22,6 +22,7 @@ class ProjectSubmission(models.Model):
     MAIL_SENDER = config.get("email_from")
 
     NOT_GRADED = ("not_graded", "Not Graded")
+    CANCELED = ("submission_cancelled", "Submission cancelled")
     PASSED = ("passed", "Passed")
     DID_NOT_PASS = ("did_not_pass", "Did Not Pass")
     UNABLE_TO_REVIEW = ("unable_to_review", "Unable to Review")
@@ -42,7 +43,7 @@ class ProjectSubmission(models.Model):
         string="Criteria",
     )
     result = fields.Selection(
-        [NOT_GRADED, PASSED, DID_NOT_PASS, UNABLE_TO_REVIEW],
+        [NOT_GRADED, PASSED, DID_NOT_PASS, UNABLE_TO_REVIEW, CANCELED],
         required=True,
         string="Result",
         default=DEFAULT_RESULT,
@@ -198,25 +199,6 @@ class ProjectSubmission(models.Model):
                     }
             return True
 
-    # def _send_notification_email_to_student(self):
-    #     for record in self:
-    #         try:
-    #             mail_template = self.env.ref(
-    #                 "project.submission_result_notification_email_template"
-    #             )
-    #             mail_template.send_mail(
-    #                 self.id, force_send=True, raise_exception=True
-    #             )
-    #             logger.info(
-    #                 f"[Project Submission]: Sent notification email to '{record.student.email}'"
-    #             )
-    #             return ""
-    #         except Exception as e:
-    #             logger.error(str(e))
-    #             logger.error(
-    #                 f"[Project Submission]: Failed to send notification email to '{record.student.email}'"
-    #             )
-    #             return f"ERROR: Failed to send notification email to '{record.student.email}'"
     def _push_grade_result_to_lms(self):
         for record in self:
             # Dành cho local dev

@@ -262,3 +262,38 @@ def skip_authentication():
         return wrapper
 
     return decorator
+
+
+def check_has_submission():
+    def decorator(origin_function):
+        def wrapper(self, *args, **kwargs):
+            request_data = json.loads(request.httprequest.data)
+            submission_id = request_data.get("submission_id")
+
+            try:
+                submission = (
+                    request.env["project_submission"]
+                    .sudo()
+                    .search(
+                        [
+                            ("id", "=", submission_id),
+                            ("student", "=", self.student.id),
+                        ]
+                    )[0]
+                )
+
+                self.submission = submission
+                return origin_function(self, *args, **kwargs)
+            except IndexError:
+                logger.info(f"[INFO]: Not found submission {submission_id}.")
+                return json_response(
+                    400,
+                    "Not found submission.",
+                )
+            except Exception as e:
+                logger.error(str(e))
+                return json_response(500, "Internal Server Error.")
+
+        return wrapper
+
+    return decorator
