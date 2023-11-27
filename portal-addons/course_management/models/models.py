@@ -67,17 +67,6 @@ class course_management(models.Model):
             try:
                 added_students = list(set(new_students) - set(old_students))
                 remove_students = list(set(old_students) - set(new_students))
-                if len(added_students) != 0:
-                    data_call_api = {
-                        "identifiers": (",").join(
-                            map(lambda s: s.email, added_students)
-                        ),
-                        "course_code": self.course_code,
-                        "action": "enroll",
-                    }
-                    response = self.api_call(data_call_api)
-                    if response.get("status_code") != 200:
-                        raise UserError(response.get("message"))
                 if len(remove_students) != 0:
                     data_call_api = {
                         "identifiers": (",").join(
@@ -85,6 +74,17 @@ class course_management(models.Model):
                         ),
                         "course_code": self.course_code,
                         "action": "unenroll",
+                    }
+                    response = self.api_call(data_call_api)
+                    if response.get("status_code") != 200:
+                        raise UserError(response.get("message"))
+                if len(added_students) != 0:
+                    data_call_api = {
+                        "identifiers": (",").join(
+                            map(lambda s: s.email, added_students)
+                        ),
+                        "course_code": self.course_code,
+                        "action": "enroll",
                     }
                     response = self.api_call(data_call_api)
                     if response.get("status_code") != 200:
@@ -109,16 +109,6 @@ class course_management(models.Model):
         new_values = self.organization_ids
         added_orgs = list(set(new_values) - set(old_values))
         removed_orgs = list(set(old_values) - set(new_values))
-        if len(added_orgs) != 0:
-            for org in added_orgs:
-                self.write(
-                    {
-                        "student_ids": [
-                            (4, student_id)
-                            for student_id in org.student_ids.ids
-                        ]
-                    }
-                )
         if len(removed_orgs) != 0:
             for org in removed_orgs:
                 self.write(
@@ -129,6 +119,17 @@ class course_management(models.Model):
                         ]
                     }
                 )
+        if len(added_orgs) != 0:
+            for org in added_orgs:
+                self.write(
+                    {
+                        "student_ids": [
+                            (4, student_id)
+                            for student_id in org.student_ids.ids
+                        ]
+                    }
+                )
+
         self._compute_temp_organization_ids()
 
     def api_call(self, values):
@@ -153,7 +154,7 @@ class course_management(models.Model):
                 return {"message": "API call successful", "status_code": 200}
             else:
                 return {
-                    "message": f"API call failed with status code {response.status_code}, {response.json()}",
+                    "message": f"API call failed with status code {response.status_code}, {response.json() if response else ''}",
                     "status_code": response.status_code,
                 }
 

@@ -7,17 +7,16 @@
             <field name="arch" type="xml">
                 <xpath expr="//form/sheet/group" position="after">
                     <group string="Student Organization">
-                        <field name="student_organization_student_ids"
-                            options="{'no_create': True}">
-                            <tree>
-                                <field name="name" />
-                                <field name="creator" />
-                                <field name="created_at" />
-                                <field name="note" />
-                            </tree>
-                        </field>
+                        <group>
+                            <field name="student_organization_student_ids"
+                                options="{'no_create': True}">
+                            </field>
+                        </group>
+                        <group>
+                            <field name="temp_student_org" invisible="True" />
+                        </group>
                     </group>
-                    <field name="temp_student_orgs" invisible="True" />
+
                 </xpath>
             </field>
         </record>
