@@ -34,7 +34,10 @@
       <field name="arch" type="xml">
         <form>
           <header>
-              <field name="ticket_status" widget="statusbar" options="{'clickable':1}" />
+              <field name="check_uid_assignee" invisible="True" />
+              <button type="object" string="Start Resolving " name="button_start_resolving"  class="oe_highlight"  attrs="{'invisible': ['|',('check_uid_assignee', '!=', True ),('ticket_status','!=','assigned')]}"/>
+              <button type="object" string="Start Resolving " name="button_start_resolving"  class="oe_highlight disabled"  attrs="{'invisible': [('check_uid_assignee', '==', True ),('ticket_status','==','assigned')]}"/>
+              <field name="ticket_status" widget="statusbar"/>
           </header>
           <sheet>
               <h4 style="color:#66598f">General Information</h4>
@@ -69,7 +72,7 @@
               <h4 style="color:#66598f">Response</h4>
               <hr />
               <group>
-                <field name="ticket_response" attrs="{'invisible':[('ticket_status','==','waiting')]}"/>
+                <field name="ticket_response" attrs="{'readonly':['|',('ticket_status','in',['waiting','assigned']), ('check_uid_assignee', '!=', True )]}"/>
               </group>
           </sheet>
           <div class="oe_chatter">
