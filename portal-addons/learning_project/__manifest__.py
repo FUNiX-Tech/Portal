@@ -23,7 +23,6 @@
     "assets": {
         "web.assets_backend": [
             "learning_project/static/src/js/override_fileselector.js",
-            "learning_project/static/src/css/project_grading_criterion_form.css",
         ]
     },
     # always loaded
