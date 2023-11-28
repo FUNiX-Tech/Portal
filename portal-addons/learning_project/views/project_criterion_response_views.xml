@@ -7,9 +7,8 @@
             <xpath expr="." position="inside">
                 <link rel="stylesheet" href="learning_project/static/src/css/project_grading_criterion_form.css"/>
             </xpath>
-            <form string="Project Criterion Response" id="ntav" class="ntav">
-                <sheet style="margin-left: auto; margin-right: 0;">
-                    <h1>tessssssssssssssss</h1>
+            <form string="Project Criterion Response">
+                <sheet>
                     <group>
                         <field name="submission" string="Submission" editable="false"/>
                         <field name="criterion" string="Criterion" editable="false"/>
