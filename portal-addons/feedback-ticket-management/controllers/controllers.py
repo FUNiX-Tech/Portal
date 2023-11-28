@@ -10,6 +10,7 @@ from ..validators.validators import (
     check_ticket_category,
     check_has_course,
     check_student,
+    check_description,
 )
 
 logger = logging.getLogger(__name__)
@@ -29,10 +30,13 @@ class FeedbackTicket(http.Controller):
         "student_email",
         "ticket_category",
         "course_id",
+        "lesson_url",
+        "ticket_description",
     )
     @check_ticket_category("ticket_category")
     @check_student("student_email")
     @check_has_course("course_id")
+    @check_description("ticket_description")
     @check_url("image", "lesson_url")
     def create_ticket(self, **kw):
         data = json.loads(http.request.httprequest.data.decode("utf-8"))

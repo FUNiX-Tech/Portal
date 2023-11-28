@@ -61,9 +61,9 @@ def check_ticket_category(category_field):
                 return json_response(
                     400,
                     _invalid_field_template(
-                        "category_field",
+                        category_field,
                         category,
-                        "category must be one of the following: outdated, bad_explain, insufficient_details, broken_resource, error_translation",
+                        "Category must be one of the following: outdated, bad_explain, insufficient_details, broken_resource, error_translation",
                     ),
                 )
             return origin_function(*args, **kwargs)
@@ -136,6 +136,31 @@ def check_has_course(course_field):
                 logger.error(str(e))
                 return json_response(
                     500, {"message": "Internal Server Error."}
+                )
+
+        return wrapper
+
+    return decorator
+
+
+def check_description(description_field):
+    def decorator(origin_function):
+        def wrapper(*args, **kwargs):
+            data = json.loads(request.httprequest.data)
+            description = data.get(description_field)
+
+            # check the length of description
+            if 6 <= len(description) and isinstance(description, str):
+                # if the length is valid, call origin function
+                return origin_function(*args, **kwargs)
+            else:
+                return json_response(
+                    400,
+                    _invalid_field_template(
+                        description_field,
+                        description,
+                        "Description must be a string and more than 6 characters",
+                    ),
                 )
 
         return wrapper
