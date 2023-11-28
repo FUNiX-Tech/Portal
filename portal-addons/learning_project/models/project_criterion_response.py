@@ -39,6 +39,13 @@ class ProjectCriterionResponse(models.Model):
         related="criterion.criteria_group", store=True
     )  # store=True để có thể sort
 
+    previously_passed = fields.Boolean(
+        string="Previously Passed", compute="_compute_previously_passed"
+    )
+    previously_feedback = fields.Html(
+        string="Previously Feedback", compute="_compute_previously_feedback"
+    )
+
     _sql_constraints = [
         (
             "unique_submission_criterion",
@@ -54,3 +61,70 @@ class ProjectCriterionResponse(models.Model):
                 raise ValidationError(
                     "Criterion and submission must belong to an project"
                 )
+
+    @api.depends("submission")
+    def _compute_previously_passed(self):
+        for record in self:
+            project = record.submission.project
+
+            submissions = project.submissions.sorted(key=lambda item: item.id)
+
+            nearest_submission = None
+            for submission in submissions:
+                if (
+                    submission.result
+                    not in ["submission_canceled", "not_graded"]
+                    and record.submission.id != submission.id
+                ):
+                    nearest_submission = submission
+                    break
+
+            if nearest_submission is None:
+                record.previously_passed = False
+                return
+
+            previously_response = list(
+                filter(
+                    lambda response: response.criterion.id
+                    == record.criterion.id,
+                    nearest_submission.criteria_responses,
+                )
+            )[0]
+            record.previously_passed = previously_response.result == "passed"
+
+    @api.depends("submission")
+    def _compute_previously_feedback(self):
+        nearest_response = self._get_nearest_respone()
+
+        for record in self:
+            record.previously_feedback = (
+                "" if nearest_response is None else nearest_response.feed_back
+            )
+
+    def _get_nearest_respone(self):
+        for record in self:
+            project = record.submission.project
+
+            submissions = project.submissions.sorted(key=lambda item: item.id)
+
+            nearest_submission = None
+            for submission in submissions:
+                if (
+                    submission.result
+                    not in ["submission_canceled", "not_graded"]
+                    and record.submission.id != submission.id
+                ):
+                    nearest_submission = submission
+                    break
+
+            if nearest_submission is None:
+                return None
+
+            nearest_response = list(
+                filter(
+                    lambda response: response.criterion.id
+                    == record.criterion.id,
+                    nearest_submission.criteria_responses,
+                )
+            )[0]
+            return nearest_response

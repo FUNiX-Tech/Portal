@@ -32,4 +32,9 @@ class Project(models.Model):
         inverse_name="project",
         string="Criteria Groups",
     )
+    submissions = fields.One2many(
+        comodel_name="project_submission",
+        inverse_name="project",
+        string="Submissions",
+    )
     _sql_constraints = [UNIQUE_PROJECT_NAME, UNIQUE_PROJECT_ORDER]

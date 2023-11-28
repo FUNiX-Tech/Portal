@@ -73,3 +73,14 @@
     justify-content: center;
     cursor: pointer;
 }
+
+.disable_grading_template_html_field_css .lib-component {
+    margin: 0;
+    padding: 0;
+    border: none;
+    position: static;
+}
+
+.disable_grading_template_html_field_css .lib-component::after {
+    display: none;
+}
