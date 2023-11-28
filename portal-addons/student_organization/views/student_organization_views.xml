@@ -18,6 +18,8 @@
       <field name="arch" type="xml">
         <form>
           <sheet>
+            <h4 style="color:#66598f">General Information</h4>
+            <hr/>
             <group>
               <group>
                 <field name="name" />
@@ -28,9 +30,11 @@
                 <field name="note" />
               </group>
             </group>
-            <group string="STUDENTS">
-              <field name="student_ids" options="{'no_create': True}" widget="many2many" />
-            </group>
+            <separator />
+            <h4 style="color:#66598f">Student List</h4>
+            <hr/>
+            <field name="student_ids" options="{'no_create': True}" widget="many2many" />
+            <separator />
           </sheet>
         </form>
       </field>

@@ -14,6 +14,8 @@ class StudentOrganization_Student(models.Model):
         "student_organization",
         computed="_compute_temp_organization",
         string="Temporary Student Organization",
+        store=False,
+        default=lambda self: self.student_organization_student_ids,
     )
 
     @api.model
@@ -61,8 +63,10 @@ class StudentOrganization_Student(models.Model):
             return success
 
     @api.depends("student_organization_student_ids")
+    @api.depends_context("open_form_event")
     def _compute_temp_organizations(self):
-        self.temp_student_org = self.student_organization_student_ids
+        for record in self:
+            record.temp_student_org = record.student_organization_student_ids
 
     @api.onchange("student_organization_student_ids")
     def _onchange_organization_ids(self):
@@ -103,9 +107,13 @@ class StudentOrganization_Student(models.Model):
         self._compute_temp_organizations()
 
     def api_call(self, values):
-        api_url = (
-            "https://test-xseries.funix.edu.vn/api/bulk_enroll/v1/bulk_enroll"
-        )
+        LMS_BASE = self.env[
+            "service_key_configuration"
+        ].get_api_key_by_service_name("LMS_BASE")
+        API_BULK_ENROLL = self.env[
+            "service_key_configuration"
+        ].get_api_key_by_service_name("API_BULK_ENROLL")
+        api_url = LMS_BASE + API_BULK_ENROLL
         headers = {
             "Content-Type": "application/json",
         }
@@ -116,19 +124,25 @@ class StudentOrganization_Student(models.Model):
             "email_students": False,
             "action": values.get("action"),
         }
-        try:
-            response = requests.post(api_url, json=payload, headers=headers)
-            print(response)
-            # Check the status code of the response
-            if response.status_code == 200:
-                return self
-            else:
-                raise UserError(
-                    f"API call failed with status code {response.status_code}, {response.json() if response else ''}"
+        # if payload have identifiers and courses we will call api
+        if payload.get("identifiers") and payload.get("courses"):
+            try:
+                response = requests.post(
+                    api_url, json=payload, headers=headers
                 )
+                print(response)
+                # Check the status code of the response
+                if response.status_code == 200:
+                    return self
+                else:
+                    raise UserError(
+                        f"API call failed with status code {response.status_code}, {response.json() if response.json() else ''}"
+                    )
 
-        except requests.exceptions.RequestException as e:
-            raise UserError(f"Error during API call: {e}")
+            except requests.exceptions.RequestException as e:
+                raise UserError(f"Error during API call: {e}")
+        else:
+            return
 
 
 # Add student  into Student Organization table

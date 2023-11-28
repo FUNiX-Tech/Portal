@@ -10,7 +10,7 @@ class StudentOrganization(models.Model):
     creator = fields.Char(
         string="Creator", default=lambda self: self.env.user.name
     )
-    note = fields.Text(string="Note")
+    note = fields.Text(string="Organization Note")
     created_at = fields.Datetime(
         string="Created Datetime",
         readonly=True,

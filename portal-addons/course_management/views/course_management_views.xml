@@ -18,7 +18,6 @@
                     <div class="o_kanban_card_header_title mb16">
                         <div class="o_primary">
                             <a type="edit" class="me-auto">
-                                <span><field name="course_code" class="o_primary"/></span>
                                 <span><field name="course_name" class="o_primary"/></span>
                             </a>
                         </div>
@@ -28,6 +27,7 @@
                       <div class="row mb16">
                           <div class="col-8 o_kanban_primary_left">
                               <div class="d-flex flex-column"  >
+                                  <span>Course Code: <field name="course_code" class="o_primary"/></span>
                                   <span>Course Creator: <field name="course_creator"/></span>
                                   <span>Created at: <field name="created_at"/></span>
                               </div>
@@ -67,6 +67,8 @@
       <field name="arch" type="xml">
         <form>
           <sheet>
+            <h4 style="color:#66598f">General Information</h4>
+            <hr/>
             <group>
               <group>
                 <field name="course_code"/>
@@ -78,10 +80,12 @@
                 <field name="created_at" />
               </group>
             </group>
-            <group string="Student Organizations">
-                <field name="organization_ids" string="Organizations Enrolled" />
-                <field name="temp_organization_ids" invisible="True"/> <!--computed temp_organization to calculate-->
-            </group>
+            <separator />
+            <h4 style="color:#66598f">Organization List</h4>
+            <hr/>
+            <field name="organization_ids" />
+            <field name="temp_organization_ids" invisible="True"/> <!--computed temp_organization to calculate-->
+            <separator />
           </sheet>
         </form>
       </field>
