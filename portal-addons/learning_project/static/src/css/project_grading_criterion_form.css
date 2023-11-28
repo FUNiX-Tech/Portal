@@ -1,0 +1,12 @@
+/* 300px is library sidebar width  */
+.modal-dialog {
+    display: flex;
+    max-width: 100vw !important;
+    padding: 10px 0 !important;
+}
+
+.modal-content.o_form_view {
+    height: 100%;
+    margin: 0 10px 0 310px;
+    flex: 1;
+}

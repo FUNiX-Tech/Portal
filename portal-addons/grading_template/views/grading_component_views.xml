@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="grading_component_view_form" model="ir.ui.view">
+        <field name="name">grading_component.form</field>
+        <field name="model">grading_component</field>
+        <field name="arch" type="xml">
+            <form string="grading_component">
+                <sheet>
+                    <group>
+                        <field name="code" string="Code" class="border bg-light"/>
+                        <field name="name" string="Name" class="border bg-light"/>
+                        <field name="categories" string="Categories" class="border bg-light"/>
+                        <field name="content" string="Content" class="border bg-light"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="grading_component_view_tree" model="ir.ui.view">
+        <field name="name">grading_component.tree</field>
+        <field name="model">grading_component</field>
+        <field name="arch" type="xml">
+            <tree limit="20" string="grading_component" edit="false" class="text-center">
+                <field name="code" />
+                <field name="name" />
+                <field name="categories" />
+                <field name="content" />
+            </tree>
+        </field>
+    </record>
+
+
+    <record id="grading_component_action" model="ir.actions.act_window">
+        <field name="name">Grading Component</field>
+        <field name="res_model">grading_component</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>

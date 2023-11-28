@@ -69,15 +69,6 @@ class ProjectSubmission(models.Model):
                     graded_all = False
                     break
 
-                for component in repsonse.feedback_components:
-                    if (
-                        component.is_show is True
-                        and component.is_optional is False
-                        and text_from_html(component.content).strip() == ""
-                    ):
-                        graded_all = False
-                        break
-
             logger.info(record.general_response)
             record.has_graded_all_criteria = (
                 graded_all

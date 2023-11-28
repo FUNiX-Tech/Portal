@@ -2,7 +2,6 @@
 
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
-from .response_component import ResponseComponent
 from odoo.addons.website.tools import text_from_html
 
 
@@ -24,12 +23,7 @@ class ProjectCriterionResponse(models.Model):
     criterion = fields.Many2one(
         "project_criterion", required=True, readonly=True
     )
-    feed_back = fields.Html(string="Feedback", compute="_compute_feedback")
-    feedback_components = fields.One2many(
-        "response_component",
-        inverse_name="criterion_response",
-        string="Feedback Components",
-    )
+    feed_back = fields.Html(string="Feedback")
     result = fields.Selection(
         [NOT_GRADED, PASSED, DID_NOT_PASS, INCOMPLETE],
         required=True,
@@ -44,9 +38,6 @@ class ProjectCriterionResponse(models.Model):
     criteria_group = fields.Many2one(
         related="criterion.criteria_group", store=True
     )  # store=True để có thể sort
-    is_missing_required_feedback = fields.Boolean(
-        compute="_check_missing_required_feedback", store=True
-    )
 
     _sql_constraints = [
         (
@@ -63,44 +54,3 @@ class ProjectCriterionResponse(models.Model):
                 raise ValidationError(
                     "Criterion and submission must belong to an project"
                 )
-
-    @api.model
-    def create(self, vals):
-        types = ResponseComponent.TYPES
-
-        for type in types:
-            component = self.env["response_component"].create(
-                {
-                    "name": type[0],
-                    "is_optional": type[1],
-                    "number": type[2],
-                }
-            )
-            vals.setdefault("feedback_components", []).append(component.id)
-
-        return super(ProjectCriterionResponse, self).create(vals)
-
-    @api.depends("feedback_components", "result")
-    def _compute_feedback(self):
-        for record in self:
-            html = ""
-            for component in record.feedback_components:
-                if component.is_show:
-                    html += component.content
-
-            record.feed_back = html
-
-    @api.depends("feedback_components.content", "result", "feed_back")
-    def _check_missing_required_feedback(self):
-        for record in self:
-            is_missing = False
-            for component in record.feedback_components:
-                if (
-                    component.is_show
-                    and not component.is_optional
-                    and text_from_html(component.content).strip() == ""
-                ):
-                    is_missing = True
-                    break
-
-            record.is_missing_required_feedback = is_missing
