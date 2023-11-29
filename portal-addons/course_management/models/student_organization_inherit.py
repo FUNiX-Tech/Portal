@@ -55,11 +55,21 @@ class StudentOrganization(models.Model):
         )
         list_old_students = self.student_ids
         old_students = self.student_ids.ids  # list ids of old students
-        new_students = (
-            vals.get("student_ids")[0][2]
-            if "student_ids" in vals
-            else self.student_ids.ids
-        )
+        # It is behavior of odoo, if just add and no remove it will use indicator 6 to link all id, if have remove or remove and add, it will use list of action with indicator 4 and 3
+        if "student_ids" in vals:
+            new_students = [
+                sublist[1]
+                for sublist in vals.get("student_ids")
+                if sublist[0] == 4
+            ]
+            if vals.get("student_ids")[0][0] == 6:
+                new_students = vals.get("student_ids")[0][2]
+        else:
+            new_students = self.student_ids.ids
+        # unlink student have organization before add new organzation (unlink course of old organization as well)
+        self.unlink_course_student_old_organization(old_students, new_students)
+
+        # change data of organization officially
         result = super(StudentOrganization, self).write(vals)
         if old_courses != new_courses:
             self._onchange_course_ids(
@@ -79,6 +89,26 @@ class StudentOrganization(models.Model):
         """
         added_courses = list(set(new_values) - set(old_values))
         removed_courses = list(set(old_values) - set(new_values))
+        if len(removed_courses) != 0:
+            for student in old_students:
+                student.write(
+                    {
+                        "course_ids": [
+                            (3, course_id) for course_id in removed_courses
+                        ]
+                    }
+                )
+            data_call_api = {
+                "identifiers": (",").join(old_students.mapped("email")),
+                "course_code": (",").join(
+                    self.env["course_management"]
+                    .browse(removed_courses)
+                    .mapped("course_code")
+                ),
+                "action": "unenroll",
+            }
+            print(data_call_api)
+            self.api_call(data_call_api)
         if len(added_courses) != 0:
             for student in self.student_ids:
                 student.write(
@@ -88,9 +118,6 @@ class StudentOrganization(models.Model):
                         ]
                     }
                 )
-            self.update_computed_organization(
-                "course_management", added_courses
-            )
             data_call_api = {
                 "identifiers": (",").join(self.student_ids.mapped("email")),
                 "course_code": (",").join(
@@ -103,34 +130,29 @@ class StudentOrganization(models.Model):
             print(data_call_api)
             self.api_call(data_call_api)
 
-        if len(removed_courses) != 0:
-            for student in old_students:
-                student.write(
+    def _onchange_student_ids(self, old_values, new_values, old_courses):
+        added_students = list(set(new_values) - set(old_values))
+        removed_students = list(set(old_values) - set(new_values))
+        if len(removed_students) != 0:
+            for course in old_courses:
+                course.write(
                     {
-                        "course_ids": [
-                            (3, course_id) for course_id in removed_courses
+                        "student_ids": [
+                            (3, student_id) for student_id in removed_students
                         ]
                     }
                 )
-            self.update_computed_organization(
-                "course_management", removed_courses
-            )
-            print(removed_courses)
             data_call_api = {
-                "identifiers": (",").join(old_students.mapped("email")),
-                "course_code": (",").join(
-                    self.env["course_management"]
-                    .browse(removed_courses)
-                    .mapped("course_code")
+                "identifiers": (",").join(
+                    self.env["portal.student"]
+                    .browse(removed_students)
+                    .mapped("email")
                 ),
+                "course_code": (",").join(old_courses.mapped("course_code")),
                 "action": "unenroll",
             }
             print(data_call_api)
             self.api_call(data_call_api)
-
-    def _onchange_student_ids(self, old_values, new_values, old_courses):
-        added_students = list(set(new_values) - set(old_values))
-        removed_students = list(set(old_values) - set(new_values))
         if len(added_students) != 0:
             for course in self.course_ids:
                 course.write(
@@ -140,7 +162,6 @@ class StudentOrganization(models.Model):
                         ]
                     }
                 )
-            self.update_computed_organization("portal.student", added_students)
             data_call_api = {
                 "identifiers": (",").join(
                     self.env["portal.student"]
@@ -155,44 +176,60 @@ class StudentOrganization(models.Model):
             print(data_call_api)
             self.api_call(data_call_api)
 
-        if len(removed_students) != 0:
-            for course in old_courses:
-                course.write(
-                    {
-                        "student_ids": [
-                            (3, student_id) for student_id in removed_students
-                        ]
-                    }
-                )
-            self.update_computed_organization(
-                "portal.student", removed_students
+    def unlink_course_student_old_organization(
+        self, old_students, new_students
+    ):
+        """
+        Unlinks the given old_students from the old organization by removing them from the
+        student_organization_student_ids field.
+        """
+        added_students = list(set(new_students) - set(old_students))
+        list_students_enrolled_organization = self.env[
+            "portal.student"
+        ].search(
+            [
+                ("id", "in", added_students),
+                ("student_organization_student_ids", "!=", False),
+            ]
+        )
+        old_courses = set()
+        for student in list_students_enrolled_organization:
+            old_courses = old_courses | set(
+                student.student_organization_student_ids.course_ids.ids
             )
-            data_call_api = {
-                "identifiers": (",").join(
-                    self.env["portal.student"]
-                    .browse(removed_students)
-                    .mapped("email")
-                ),
-                "course_code": (",").join(old_courses.mapped("course_code")),
-                "action": "unenroll",
-            }
-            print(data_call_api)
-            self.api_call(data_call_api)
-
-    def update_computed_organization(self, model, lists):
-        if model == "course_management":
-            courses = self.env["course_management"].browse(lists)
-            for course in courses:
-                course._compute_temp_organization_ids()
-        elif model == "portal.student":
-            students = self.env["portal.student"].browse(lists)
-            for student in students:
-                student._compute_temp_organizations()
+            student.write(
+                {
+                    "student_organization_student_ids": False,
+                    "course_ids": [
+                        (3, course_id) for course_id in old_courses
+                    ],
+                },
+            )
+        print("old_courses", old_courses)
+        data_call_api = {
+            "identifiers": (",").join(
+                self.env["portal.student"]
+                .browse(added_students)
+                .mapped("email")
+            ),
+            "course_code": (",").join(
+                self.env["course_management"]
+                .browse(old_courses)
+                .mapped("course_code")
+            ),
+            "action": "unenroll",
+        }
+        print(data_call_api)
+        self.api_call(data_call_api)
 
     def api_call(self, values):
-        api_url = (
-            "https://test-xseries.funix.edu.vn/api/bulk_enroll/v1/bulk_enroll"
-        )
+        LMS_BASE = self.env[
+            "service_key_configuration"
+        ].get_api_key_by_service_name("LMS_BASE")
+        API_BULK_ENROLL = self.env[
+            "service_key_configuration"
+        ].get_api_key_by_service_name("API_BULK_ENROLL")
+        api_url = LMS_BASE + API_BULK_ENROLL
         headers = {
             "Content-Type": "application/json",
         }
@@ -203,16 +240,23 @@ class StudentOrganization(models.Model):
             "email_students": False,
             "action": values.get("action"),
         }
-        try:
-            response = requests.post(api_url, json=payload, headers=headers)
-            print(response)
-            # Check the status code of the response
-            if response.status_code == 200:
-                return self
-            else:
-                raise UserError(
-                    f"API call failed with status code {response.status_code}, {response.json()}"
+        # if payload have identifiers and courses we will call api
+        if payload.get("identifiers") and payload.get("courses"):
+            try:
+                response = requests.post(
+                    api_url, json=payload, headers=headers
                 )
+                print(response)
+                # Check the status code of the response
+                if response.status_code == 200:
+                    return self
+                else:
+                    print("test", response.json())
+                    raise UserError(
+                        f"API call failed with status code {response.status_code}, {(response.json()) if response.json() else 'asd'}"
+                    )
 
-        except requests.exceptions.RequestException as e:
-            raise UserError(f"Error during API call: {e}")
+            except requests.exceptions.RequestException as e:
+                raise UserError(f"Error during API call: {e}")
+        else:
+            return

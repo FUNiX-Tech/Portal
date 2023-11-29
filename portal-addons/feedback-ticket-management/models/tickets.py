@@ -81,6 +81,7 @@ class FeedbackTicket(models.Model):
     complete_date = fields.Datetime(
         string="Complete Ticket Date", readonly=True
     )
+    check_uid_assignee = fields.Boolean(compute="_computed_check_uid_assignee")
 
     # Action send email based on type
     def action_send_mail(self, ticket_id, email_type="assign"):
@@ -177,6 +178,10 @@ class FeedbackTicket(models.Model):
     def ticket_assignee_onchange(self):
         if self.ticket_assignee and self.ticket_status == "waiting":
             self.ticket_status = "assigned"
+        elif not self.ticket_assignee:
+            self.ticket_status = "waiting"
+        elif self.ticket_assignee != self._origin.ticket_assignee:
+            self.ticket_status = "assigned"
 
     # Function compute to show "Assign to you" tag if the ticket is assigned to current logged in user.
     @api.depends("ticket_assignee")
@@ -236,3 +241,17 @@ class FeedbackTicket(models.Model):
         body = f"<em>Subject : {email_data[0]['subject']}</em><br/><p>Email to: {email_data[0]['email_to']}</p><br/>{email_data[0]['body_html']}"
         print(body)
         self.message_post(body=body)
+
+    def button_start_resolving(self):
+        self.ticket_status = "in_progress"
+        return
+
+    @api.depends_context("uid")
+    def _computed_check_uid_assignee(self):
+        """
+        This function checks if the ticket assignee is the same as the current user.
+        If they are the same, it sets the field check_uid_assignee to True.
+        """
+        self.check_uid_assignee = (
+            self.ticket_assignee.id == self.env.user.sudo().id
+        )

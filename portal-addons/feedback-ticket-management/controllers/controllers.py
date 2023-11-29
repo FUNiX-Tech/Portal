@@ -1,7 +1,19 @@
 # -*- coding: utf-8 -*-
 from odoo import http
 from odoo.http import request
+import logging
 import json
+from ..utils.utils import json_response
+from ..validators.validators import (
+    check_fields_presence,
+    check_url,
+    check_ticket_category,
+    check_has_course,
+    check_student,
+    check_description,
+)
+
+logger = logging.getLogger(__name__)
 
 
 class FeedbackTicket(http.Controller):
@@ -14,32 +26,25 @@ class FeedbackTicket(http.Controller):
         csrf=False,
         cors="*",
     )
+    @check_fields_presence(
+        "student_email",
+        "ticket_category",
+        "course_id",
+        "lesson_url",
+        "ticket_description",
+    )
+    @check_ticket_category("ticket_category")
+    @check_student("student_email")
+    @check_has_course("course_id")
+    @check_description("ticket_description")
+    @check_url("image", "lesson_url")
     def create_ticket(self, **kw):
         data = json.loads(http.request.httprequest.data.decode("utf-8"))
-        if all(
-            key in list(data.keys())
-            for key in [
-                "student_email",
-                "ticket_category",
-                "course_id",
-            ]
-        ):
-            student_email = data.get("student_email")
-            student = (
-                request.env["portal.student"]
-                .sudo()
-                .search([("email", "=", student_email)])
-            )
-            course_code = data.get(
-                "course_id"
-            )  # code_id from lms is course_code in portal
-            course = (
-                request.env["course_management"]
-                .sudo()
-                .search([("course_code", "=", course_code)])
-            )
+        student = self.student
+        course = self.course
 
-            if student and course:
+        if student and course:
+            try:
                 request.env["feedback_ticket"].sudo().create(
                     {
                         "ticket_category": data.get("ticket_category"),
@@ -50,21 +55,11 @@ class FeedbackTicket(http.Controller):
                         "ticket_attachment": data.get("image"),
                     }
                 )
-                return http.request.make_json_response(
-                    data={"message": "Your ticket has been generated!"},
+                return json_response(
                     status=200,
+                    data={"message": "Your ticket has been generated!"},
                 )
-            else:
-                return http.request.make_json_response(
-                    data={
-                        "message": "Student email or Course id do not found!"
-                    },
-                    status=400,
-                )
-        else:
-            return http.request.make_json_response(
-                data={
-                    "message": "Please make sure 'student_email', 'ticket_category' and 'course_id' are included in body request"
-                },
-                status=400,
-            )
+            except Exception as e:
+                logger.error(str(e))
+                # end create submission history
+                return json_response(500, {"message": "Internal Server Error"})

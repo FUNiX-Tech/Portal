@@ -5,16 +5,16 @@
             <field name="model">course_management</field>
             <field name="inherit_id" ref="course_management.view_course_management_form" />
             <field name="arch" type="xml">
-                <xpath expr="//form/sheet/group" position="after">
-                    <group string="Students">
-                        <field name="student_ids"
-                            options="{'no_create': True}">
-                            <tree>
-                                <field name="name" />
-                                <field name="email" />
-                            </tree>
-                        </field>
-                    </group>
+                <xpath expr="//form/sheet" position="inside">
+                    <h4 style="color:#66598f">Student List</h4>
+                    <hr/>
+                    <field name="student_ids"
+                        options="{'no_create': True}">
+                        <tree>
+                            <field name="name" />
+                            <field name="email" />
+                        </tree>
+                    </field>
                 </xpath>
             </field>
         </record>

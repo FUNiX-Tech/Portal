@@ -1,0 +1,22 @@
+<odoo>
+    <data>
+        <record id="course_for_organization_view_inherit" model="ir.ui.view">
+            <field name="name">Organization Form Inherit For Courses</field>
+            <field name="model">student_organization</field>
+            <field name="inherit_id" ref="student_organization.student_organization_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//form/sheet" position="inside">
+                    <h4 style="color:#66598f">Course List</h4>
+                    <hr/>
+                    <field name="course_ids"
+                        options="{'no_create': True}">
+                        <tree>
+                            <field name="course_name" />
+                            <field name="course_code" />
+                        </tree>
+                    </field>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
