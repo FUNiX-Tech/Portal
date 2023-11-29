@@ -166,11 +166,21 @@ class Student(models.Model):
                 }
             ]
 
-            self.send_api_request(
+            response = self.send_api_request(
                 data_body,
                 headers,
                 endpoint="api/funix_portal/user/create_user",
             )
+
+            # Check response status
+            if (
+                not response
+                or response.status_code < 200
+                or response.status_code >= 300
+            ):
+                raise exceptions.ValidationError(
+                    "Failed to create student in LMS"
+                )
 
         return super(Student, self).create(student_dict)
 
@@ -237,11 +247,20 @@ class Student(models.Model):
             ]
 
             # Send the API request with all the data
-            self.send_api_request(
+            response = self.send_api_request(
                 data_body,
                 headers,
                 endpoint="api/funix_portal/user/create_user",
             )
+
+            if (
+                not response
+                or response.status_code < 200
+                or response.status_code >= 300
+            ):
+                raise exceptions.ValidationError(
+                    "Failed to import student in LMS"
+                )
 
         return result
 
