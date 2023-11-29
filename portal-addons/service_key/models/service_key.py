@@ -112,6 +112,10 @@ class ServiceKeyConfiguration(models.Model):
                 "name": "MAIL_SERVICE",
                 "api_key": "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",
             },
+            {
+                "name": "API_BULK_ENROLL",
+                "api_key": "api/bulk_enroll/v1/bulk_enroll",
+            },
         ]
         for key in key_lists:
             if not self.check_key_existing(key["name"]):  # if key not existing
