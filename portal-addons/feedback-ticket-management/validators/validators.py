@@ -89,12 +89,12 @@ def check_student(student_field):
                     return origin_function(self, *args, **kwargs)
                 else:
                     logger.info(
-                        f"[INFO]: Not found student with code {student_email}"
+                        f"[INFO]: Not found student with email {student_email}"
                     )
                     return json_response(
                         400,
                         {
-                            "message": f"Not found course with code {student_email}"
+                            "message": f"Not found student with email {student_email}"
                         },
                     )
             except Exception as e:
