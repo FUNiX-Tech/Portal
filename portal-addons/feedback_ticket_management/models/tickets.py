@@ -87,7 +87,7 @@ class FeedbackTicket(models.Model):
     def action_send_mail(self, ticket_id, email_type="assign"):
         if email_type == "assign" and self.ticket_assignee.email:
             template = self.env.ref(
-                "feedback-ticket-management.assign_ticket_email_template"
+                "feedback_ticket_management.assign_ticket_email_template"
             )
             email = (
                 template.generate_email(
@@ -98,7 +98,7 @@ class FeedbackTicket(models.Model):
             template.send_mail(ticket_id, force_send=True)
         elif email_type == "response" and self.ticket_requester.email:
             template = self.env.ref(
-                "feedback-ticket-management.response_ticket_email_template"
+                "feedback_ticket_management.response_ticket_email_template"
             )
             email = (
                 template.generate_email(
@@ -109,7 +109,7 @@ class FeedbackTicket(models.Model):
             template.send_mail(ticket_id, force_send=True)
         elif email_type == "reminder":
             template = self.env.ref(
-                "feedback-ticket-management.email_assignee_reminder_template"
+                "feedback_ticket_management.email_assignee_reminder_template"
             )
             date_diff = (datetime.now() - self.created_at).days
             email = (

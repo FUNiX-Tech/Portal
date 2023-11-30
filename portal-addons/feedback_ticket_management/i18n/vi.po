@@ -1,0 +1,490 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: POEditor.com\n"
+"Project-Id-Version: Odoo Server 16.0\n"
+"Language: vi\n"
+
+#. module: feedback_ticket_management
+#: model:mail.template,body_html:feedback_ticket_management.assign_ticket_email_template
+msgid "<div style=\"width:100%\">\n"
+"                        <h4>Dear <t t-out=\"object.ticket_assignee.name\">,</t></h4>\n"
+"                        <p>There is new ticket which is assigned to you. Go to Portal and check it out for further details.</p>\n"
+"                        <p>Best regards,</p>\n"
+"                        <p>Funix portal</p>\n"
+"                </div>\n"
+"            "
+msgstr ""
+
+#. module: feedback_ticket_management
+#: model:mail.template,body_html:feedback_ticket_management.email_assignee_reminder_template
+msgid "<div style=\"width:100%\">\n"
+"                        <h4>Dear <t t-out=\"object.ticket_assignee.name\">,</t></h4>\n"
+"                        <p>Your assigned ticket is pending for a long time . Please go to Portal to check it and proceed the next step.</p>\n"
+"                        <p>Best regards,</p>\n"
+"                        <p>Funix portal</p>\n"
+"                </div>\n"
+"            "
+msgstr ""
+
+#. module: feedback_ticket_management
+#: model:mail.template,body_html:feedback_ticket_management.response_ticket_email_template
+msgid "<div style=\"width:100%\">\n"
+"                        <h4>Dear <t t-out=\"object.ticket_requester.name\">,</t></h4>\n"
+"                        <p>Your feedback has been acknowledged and resolved. Please see the response below and proceed again</p>\n"
+"                        <p>Reponse: <t t-out=\"object.ticket_response\"></t></p>\n"
+"                        <p>Best regards,</p>\n"
+"                        <p>Funix portal</p>\n"
+"                </div>\n"
+"            "
+msgstr ""
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,field_description:feedback_ticket_management.field_feedback_ticket__message_needaction
+msgid "Action Needed"
+msgstr "Hành động cần thiết"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,field_description:feedback_ticket_management.field_feedback_ticket__activity_ids
+msgid "Activities"
+msgstr "Các hành động"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,field_description:feedback_ticket_management.field_feedback_ticket__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr "Các hành động khác"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,field_description:feedback_ticket_management.field_feedback_ticket__activity_state
+msgid "Activity State"
+msgstr "Trạng thái hoạt động"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,field_description:feedback_ticket_management.field_feedback_ticket__activity_type_icon
+msgid "Activity Type Icon"
+msgstr "Biểu tượng loại hoạt động"
+
+#. module: feedback_ticket_management
+#: model:res.groups,name:feedback_ticket_management.group_feedback_ticket_management_admin
+msgid "Admin"
+msgstr "Quản trị viên"
+
+#. module: feedback_ticket_management
+#: model:ir.ui.menu,name:feedback_ticket_management.feedback_ticket_management_list_all
+msgid "All Tickets"
+msgstr "Tất cả Ticket"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,field_description:feedback_ticket_management.field_feedback_ticket__assign_to_you
+msgid "Assign To You"
+msgstr "Phân công cho bạn"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields.selection,name:feedback_ticket_management.selection__feedback_ticket__ticket_status__assigned
+msgid "Assigned"
+msgstr "Đã phân công"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,field_description:feedback_ticket_management.field_feedback_ticket__ticket_assignee
+msgid "Assigned Staff"
+msgstr "Nhân viên được phân công"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,field_description:feedback_ticket_management.field_feedback_ticket__message_attachment_count
+msgid "Attachment Count"
+msgstr "Tính toán tệp đính kèm"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,help:feedback_ticket_management.field_feedback_ticket__created_at
+msgid "Automatically generated"
+msgstr "Tự động tạo ra"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,field_description:feedback_ticket_management.field_feedback_ticket__check_uid_assignee
+msgid "Check Uid Assignee"
+msgstr "Kiểm tra Uid người được phân công"
+
+#. module: feedback_ticket_management
+#: model_terms:ir.ui.view,arch_db:feedback_ticket_management.feedback_tickets_management_form
+msgid "Click here to open image"
+msgstr "Bấm vào đây để mở hình ảnh"
+
+#. module: feedback_ticket_management
+#: model_terms:ir.ui.view,arch_db:feedback_ticket_management.feedback_tickets_management_list
+msgid "Click here to see"
+msgstr "Bấm vào đây để xem"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,field_description:feedback_ticket_management.field_feedback_ticket__complete_date
+msgid "Complete Ticket Date"
+msgstr "Ngày hoàn thànhTicket"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields.selection,name:feedback_ticket_management.selection__feedback_ticket__ticket_category__outdated
+msgid "Content contains outdated information"
+msgstr "Nội dung chứa thông tin lỗi thời"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields.selection,name:feedback_ticket_management.selection__feedback_ticket__ticket_category__bad_explain
+msgid "Content is not explained well"
+msgstr "Nội dung không được giải thích rõ ràng"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields.selection,name:feedback_ticket_management.selection__feedback_ticket__ticket_category__insufficient_details
+msgid "Content needs more detail"
+msgstr "Nội dung cần chi tiết hơn"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,field_description:feedback_ticket_management.field_feedback_ticket__course_rel
+msgid "Course"
+msgstr "Khóa học"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,field_description:feedback_ticket_management.field_feedback_ticket__created_at
+msgid "Created Datetime"
+msgstr "Ngày giờ đã tạo"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,field_description:feedback_ticket_management.field_feedback_ticket__create_uid
+msgid "Created by"
+msgstr "Được tạo bởi"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,field_description:feedback_ticket_management.field_feedback_ticket__create_date
+msgid "Created on"
+msgstr "Được tạo ra"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,field_description:feedback_ticket_management.field_feedback_ticket__display_name
+msgid "Display Name"
+msgstr "Tên hiển thị"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields.selection,name:feedback_ticket_management.selection__feedback_ticket__ticket_status__done
+msgid "Done"
+msgstr "Hoàn Thành"
+
+#. module: feedback_ticket_management
+#: model_terms:ir.ui.view,arch_db:feedback_ticket_management.feedback_tickets_management_form
+msgid "Feedback Details"
+msgstr "Chi tiết phản hồi"
+
+#. module: feedback_ticket_management
+#: model:ir.ui.menu,name:feedback_ticket_management.feedback_ticket_management_menu_root
+msgid "Feedback Ticket"
+msgstr "Phản hồi Ticket"
+
+#. module: feedback_ticket_management
+#: model:ir.actions.act_window,name:feedback_ticket_management.feedback_ticket_management_action_window
+#: model:ir.module.category,name:feedback_ticket_management.module_category_feedback_ticket_management
+msgid "Feedback Ticket Management"
+msgstr "Quản lý phản hồi Ticket"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,field_description:feedback_ticket_management.field_feedback_ticket__message_follower_ids
+msgid "Followers"
+msgstr "Người theo dõi"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,field_description:feedback_ticket_management.field_feedback_ticket__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "Người theo dõi (Đối tác)"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,help:feedback_ticket_management.field_feedback_ticket__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr "Phông chữ biểu tượng tuyệt vời, ví dụ: nhiệm vụ fa"
+
+#. module: feedback_ticket_management
+#: model_terms:ir.ui.view,arch_db:feedback_ticket_management.feedback_tickets_management_form
+msgid "General Information"
+msgstr "Thông tin chung"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,field_description:feedback_ticket_management.field_feedback_ticket__has_message
+msgid "Has Message"
+msgstr "Có tin nhắn"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,field_description:feedback_ticket_management.field_feedback_ticket__id
+msgid "ID"
+msgstr "ID"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,field_description:feedback_ticket_management.field_feedback_ticket__activity_exception_icon
+msgid "Icon"
+msgstr "Biểu tượng"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,help:feedback_ticket_management.field_feedback_ticket__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr "Biểu tượng để biểu thị một hoạt động ngoại lệ."
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,help:feedback_ticket_management.field_feedback_ticket__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "Nếu được chọn, các tin nhắn mới cần bạn chú ý."
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,help:feedback_ticket_management.field_feedback_ticket__message_has_error
+msgid "If checked, some messages have a delivery error."
+msgstr "Nếu được chọn, một số tin nhắn có lỗi gửi."
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields.selection,name:feedback_ticket_management.selection__feedback_ticket__ticket_status__in_progress
+msgid "In Progress"
+msgstr "Đang xử lý"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,field_description:feedback_ticket_management.field_feedback_ticket__message_is_follower
+msgid "Is Follower"
+msgstr "Là người theo dõi"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,field_description:feedback_ticket_management.field_feedback_ticket____last_update
+msgid "Last Modified on"
+msgstr "Sửa đổi lần cuối vào"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,field_description:feedback_ticket_management.field_feedback_ticket__write_uid
+msgid "Last Updated by"
+msgstr "Cập nhật lần cuối bởi"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,field_description:feedback_ticket_management.field_feedback_ticket__write_date
+msgid "Last Updated on"
+msgstr "Cập nhật lần cuối vào"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,field_description:feedback_ticket_management.field_feedback_ticket__lesson_url
+msgid "Lesson Link"
+msgstr "Đường dẫn bài học"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,field_description:feedback_ticket_management.field_feedback_ticket__message_main_attachment_id
+msgid "Main Attachment"
+msgstr "Tệp đính kèm chính"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,field_description:feedback_ticket_management.field_feedback_ticket__message_has_error
+msgid "Message Delivery error"
+msgstr "Lỗi gửi tin nhắn"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,field_description:feedback_ticket_management.field_feedback_ticket__message_ids
+msgid "Messages"
+msgstr "Tin nhắn"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,field_description:feedback_ticket_management.field_feedback_ticket__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr "Hạn chót hoạt động của tôi"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,field_description:feedback_ticket_management.field_feedback_ticket__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr "Hạn chót hoạt động tiếp theo"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,field_description:feedback_ticket_management.field_feedback_ticket__activity_summary
+msgid "Next Activity Summary"
+msgstr "Tóm tắt hoạt động tiếp theo"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,field_description:feedback_ticket_management.field_feedback_ticket__activity_type_id
+msgid "Next Activity Type"
+msgstr "Loại hoạt động tiếp theo"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,field_description:feedback_ticket_management.field_feedback_ticket__message_needaction_counter
+msgid "Number of Actions"
+msgstr "Số lượng hành động"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,field_description:feedback_ticket_management.field_feedback_ticket__message_has_error_counter
+msgid "Number of errors"
+msgstr "Số lỗi"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,help:feedback_ticket_management.field_feedback_ticket__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "Số lượng tin nhắn yêu cầu hành động"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,help:feedback_ticket_management.field_feedback_ticket__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "Số lượng tin nhắn có lỗi gửi"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,field_description:feedback_ticket_management.field_feedback_ticket__processing_time
+msgid "Processing Time"
+msgstr "Thời gian xử lý"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields.selection,name:feedback_ticket_management.selection__feedback_ticket__ticket_category__broken_resource
+msgid "Resource is missing or broken (link, dataset, etc)"
+msgstr "Tài nguyên bị thiếu hoặc bị hỏng (liên kết, tập dữ liệu, v.v.)"
+
+#. module: feedback_ticket_management
+#: model_terms:ir.ui.view,arch_db:feedback_ticket_management.feedback_tickets_management_form
+msgid "Response"
+msgstr "Phản hồi"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,field_description:feedback_ticket_management.field_feedback_ticket__ticket_response
+msgid "Response Content"
+msgstr "Nội dung phản hồi"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,field_description:feedback_ticket_management.field_feedback_ticket__activity_user_id
+msgid "Responsible User"
+msgstr "Người dùng có trách nhiệm"
+
+#. module: feedback_ticket_management
+#: model:ir.actions.server,name:feedback_ticket_management.ir_cron_schedule_remind_assignee_action_ir_actions_server
+#: model:ir.cron,cron_name:feedback_ticket_management.ir_cron_schedule_remind_assignee_action
+msgid "Scheduling Remind Assignee"
+msgstr "Lên lịch nhắc nhở người được phân công"
+
+#. module: feedback_ticket_management
+#: model:ir.actions.act_window,name:feedback_ticket_management.open_config_key_ticket_management
+msgid "Set Up Config Key"
+msgstr "Thiết lập cấu hình"
+
+#. module: feedback_ticket_management
+#: model:ir.ui.menu,name:feedback_ticket_management.feedback_ticket_management_time_reminder
+msgid "Setting Configs"
+msgstr "Cài đặt cấu hình"
+
+#. module: feedback_ticket_management
+#: model:res.groups,name:feedback_ticket_management.group_feedback_ticket_management_staff
+msgid "Staff"
+msgstr "Nhân viên"
+
+#. module: feedback_ticket_management
+#: model_terms:ir.ui.view,arch_db:feedback_ticket_management.feedback_tickets_management_form
+msgid "Start Resolving"
+msgstr "Bắt đầu giải quyết"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,help:feedback_ticket_management.field_feedback_ticket__activity_state
+msgid "Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr "Trạng thái dựa trên hoạt động\n"
+"Quá hạn: Đã qua ngày đáo hạn\n"
+"Hôm nay: Ngày hoạt động là hôm nay\n"
+"Dự kiến: Hoạt động sắp tới."
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,field_description:feedback_ticket_management.field_feedback_ticket__ticket_requester
+msgid "Student"
+msgstr "Học sinh"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,field_description:feedback_ticket_management.field_feedback_ticket__requester_email
+msgid "Student Email"
+msgstr "Email sinh viên"
+
+#. module: feedback_ticket_management
+#: model:mail.template,description:feedback_ticket_management.response_ticket_email_template
+msgid "The ticket has been resolved. Make a response to requester"
+msgstr "Ticket đã được giải quyết. Trả lời người yêu cầu"
+
+#. module: feedback_ticket_management
+#: model:mail.template,description:feedback_ticket_management.email_assignee_reminder_template
+msgid "The ticket is assigned for days, please check and handle it"
+msgstr "Ticket được giao trong nhiều ngày, vui lòng kiểm tra và xử lý"
+
+#. module: feedback_ticket_management
+#: model:mail.template,description:feedback_ticket_management.assign_ticket_email_template
+msgid "There is new ticket which is assigned to you"
+msgstr "Có Ticket mới được giao cho bạn"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,field_description:feedback_ticket_management.field_feedback_ticket__ticket_attachment
+msgid "Ticket Attachment"
+msgstr "Đính kèm Ticket"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,field_description:feedback_ticket_management.field_feedback_ticket__ticket_category
+msgid "Ticket Category"
+msgstr "Loại Ticket"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,field_description:feedback_ticket_management.field_feedback_ticket__ticket_description
+msgid "Ticket Descriptions"
+msgstr "Mô tả Ticket"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,field_description:feedback_ticket_management.field_feedback_ticket__ticket_number
+msgid "Ticket Number"
+msgstr "Mã Ticket"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,field_description:feedback_ticket_management.field_feedback_ticket__ticket_status
+msgid "Ticket status"
+msgstr "Trạng thái Ticket"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields.selection,name:feedback_ticket_management.selection__feedback_ticket__ticket_category__error_translation
+msgid "Translation Error in content"
+msgstr "Lỗi dịch nội dung"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,help:feedback_ticket_management.field_feedback_ticket__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr "Loại hoạt động ngoại lệ được ghi lại."
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields.selection,name:feedback_ticket_management.selection__feedback_ticket__ticket_status__waiting
+msgid "Waiting"
+msgstr "Đang chờ phân công"
+
+#. module: feedback_ticket_management
+#: model:ir.model.fields,field_description:feedback_ticket_management.field_feedback_ticket__warning_ticket
+msgid "Warning Ticket"
+msgstr "Phiếu cảnh báo"
+
+#. module: feedback_ticket_management
+#: model:mail.template,subject:feedback_ticket_management.assign_ticket_email_template
+msgid "You Are Assigned To New Ticket! - {{object.ticket_number}}"
+msgstr "Bạn được phân công một Ticket mới! - {{object.ticket_number}}"
+
+#. module: feedback_ticket_management
+#: model:mail.template,subject:feedback_ticket_management.response_ticket_email_template
+msgid "Your Feedback Is Resolve! - {{object.ticket_number}}"
+msgstr "Phản hồi của bạn đã được giải quyết! - {{object.ticket_number}}"
+
+#. module: feedback_ticket_management
+#: model:mail.template,subject:feedback_ticket_management.email_assignee_reminder_template
+msgid "Your Ticket Is Pending For {{ctx.get(\"date_diff\")}} days - {{object.ticket_number}}"
+msgstr "Ticket của bạn đang chờ xử lý trong {{ctx.get(\"date_diff\")}} ngày - {{object.ticket_number}}"
+
+#. module: feedback_ticket_management
+#: model_terms:ir.ui.view,arch_db:feedback_ticket_management.feedback_tickets_management_search
+msgid "Your Tickets"
+msgstr "Ticket của bạn"
+
+#. module: feedback_ticket_management
+#: model:mail.template,name:feedback_ticket_management.email_assignee_reminder_template
+msgid "[PORTAL] Reminder Handle Ticket To Assignee "
+msgstr "[Portal] Nhắc nhở xử lý Ticket cho người được phân công "
+
+#. module: feedback_ticket_management
+#: model:mail.template,name:feedback_ticket_management.assign_ticket_email_template
+msgid "[PORTAL] Ticket Assignment Notification"
+msgstr "[PORTAL] Thông báo phân công Ticket"
+
+#. module: feedback_ticket_management
+#: model:mail.template,name:feedback_ticket_management.response_ticket_email_template
+msgid "[PORTAL] Ticket Response Notification"
+msgstr "[Portal] Thông báo phản hồi Ticket"
+
+#. module: feedback_ticket_management
+#: model:ir.model,name:feedback_ticket_management.model_feedback_ticket
+msgid "feedback_ticket_management"
+msgstr "Quản lý phản hồi Ticket"
