@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 class FeedbackTicket(http.Controller):
     # API to create ticket
     @http.route(
-        "/api/feedback_ticket_management/create",
+        "/api/feedback-ticket-management/create",
         type="http",
         auth="public",
         method=["POST"],
