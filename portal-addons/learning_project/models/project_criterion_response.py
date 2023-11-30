@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 
+import logging
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
-from odoo.addons.website.tools import text_from_html
+from odoo.tools import config
+
+logger = logging.getLogger(__name__)
 
 
 class ProjectCriterionResponse(models.Model):
@@ -22,6 +25,9 @@ class ProjectCriterionResponse(models.Model):
     )
     criterion = fields.Many2one(
         "project_criterion", required=True, readonly=True
+    )
+    specifications = fields.Html(
+        string="Specifications", related="criterion.specifications"
     )
     feed_back = fields.Html(string="Feedback")
     result = fields.Selection(
@@ -83,13 +89,29 @@ class ProjectCriterionResponse(models.Model):
                 record.previously_passed = False
                 return
 
-            previously_response = list(
-                filter(
-                    lambda response: response.criterion.id
-                    == record.criterion.id,
-                    nearest_submission.criteria_responses,
-                )
-            )[0]
+            try:
+                previously_response = list(
+                    filter(
+                        lambda response: response.criterion.id
+                        == record.criterion.id,
+                        nearest_submission.criteria_responses,
+                    )
+                )[0]
+            except IndexError as e:
+                # Xảy ra khi project đã có submission nhưng có ai đó sửa thêm tiêu chí vào project
+                if (
+                    config.get("debug_mode") is True
+                    and config.get("allow_to_add_criteria_after_submission")
+                    is True
+                ):
+                    logger.warning(
+                        "Bạn đang cho phép thêm tiêu chí cho learning project mặc dù project đã có submission, vì vậy 'previously_passed' sẽ luôn False"
+                    )
+                    record.previously_passed = False
+                    return
+                else:
+                    raise e
+
             record.previously_passed = previously_response.result == "passed"
 
     @api.depends("submission")
@@ -120,11 +142,27 @@ class ProjectCriterionResponse(models.Model):
             if nearest_submission is None:
                 return None
 
-            nearest_response = list(
-                filter(
-                    lambda response: response.criterion.id
-                    == record.criterion.id,
-                    nearest_submission.criteria_responses,
-                )
-            )[0]
+            try:
+                nearest_response = list(
+                    filter(
+                        lambda response: response.criterion.id
+                        == record.criterion.id,
+                        nearest_submission.criteria_responses,
+                    )
+                )[0]
+            except IndexError as e:
+                # Xảy ra khi project đã có submission nhưng có ai đó sửa thêm tiêu chí vào project
+                if (
+                    config.get("debug_mode") is True
+                    and config.get("allow_to_add_criteria_after_submission")
+                    is True
+                ):
+                    logger.warning(
+                        "Bạn đang cho phép thêm tiêu chí cho learning project mặc dù project đã có submission, vì vậy 'nearest_response' sẽ luôn None"
+                    )
+                    record.previously_passed = False
+                    return
+                else:
+                    raise e
+
             return nearest_response
