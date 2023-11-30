@@ -7,7 +7,6 @@ def json_response(status=200, message="success", data=None, metadata=None):
         "data": data,
         "status": status,
         "message": message,
-        "message": message,
         "metadata": metadata,
     }
 

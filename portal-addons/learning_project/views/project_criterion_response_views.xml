@@ -4,32 +4,27 @@
         <field name="name">project_criterion_response.form</field>
         <field name="model">project_criterion_response</field>
         <field name="arch" type="xml">
+            <xpath expr="." position="inside">
+                <link rel="stylesheet" href="learning_project/static/src/css/project_grading_criterion_form.css"/>
+            </xpath>
             <form string="Project Criterion Response">
                 <sheet>
                     <group>
-                        <field name="submission" string="Submission" editable="false"/>
-                        <field name="criterion" string="Criterion" editable="false"/>
-                        <field name="result" attrs="{'invisible': [('submission_result', '=', 'not_graded')]}" string="Result" widget="badge" decoration-success="result == 'passed'" decoration-danger="result == 'did_not_pass'" decoration-warning="result == 'incomplete'" />
-                        <field name="result" attrs="{'invisible': [('submission_result', '!=', 'not_graded')]}" string="Result" />
+                        <field name="submission" readonly="1" string="Submission" />
+                        <field name="criterion" class='criterion_name' readonly="1" string="Criterion" />
+                        <field name="specifications" readonly="1" string="Specifications" class='criterion_specifications' />
+                        <field name="result" class='criterion_result' attrs="{'invisible': [('submission_result', '=', 'not_graded')]}" string="Result" widget="badge" decoration-success="result == 'passed'" decoration-danger="result == 'did_not_pass'" decoration-warning="result == 'incomplete'" />
+                        <field name="result" class='criterion_result' attrs="{'invisible': [('submission_result', '!=', 'not_graded')]}" string="Result" />
                         <field name="submission_result" string="Submission Result" invisible="1"/>
-                        <field name="feedback_components" string="Feedback" class="row">
-                            <tree create="false" delete="false" editable="top">
-                                <field class="col-1" name="name" string="Name" readonly="1" attrs="{'invisible': [('is_show', '=', False)]}" />
-                                <field class="col-11" name="content" string="Content" attrs="{'invisible': [('is_show', '=', False)]}" />
-                                <field name="criterion_response_result" string="Result" invisible="1" />
-                                <field name="is_show" string="Is Show" invisible="1" />
-                            </tree>
-                        </field>
+                        <field name="previously_passed" readonly="1" string="Previously Passed" />
+                        <field name="previously_feedback" readonly="1" string="Previously Feedback" class='disable_grading_template_html_field_css' />
+                        <field name="feed_back" widget="grading_template_html" string="Feedback"/>
                     </group>
-                    <notebook>
-                        <page string="Preview">
-                            <field name="feed_back" widget="html" string="Preview"/>
-                        </page>
-                    </notebook>
                 </sheet>
             </form>
         </field>
     </record>
+
 
     <record id="project_criterion_response_action" model="ir.actions.act_window">
         <field name="name">Project Criterion Response</field>

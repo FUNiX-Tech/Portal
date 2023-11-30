@@ -4,6 +4,7 @@ from odoo import http
 from odoo.http import request
 from ..utils.utils import json_response
 from ..validators import request_validators, project_validators
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -117,6 +118,25 @@ class ProjectSubmissionController(http.Controller):
                 logger.error(str(e))
             # end create submission history
 
+            # assign to mentor
+            try:
+                last_submission = (
+                    request.env["project_submission"]
+                    .sudo()
+                    .search(
+                        [
+                            ("student", "=", self.student.id),
+                            ("project", "=", self.project.id),
+                            ("result", "!=", "submission_canceled"),
+                        ]
+                    )
+                ).sorted("id")[0]
+                created_submission.mentor_id = last_submission.mentor_id
+            except IndexError:
+                pass
+            except Exception as e:
+                logger.error(str(e))
+
             return json_response(200, "Submission saved!", response_data)
 
         except Exception as e:
@@ -164,6 +184,7 @@ class ProjectSubmissionController(http.Controller):
                     [
                         ("student", "=", self.student.id),
                         ("project", "=", self.project.id),
+                        ("result", "!=", "submission_canceled"),
                     ]
                 )
             ).sorted("id")
@@ -225,6 +246,7 @@ class ProjectSubmissionController(http.Controller):
                                 "number": response.number,
                                 "criteria_group": response.criteria_group.title,
                                 "group_number": response.criteria_group.number,
+                                "specifications": response.criterion.specifications,
                             }
                         )
 
@@ -265,3 +287,95 @@ class ProjectSubmissionController(http.Controller):
             output.append({"group_name": key, "criteria": groups[key]})
 
         return output
+
+    @http.route(
+        "/api/v1/project/submission/cancel",
+        type="http",
+        auth="public",
+        methods=["POST"],
+        cors="*",
+        csrf=False,
+    )
+    @request_validators.check_fields_presence("submission_id", "email")
+    @project_validators.skip_authentication()
+    @project_validators.check_has_submission()
+    def cancel_project_submission(self):
+        try:
+            submission = self.submission
+
+            if submission.result == "submission_cancelled":
+                return json_response(
+                    400, "This submission has already canceled."
+                )
+
+            if submission.result != "not_graded":
+                return json_response(
+                    400,
+                    "You cannot cancel this submission because the submission has been graded.",
+                )
+
+            minutes = round(
+                (datetime.now() - submission.create_date).total_seconds() / 60
+            )
+            if minutes > 30:
+                return json_response(
+                    400,
+                    "You cannot cancel this submission because it was submitted more than 30 minutes ago.",
+                )
+
+            if submission.mentor_id.id is not False:
+                return json_response(
+                    400,
+                    "You cannot cancel this submission because a mentor is reviewing it.",
+                )
+
+            submission.result = "submission_cancelled"
+
+            try:
+                request.env["submission_history"].sudo().create(
+                    {
+                        "student_id": self.student.id,
+                        "project_id": self.project.id,
+                        "submission_id": submission.id,
+                        "status": "submission_cancelled",  # Đặt trạng thái là 'submission_cancelled'
+                    }
+                )
+
+                # send mail to student
+                # lấy thông tin ProjectSubmission và student như:
+                # student email, project title, course name, course code, submission_url
+                student_email = self.student.email
+                project_title = self.project.title
+                course_name = self.project.course.course_name
+                course_code = self.project.course.course_code
+                submission_url = submission.submission_url
+
+                # Tạo nội dung email
+                body = f"""<div>
+                <h2>Hello {self.student.name}</h2>
+                <h3>You had successfully canceled Project Submission  </h3>
+                <p>Project: {project_title}</p>
+                <p>Course name: {course_name}</p>
+                <p>Couse code: {course_code}</p>
+                <div>"""
+
+                # Gửi email
+                submission.send_email(
+                    submission,
+                    student_email,
+                    "Notification:  Project Submission Successfully Canceled",
+                    "Notification:  Project Submission Successfully Canceled",
+                    body,
+                    "Project Submission Canceled Successfully",
+                    submission_url,
+                    "Go to Project Submission",
+                )
+
+            except Exception as e:
+                logger.error(str(e))
+
+            return json_response(200, "Canceled submission successfully.")
+
+        except Exception as e:
+            logger.error(str(e))
+            return json_response(500, "Internal Server Error")

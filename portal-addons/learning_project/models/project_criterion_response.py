@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 
+import logging
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
-from .response_component import ResponseComponent
-from odoo.addons.website.tools import text_from_html
+from odoo.tools import config
+
+logger = logging.getLogger(__name__)
 
 
 class ProjectCriterionResponse(models.Model):
@@ -24,12 +26,10 @@ class ProjectCriterionResponse(models.Model):
     criterion = fields.Many2one(
         "project_criterion", required=True, readonly=True
     )
-    feed_back = fields.Html(string="Feedback", compute="_compute_feedback")
-    feedback_components = fields.One2many(
-        "response_component",
-        inverse_name="criterion_response",
-        string="Feedback Components",
+    specifications = fields.Html(
+        string="Specifications", related="criterion.specifications"
     )
+    feed_back = fields.Html(string="Feedback")
     result = fields.Selection(
         [NOT_GRADED, PASSED, DID_NOT_PASS, INCOMPLETE],
         required=True,
@@ -44,8 +44,12 @@ class ProjectCriterionResponse(models.Model):
     criteria_group = fields.Many2one(
         related="criterion.criteria_group", store=True
     )  # store=True để có thể sort
-    is_missing_required_feedback = fields.Boolean(
-        compute="_check_missing_required_feedback", store=True
+
+    previously_passed = fields.Boolean(
+        string="Previously Passed", compute="_compute_previously_passed"
+    )
+    previously_feedback = fields.Html(
+        string="Previously Feedback", compute="_compute_previously_feedback"
     )
 
     _sql_constraints = [
@@ -64,43 +68,101 @@ class ProjectCriterionResponse(models.Model):
                     "Criterion and submission must belong to an project"
                 )
 
-    @api.model
-    def create(self, vals):
-        types = ResponseComponent.TYPES
-
-        for type in types:
-            component = self.env["response_component"].create(
-                {
-                    "name": type[0],
-                    "is_optional": type[1],
-                    "number": type[2],
-                }
-            )
-            vals.setdefault("feedback_components", []).append(component.id)
-
-        return super(ProjectCriterionResponse, self).create(vals)
-
-    @api.depends("feedback_components", "result")
-    def _compute_feedback(self):
+    @api.depends("submission")
+    def _compute_previously_passed(self):
         for record in self:
-            html = ""
-            for component in record.feedback_components:
-                if component.is_show:
-                    html += component.content
+            project = record.submission.project
 
-            record.feed_back = html
+            submissions = project.submissions.sorted(key=lambda item: item.id)
 
-    @api.depends("feedback_components.content", "result", "feed_back")
-    def _check_missing_required_feedback(self):
-        for record in self:
-            is_missing = False
-            for component in record.feedback_components:
+            nearest_submission = None
+            for submission in submissions:
                 if (
-                    component.is_show
-                    and not component.is_optional
-                    and text_from_html(component.content).strip() == ""
+                    submission.result
+                    not in ["submission_canceled", "not_graded"]
+                    and record.submission.id != submission.id
                 ):
-                    is_missing = True
+                    nearest_submission = submission
                     break
 
-            record.is_missing_required_feedback = is_missing
+            if nearest_submission is None:
+                record.previously_passed = False
+                return
+
+            try:
+                previously_response = list(
+                    filter(
+                        lambda response: response.criterion.id
+                        == record.criterion.id,
+                        nearest_submission.criteria_responses,
+                    )
+                )[0]
+            except IndexError as e:
+                # Xảy ra khi project đã có submission nhưng có ai đó sửa thêm tiêu chí vào project
+                if (
+                    config.get("debug_mode") is True
+                    and config.get("allow_to_add_criteria_after_submission")
+                    is True
+                ):
+                    logger.warning(
+                        "Bạn đang cho phép thêm tiêu chí cho learning project mặc dù project đã có submission, vì vậy 'previously_passed' sẽ luôn False"
+                    )
+                    record.previously_passed = False
+                    return
+                else:
+                    raise e
+
+            record.previously_passed = previously_response.result == "passed"
+
+    @api.depends("submission")
+    def _compute_previously_feedback(self):
+        nearest_response = self._get_nearest_respone()
+
+        for record in self:
+            record.previously_feedback = (
+                "" if nearest_response is None else nearest_response.feed_back
+            )
+
+    def _get_nearest_respone(self):
+        for record in self:
+            project = record.submission.project
+
+            submissions = project.submissions.sorted(key=lambda item: item.id)
+
+            nearest_submission = None
+            for submission in submissions:
+                if (
+                    submission.result
+                    not in ["submission_canceled", "not_graded"]
+                    and record.submission.id != submission.id
+                ):
+                    nearest_submission = submission
+                    break
+
+            if nearest_submission is None:
+                return None
+
+            try:
+                nearest_response = list(
+                    filter(
+                        lambda response: response.criterion.id
+                        == record.criterion.id,
+                        nearest_submission.criteria_responses,
+                    )
+                )[0]
+            except IndexError as e:
+                # Xảy ra khi project đã có submission nhưng có ai đó sửa thêm tiêu chí vào project
+                if (
+                    config.get("debug_mode") is True
+                    and config.get("allow_to_add_criteria_after_submission")
+                    is True
+                ):
+                    logger.warning(
+                        "Bạn đang cho phép thêm tiêu chí cho learning project mặc dù project đã có submission, vì vậy 'nearest_response' sẽ luôn None"
+                    )
+                    record.previously_passed = False
+                    return
+                else:
+                    raise e
+
+            return nearest_response
