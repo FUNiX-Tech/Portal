@@ -27,18 +27,6 @@ function check_perf() {
     console.log("performance number: ", i)
 }
 
-// fetch templates
-async function _getTempaltes() {
-    try {
-        const res = await fetch(FETCH_TEMPLATES_API);
-        const data = await res.json()
-        return data.data
-    } catch (error) {
-        console.log(error)
-        return []
-    }
-}
-
 // fetch components
 async function _getComponents() {
     try {
@@ -80,10 +68,19 @@ odoo.define('grading_template.wysiwyg', function (require) {
 
             const editor = this.$el[0];
             editor.ondrop = e => this._onDropHandler(e)
-            editor.onclick = e => this._onClickHandler(e);
+            editor.onclick = e => this._onClickHandler(e)
             editor.ondragstart = e => this._onDragStartHandler(e)
+            document.querySelector('.criterion_result select').onchange = async () => {
+                const templates = await this._updateTemplatesList();
+                if (templates.length > 0) {
+                    this.setValue(templates[0].content)
+                } else {
+                    this.setValue('')
+                }
+            }
 
-            this._renderTemplatesLib();
+            await this._renderTemplatesLib();
+            await this._updateTemplatesList();
         },
         /**
          * Check mouse pointer đang gần top hay bottom của element
@@ -121,6 +118,25 @@ odoo.define('grading_template.wysiwyg', function (require) {
             link.href = CSS_PATH
             document.head.appendChild(link)
         },
+        _updateTemplatesList: async function () {
+            const templates = await this._getTempaltes();
+            const templatesList = document.getElementById('templates_list')
+            templatesList.innerHTML = ''
+            templates.forEach(template => {
+                const li = document.createElement("li")
+                li.innerText = template.name
+                li.classList.add('template-item')
+                li.classList.add('lib-item')
+
+                // if click, replace editor content with the template content
+                li.onclick = function () {
+                    this.setValue(template.content);
+                    this._enableDraggableAllLibComponentsInEditor();
+                }.bind(this)
+                templatesList.appendChild(li)
+            })
+            return templates
+        },
         _renderTemplatesLib: async function () {
             const wysisyg = this;
 
@@ -132,7 +148,7 @@ odoo.define('grading_template.wysiwyg', function (require) {
             document.body.appendChild(modal)
 
             // fetch templates and components
-            const templates = await _getTempaltes();
+            const templates = await this._getTempaltes();
             const components = await _getComponents();
 
             // create templates lib
@@ -146,6 +162,7 @@ odoo.define('grading_template.wysiwyg', function (require) {
 
             // template items
             const templatesUl = document.createElement("ul")
+            templatesUl.id = 'templates_list'
             templates.forEach(template => {
                 const li = document.createElement("li")
                 li.innerText = template.name
@@ -474,6 +491,38 @@ odoo.define('grading_template.wysiwyg', function (require) {
             range.setStart(element, closest.offset);
             range.setEnd(element, closest.offset);
             return range;
+        },
+        async _getTempaltes() {
+            try {
+                const result = this._getCriterionResult();
+                let template_category_code = ''
+                const previous_result = document.querySelector('.previous_result').innerText;
+
+                if (result === 'not_graded') {
+                    template_category_code = ''
+                } else if (result === 'passed') {
+                    if (previous_result === '') {
+                        template_category_code = 'pass_none'
+                    } else if (previous_result == 'passed') {
+                        template_category_code = 'pass_pass'
+                    } else {
+                        template_category_code = 'pass_fail'
+                    }
+                } else {
+                    template_category_code = result // did_not_pass, incomplete
+                }
+
+                if (template_category_code == '') {
+                    return []
+                }
+
+                const res = await fetch(`${FETCH_TEMPLATES_API}/${template_category_code}`);
+                const data = await res.json()
+                return data.data
+            } catch (error) {
+                console.log(error)
+                return []
+            }
         }
     });
 

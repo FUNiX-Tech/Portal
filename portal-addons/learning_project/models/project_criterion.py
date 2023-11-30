@@ -29,6 +29,13 @@ class ProjectCriterion(models.Model):
     criteria_group_number = fields.Integer(
         string="Group Number", related="criteria_group.number"
     )
+
+    material = fields.One2many(
+        "project_criterion_material",
+        inverse_name="criterion",
+        string="Materials",
+    )
+
     _sql_constraints = [
         UNIQUE_PROJECT_CRITERION_NAME,
         UNIQUE_PROJECT_CRITERION_ORDER,

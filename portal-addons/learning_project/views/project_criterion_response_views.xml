@@ -14,11 +14,12 @@
                         <field name="criterion" class='criterion_name' readonly="1" string="Criterion" />
                         <field name="specifications" readonly="1" string="Specifications" class='criterion_specifications' />
                         <field name="result" class='criterion_result' attrs="{'invisible': [('submission_result', '=', 'not_graded')]}" string="Result" widget="badge" decoration-success="result == 'passed'" decoration-danger="result == 'did_not_pass'" decoration-warning="result == 'incomplete'" />
-                        <field name="result" class='criterion_result' attrs="{'invisible': [('submission_result', '!=', 'not_graded')]}" string="Result" />
+                        <field name="result" required="1" class='criterion_result' attrs="{'invisible': [('submission_result', '!=', 'not_graded')]}" string="Result" />
                         <field name="submission_result" string="Submission Result" invisible="1"/>
-                        <field name="previously_passed" readonly="1" string="Previously Passed" />
+                        <field name="previous_result" readonly="1" string="Previously Result" class='previous_result' />
                         <field name="previously_feedback" readonly="1" string="Previously Feedback" class='disable_grading_template_html_field_css' />
                         <field name="feed_back" widget="grading_template_html" string="Feedback"/>
+                        <field name="material" string="Material"/>
                     </group>
                 </sheet>
             </form>

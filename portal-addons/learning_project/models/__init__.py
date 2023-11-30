@@ -6,4 +6,5 @@ from . import (
     project_criterion,
     project_submission,
     project_criterion_response,
+    project_criterion_material,
 )
