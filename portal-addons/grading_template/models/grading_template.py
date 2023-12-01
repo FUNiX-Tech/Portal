@@ -29,14 +29,14 @@ class GradingTemplate(models.Model):
     code = fields.Char("Code", required=True)
     name = fields.Char("Display Name", required=True)
     content = fields.Html(string="Content")
-    components = fields.One2many(
-        "grading_component", compute="_compute_components"
-    )
+    # components = fields.One2many(
+    #     "grading_component", compute="_compute_components"
+    # )
 
-    @api.depends("code")
-    def _compute_components(self):
-        for record in self:
-            record.components = self.env["grading_component"].search([])
+    # @api.depends("code")
+    # def _compute_components(self):
+    #     for record in self:
+    #         record.components = self.env["grading_component"].search([])
 
-    def append_content(self):
-        return True
+    # def append_content(self):
+    #     return True
