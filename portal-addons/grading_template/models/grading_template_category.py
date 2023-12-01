@@ -23,7 +23,7 @@ class GradingTemplateCategory(models.Model):
 
     code = fields.Char("Code", required=True)
     name = fields.Char("Display Name", required=True)
-    templates = fields.Many2one(
+    templates = fields.One2many(
         comodel_name="grading_template",
         string="Grading Templates",
     )
