@@ -1,0 +1,180 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: POEditor.com\n"
+"Project-Id-Version: Odoo Server 16.0\n"
+"Language: vi\n"
+
+#. module: mail_service
+#: model:ir.model.fields,field_description:mail_service.field_mail_service__message_needaction
+msgid "Action Needed"
+msgstr "Hành động cần thiết"
+
+#. module: mail_service
+#: model:ir.model.fields,field_description:mail_service.field_mail_service__activity_ids
+msgid "Activities"
+msgstr "Hoạt động"
+
+#. module: mail_service
+#: model:ir.model.fields,field_description:mail_service.field_mail_service__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr "Trang trí ngoại lệ hoạt động"
+
+#. module: mail_service
+#: model:ir.model.fields,field_description:mail_service.field_mail_service__activity_state
+msgid "Activity State"
+msgstr "Trạng thái hoạt động"
+
+#. module: mail_service
+#: model:ir.model.fields,field_description:mail_service.field_mail_service__activity_type_icon
+msgid "Activity Type Icon"
+msgstr "Biểu tượng loại hoạt động"
+
+#. module: mail_service
+#: model:res.groups,name:mail_service.group_mail_service_admin
+msgid "Admin"
+msgstr "Quản trị viên"
+
+#. module: mail_service
+#: model:ir.model.fields,field_description:mail_service.field_mail_service__message_attachment_count
+msgid "Attachment Count"
+msgstr "Số lượng tệp đính kèm"
+
+#. module: mail_service
+#: model:ir.model.fields,field_description:mail_service.field_mail_service__message_follower_ids
+msgid "Followers"
+msgstr "Theo"
+
+#. module: mail_service
+#: model:ir.model.fields,field_description:mail_service.field_mail_service__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "Người theo dõi (Đối tác)"
+
+#. module: mail_service
+#: model:ir.model.fields,help:mail_service.field_mail_service__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr "Biểu tượng phông chữ tuyệt vời, ví dụ: fa-tasks"
+
+#. module: mail_service
+#: model:ir.model.fields,field_description:mail_service.field_mail_service__has_message
+msgid "Has Message"
+msgstr "Có tin nhắn"
+
+#. module: mail_service
+#: model:ir.model.fields,field_description:mail_service.field_mail_service__activity_exception_icon
+msgid "Icon"
+msgstr "Biểu tượng"
+
+#. module: mail_service
+#: model:ir.model.fields,help:mail_service.field_mail_service__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr "Biểu tượng để cho biết một hoạt động ngoại lệ."
+
+#. module: mail_service
+#: model:ir.model.fields,help:mail_service.field_mail_service__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "Nếu được chọn, tin nhắn mới đòi hỏi sự chú ý của bạn."
+
+#. module: mail_service
+#: model:ir.model.fields,help:mail_service.field_mail_service__message_has_error
+msgid "If checked, some messages have a delivery error."
+msgstr "Nếu được chọn, một số thư có lỗi gửi."
+
+#. module: mail_service
+#: model:ir.model.fields,field_description:mail_service.field_mail_service__message_is_follower
+msgid "Is Follower"
+msgstr "Là người theo dõi"
+
+#. module: mail_service
+#: model:ir.model,name:mail_service.model_mail_service
+#: model:ir.module.category,name:mail_service.module_category_mail_service
+msgid "Mail Service"
+msgstr "Dịch vụ thư tín"
+
+#. module: mail_service
+#: model:ir.model.fields,field_description:mail_service.field_mail_service__message_main_attachment_id
+msgid "Main Attachment"
+msgstr "Tệp đính kèm chính"
+
+#. module: mail_service
+#: model:ir.model.fields,field_description:mail_service.field_mail_service__message_has_error
+msgid "Message Delivery error"
+msgstr "Lỗi Gửi thư"
+
+#. module: mail_service
+#: model:ir.model.fields,field_description:mail_service.field_mail_service__message_ids
+msgid "Messages"
+msgstr "Thư"
+
+#. module: mail_service
+#: model:ir.model.fields,field_description:mail_service.field_mail_service__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr "Thời hạn hoạt động của tôi"
+
+#. module: mail_service
+#: model:ir.model.fields,field_description:mail_service.field_mail_service__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr "Hạn chót hoạt động tiếp theo"
+
+#. module: mail_service
+#: model:ir.model.fields,field_description:mail_service.field_mail_service__activity_summary
+msgid "Next Activity Summary"
+msgstr "Tóm tắt hoạt động tiếp theo"
+
+#. module: mail_service
+#: model:ir.model.fields,field_description:mail_service.field_mail_service__activity_type_id
+msgid "Next Activity Type"
+msgstr "Loại hoạt động tiếp theo"
+
+#. module: mail_service
+#: model:ir.model.fields,field_description:mail_service.field_mail_service__message_needaction_counter
+msgid "Number of Actions"
+msgstr "Số lượng hành động"
+
+#. module: mail_service
+#: model:ir.model.fields,field_description:mail_service.field_mail_service__message_has_error_counter
+msgid "Number of errors"
+msgstr "Số lỗi"
+
+#. module: mail_service
+#: model:ir.model.fields,help:mail_service.field_mail_service__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "Số lượng thư yêu cầu hành động"
+
+#. module: mail_service
+#: model:ir.model.fields,help:mail_service.field_mail_service__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "Số lượng thư có lỗi gửi"
+
+#. module: mail_service
+#: model:ir.model.fields,field_description:mail_service.field_mail_service__activity_user_id
+msgid "Responsible User"
+msgstr "Người dùng có trách nhiệm"
+
+#. module: mail_service
+#: model:ir.model.fields,help:mail_service.field_mail_service__activity_state
+msgid "Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr "Trạng thái dựa trên các hoạt động\n"
+"Quá hạn: Ngày đáo hạn đã qua\n"
+"Hôm nay: Ngày hoạt động là hôm nay\n"
+"Kế hoạch: Các hoạt động trong tương lai."
+
+#. module: mail_service
+#: model:ir.model.fields,help:mail_service.field_mail_service__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr "Loại hoạt động ngoại lệ trong hồ sơ."
+
+#. module: mail_service
+#: model:res.groups,name:mail_service.group_mail_service_user
+msgid "User"
+msgstr "Người dùng"
+
+#. module: mail_service
+#: model:mail.template,name:mail_service.portal_mail_template
+msgid "[PORTAL] Mail Template"
+msgstr "[PORTAL] Mẫu Thư"
