@@ -20,12 +20,10 @@ class GradingTemplate(models.Model):
     _description = "grading_template"
     _rec_name = "name"
 
-    categories = fields.Many2many(
+    category = fields.Many2one(
         comodel_name="grading_template_category",
-        relation="grading_template_category_and_template",
-        column1="grading_template_ids",
-        column2="grading_template_category_ids",
-        string="Grading Template Categories",
+        string="Grading Template Category",
+        required=True,
     )
 
     code = fields.Char("Code", required=True)

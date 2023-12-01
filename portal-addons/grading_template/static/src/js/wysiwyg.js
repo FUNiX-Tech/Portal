@@ -20,25 +20,6 @@ const SVG_CLOSE = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="
 </svg>
 `
 
-let i = 0;
-
-function check_perf() {
-    i++;
-    console.log("performance number: ", i)
-}
-
-// fetch templates
-async function _getTempaltes() {
-    try {
-        const res = await fetch(FETCH_TEMPLATES_API);
-        const data = await res.json()
-        return data.data
-    } catch (error) {
-        console.log(error)
-        return []
-    }
-}
-
 // fetch components
 async function _getComponents() {
     try {
@@ -80,10 +61,19 @@ odoo.define('grading_template.wysiwyg', function (require) {
 
             const editor = this.$el[0];
             editor.ondrop = e => this._onDropHandler(e)
-            editor.onclick = e => this._onClickHandler(e);
+            editor.onclick = e => this._onClickHandler(e)
             editor.ondragstart = e => this._onDragStartHandler(e)
+            document.querySelector('.criterion_result select').onchange = async () => {
+                const templates = await this._updateTemplatesList();
+                if (templates.length > 0) {
+                    this.setValue(templates[0].content)
+                } else {
+                    this.setValue('')
+                }
+            }
 
-            this._renderTemplatesLib();
+            await this._renderTemplatesLib();
+            await this._updateTemplatesList();
         },
         /**
          * Check mouse pointer đang gần top hay bottom của element
@@ -115,11 +105,46 @@ odoo.define('grading_template.wysiwyg', function (require) {
                 return
             }
 
+            const modal = this.$el.parentsUntil('.modal-dialog').last().parent()
+            const modal_content = $('.modal-content.o_form_view', modal)
+            modal.css({
+                'display': 'flex',
+                'max-width': '100vw',
+                'padding': '10px 0'
+            })
+            modal_content.css({
+                'height': '100%',
+                'margin': '0 10px 0 310px',
+                'flex': 1
+
+            })
+
             const link = document.createElement('link')
             link.id = STYLE_LINK_ID
             link.rel = 'stylesheet'
             link.href = CSS_PATH
             document.head.appendChild(link)
+        },
+        _updateTemplatesList: async function () {
+            const templates = await this._getTemplates();
+            const templatesList = document.getElementById('templates_list')
+            templatesList.innerHTML = ''
+            templates.forEach(template => {
+                const li = document.createElement("li")
+                li.innerText = template.name
+                li.classList.add('template-item')
+                li.classList.add('lib-item')
+
+                // if click, replace editor content with the template content
+                li.onclick = function () {
+                    this.setValue(template.content);
+                    this._enableDraggableAllLibComponentsInEditor();
+                }.bind(this)
+                templatesList.appendChild(li)
+            })
+
+
+            return templates
         },
         _renderTemplatesLib: async function () {
             const wysisyg = this;
@@ -132,7 +157,7 @@ odoo.define('grading_template.wysiwyg', function (require) {
             document.body.appendChild(modal)
 
             // fetch templates and components
-            const templates = await _getTempaltes();
+            const templates = await this._getTemplates();
             const components = await _getComponents();
 
             // create templates lib
@@ -146,6 +171,7 @@ odoo.define('grading_template.wysiwyg', function (require) {
 
             // template items
             const templatesUl = document.createElement("ul")
+            templatesUl.id = 'templates_list'
             templates.forEach(template => {
                 const li = document.createElement("li")
                 li.innerText = template.name
@@ -210,7 +236,6 @@ odoo.define('grading_template.wysiwyg', function (require) {
             previewBtn.innerText = 'Preview'
             previewBtn.classList.add(BUTTON_CLASS)
             previewBtn.onclick = function () {
-                console.log('render preview')
                 wysisyg._renderFeedbackPreview();
             }
 
@@ -322,7 +347,6 @@ odoo.define('grading_template.wysiwyg', function (require) {
          * @param {DragStartEvent} e
          */
         _onDragStartHandler(e) {
-            check_perf();
             if (e.target.classList.contains(LIB_COMPONENT_CLASS)) {
 
                 e.dataTransfer.setData("component", JSON.stringify({
@@ -336,7 +360,6 @@ odoo.define('grading_template.wysiwyg', function (require) {
          * @param {DropEvent} e
          */
         _onDropHandler(e) {
-            check_perf()
             e.preventDefault();
             var hoveredElement = document.elementFromPoint(e.clientX, e.clientY);
 
@@ -378,7 +401,6 @@ odoo.define('grading_template.wysiwyg', function (require) {
          * @param {MouseClickEvent} e
          */
         _onClickHandler(e) {
-            check_perf();
             if (e.target.classList.contains(LIB_COMPONENT_CLASS)) {
                 const target = e.target;
                 const rect = target.getBoundingClientRect();
@@ -474,6 +496,37 @@ odoo.define('grading_template.wysiwyg', function (require) {
             range.setStart(element, closest.offset);
             range.setEnd(element, closest.offset);
             return range;
+        },
+        async _getTemplates() {
+            try {
+                const result = this._getCriterionResult();
+                let template_category_code = ''
+                const previous_result = document.querySelector('.previous_result').innerText;
+                if (result === 'not_graded') {
+                    template_category_code = ''
+                } else if (result === 'passed') {
+                    if (previous_result === '' || previous_result == 'none') {
+                        template_category_code = 'pass_none'
+                    } else if (previous_result == 'passed') {
+                        template_category_code = 'pass_pass'
+                    } else {
+                        template_category_code = 'pass_fail'
+                    }
+                } else {
+                    template_category_code = result // did_not_pass, incomplete
+                }
+
+                if (template_category_code == '') {
+                    return []
+                }
+
+                const res = await fetch(`${FETCH_TEMPLATES_API}/${template_category_code}`);
+                const data = await res.json()
+                return data.data
+            } catch (error) {
+                console.log(error)
+                return []
+            }
         }
     });
 

@@ -7,16 +7,10 @@
             <form string="grading_template">
                 <sheet>
                     <group>
-                        <field name="categories" string="Categories" class="border bg-light"/>
+                        <field name="category" string="Category" class="border bg-light"/>
                         <field name="code" string="Code" class="border bg-light"/>
                         <field name="name" string="Name" class="border bg-light" widget="custom_text"/>
-                        <field name="content" string="Content" class="border bg-light dropzone" widget="grading_template_html" />
-                        <field name="components" string="Components" class="border bg-light">
-                            <tree>
-                                <field name="name" />
-                                <field name="content" widget="html" dragdrop="true" drag_mode="move" />
-                            </tree>
-                        </field>
+                        <field name="content" string="Content" class="border bg-light dropzone" widget="html" />
                     </group>
                 </sheet>
             </form>
@@ -28,7 +22,7 @@
         <field name="model">grading_template</field>
         <field name="arch" type="xml">
             <tree limit="20" string="grading_template" edit="false" class="text-center">
-                <field name="categories" />
+                <field name="category" />
                 <field name="code" />
                 <field name="name" />
                 <field name="content" />

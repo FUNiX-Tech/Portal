@@ -13,6 +13,11 @@
                             <field name="project" string="Project" class="border bg-light" invisible="1"/>
                             <field name="criteria_group" string="Criteria Group" class="border bg-light" context="{'default_project': project}" domain="[('project', '=', project)]" />
                             <field name="criteria_group_number" class="border bg-light"/>
+                            <field name="material" class="border bg-light">
+                                <tree>
+                                    <field name="name" class="border bg-light"/>
+                                </tree>
+                            </field>
                         </group>
                         <notebook>
                             <page string="Specifications">

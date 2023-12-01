@@ -7,6 +7,21 @@ from odoo.tools import config
 
 logger = logging.getLogger(__name__)
 
+template_categories = [
+    ("pass_none", "Pass lần đầu"),
+    ("pass_pass", "Pass lần 2, lần trước pass"),
+    ("pass_fail", "Pass lần 2, lần trước fail"),
+    ("did_not_pass", "Không pass"),
+    ("incomplete", "Chưa hòan thành"),
+]
+
+# Tạo template trong list dưới
+# Xác định default template cho từng category
+# xác định tiêu chí thuộc category nào
+# auto chọn template
+# có thể đổi template
+# kéo component khi cần
+
 
 class ProjectCriterionResponse(models.Model):
     _name = "project_criterion_response"
@@ -50,6 +65,14 @@ class ProjectCriterionResponse(models.Model):
     )
     previously_feedback = fields.Html(
         string="Previously Feedback", compute="_compute_previously_feedback"
+    )
+
+    previous_result = fields.Char(
+        string="Previous Result", compute="_compute_previous_result"
+    )
+
+    material = fields.One2many(
+        "project_criterion_material", related="criterion.material"
     )
 
     _sql_constraints = [
@@ -127,42 +150,36 @@ class ProjectCriterionResponse(models.Model):
         for record in self:
             project = record.submission.project
 
-            submissions = project.submissions.sorted(key=lambda item: item.id)
-
-            nearest_submission = None
-            for submission in submissions:
-                if (
-                    submission.result
-                    not in ["submission_canceled", "not_graded"]
-                    and record.submission.id != submission.id
-                ):
-                    nearest_submission = submission
-                    break
-
-            if nearest_submission is None:
-                return None
-
             try:
-                nearest_response = list(
+                submissions = list(
                     filter(
-                        lambda response: response.criterion.id
+                        lambda item: item.id != record.submission.id
+                        and item.student.id == record.submission.student.id
+                        and item.result != "submission_canceled",
+                        project.submissions,
+                    )
+                )
+                submissions.sort(key=lambda item: item.id)
+                submission = submissions[-1]
+
+                previous_criterion_response = list(
+                    filter(
+                        lambda criterion_resopnse: criterion_resopnse.criterion.id
                         == record.criterion.id,
-                        nearest_submission.criteria_responses,
+                        submission.criteria_responses,
                     )
                 )[0]
-            except IndexError as e:
-                # Xảy ra khi project đã có submission nhưng có ai đó sửa thêm tiêu chí vào project
-                if (
-                    config.get("debug_mode") is True
-                    and config.get("allow_to_add_criteria_after_submission")
-                    is True
-                ):
-                    logger.warning(
-                        "Bạn đang cho phép thêm tiêu chí cho learning project mặc dù project đã có submission, vì vậy 'nearest_response' sẽ luôn None"
-                    )
-                    record.previously_passed = False
-                    return
-                else:
-                    raise e
 
-            return nearest_response
+                return previous_criterion_response
+            except IndexError:
+                return None
+
+    @api.depends("submission")
+    def _compute_previous_result(self):
+        prev_response = self._get_nearest_respone()
+
+        for r in self:
+            if prev_response is not None:
+                r.previous_result = prev_response.result
+            else:
+                r.previous_result = "none"

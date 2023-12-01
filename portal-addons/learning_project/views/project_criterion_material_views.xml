@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="project_criterion_material_view_form" model="ir.ui.view">
+        <field name="name">project_criterion_material.form</field>
+        <field name="model">project_criterion_material</field>
+        <field name="arch" type="xml">
+            <form string="Project Criterion">
+                <sheet>
+                    <field name="name" class="border bg-light"/>
+                    <field name="content" class="border bg-light"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="project_criterion_material_view_tree" model="ir.ui.view">
+        <field name="name">project_criterion_material.tree</field>
+        <field name="model">project_criterion_material</field>
+        <field name="arch" type="xml">
+            <tree string="Project Criterion" edit="false" class="text-center">
+                <field name="name" />
+                <field name="content" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="project_criterion_material_action" model="ir.actions.act_window">
+        <field name="name">Project Criterion Material</field>
+        <field name="res_model">project_criterion_material</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>

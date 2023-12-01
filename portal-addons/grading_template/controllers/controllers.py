@@ -45,33 +45,26 @@ class GradingTemplate(http.Controller):
         return json_response(200, "Success", serialized)
 
     @http.route(
-        "/api/v1/grading_template/templates",
+        "/api/v1/grading_template/templates/<string:code>",
         type="http",
         auth="public",
         methods=["GET"],
         cors="*",
         csrf=False,
     )
-    def get_templates(self):
-        templates = (request.env["grading_template"].sudo().search([])).sorted(
-            "id"
-        )
+    def get_templates(self, code):
+        templates = (
+            request.env["grading_template"]
+            .sudo()
+            .search([("category.code", "=", code)])
+        ).sorted("id")
 
         serialized = []
         for template in templates:
             serialized.append(
                 {
                     "id": template.id,
-                    "categories": list(
-                        map(
-                            lambda e: {
-                                "id": e.id,
-                                "name": e.name,
-                                "code": e.code,
-                            },
-                            template.categories,
-                        )
-                    ),
+                    "category": template.category.name,
                     "code": template.code,
                     "name": template.name,
                     "content": template.content,
