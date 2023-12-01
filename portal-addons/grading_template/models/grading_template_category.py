@@ -25,6 +25,7 @@ class GradingTemplateCategory(models.Model):
     name = fields.Char("Display Name", required=True)
     templates = fields.One2many(
         comodel_name="grading_template",
+        inverse_name="category",
         string="Grading Templates",
     )
 
