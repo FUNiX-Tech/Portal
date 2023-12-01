@@ -274,7 +274,6 @@ class ProjectSubmissionController(http.Controller):
 
         criteria.sort(key=lambda e: e["group_number"])
         for item in criteria:
-            print(item.get("group_number"))
             if groups.get(item.get("criteria_group")) is None:
                 groups[item.get("criteria_group")] = []
 

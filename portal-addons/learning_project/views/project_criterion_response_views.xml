@@ -4,9 +4,6 @@
         <field name="name">project_criterion_response.form</field>
         <field name="model">project_criterion_response</field>
         <field name="arch" type="xml">
-            <xpath expr="." position="inside">
-                <link rel="stylesheet" href="learning_project/static/src/css/project_grading_criterion_form.css"/>
-            </xpath>
             <form string="Project Criterion Response">
                 <sheet>
                     <group>
@@ -19,7 +16,11 @@
                         <field name="previous_result" readonly="1" string="Previously Result" class='previous_result' />
                         <field name="previously_feedback" readonly="1" string="Previously Feedback" class='disable_grading_template_html_field_css' />
                         <field name="feed_back" widget="grading_template_html" string="Feedback"/>
-                        <field name="material" string="Material"/>
+                        <field name="material" string="Material" readonly='1'>
+                            <tree>
+                                <field name="name" />
+                            </tree>
+                        </field>
                     </group>
                 </sheet>
             </form>

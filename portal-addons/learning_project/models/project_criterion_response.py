@@ -139,9 +139,6 @@ class ProjectCriterionResponse(models.Model):
 
     @api.depends("submission")
     def _compute_previously_feedback(self):
-        print(
-            "compute feedbackkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk"
-        )
         nearest_response = self._get_nearest_respone()
 
         for record in self:
@@ -164,63 +161,7 @@ class ProjectCriterionResponse(models.Model):
                 )
                 submissions.sort(key=lambda item: item.id)
                 submission = submissions[-1]
-                print(submission.id)
-                print(submission.id)
-                print(submission.id)
-                print(submission.id)
-                print(submission.id)
-                print(submission.id)
-                print(submission.id)
-                print(submission.id)
-                print(submission.id)
-                print(submission.id)
-                print(submission.id)
-                print(submission.id)
-                print(submission.id)
-                print(submission.id)
-                print(submission.id)
-                print(submission.id)
-                print(submission.id)
-                print(submission.id)
-                print(submission.id)
-                print(submission.id)
-                print(submission.id)
-                print(submission.id)
-                print(submission.id)
-                print(submission.id)
-                print(submission.id)
-                print(submission.id)
-                print(submission.id)
-                print(submission.id)
-                print(submission.id)
-                print(submission.id)
-                print(submission.result)
-                print(submission.result)
-                print(submission.result)
-                print(submission.result)
-                print(submission.result)
-                print(submission.result)
-                print(submission.result)
-                print(submission.result)
-                print(submission.result)
-                print(submission.result)
-                print(submission.result)
-                print(submission.result)
-                print(submission.result)
-                print(submission.result)
-                print(submission.result)
-                print(submission.result)
-                print(submission.result)
-                print(submission.result)
-                print(submission.result)
-                print(submission.result)
-                print(submission.result)
-                print(submission.result)
-                print(submission.result)
-                print(submission.result)
-                print(submission.result)
-                print(submission.result)
-                print(submission.result)
+
                 previous_criterion_response = list(
                     filter(
                         lambda criterion_resopnse: criterion_resopnse.criterion.id
@@ -228,16 +169,6 @@ class ProjectCriterionResponse(models.Model):
                         submission.criteria_responses,
                     )
                 )[0]
-                print("111111", previous_criterion_response.result)
-                print("111111", previous_criterion_response.result)
-                print("111111", previous_criterion_response.result)
-                print("111111", previous_criterion_response.result)
-                print("111111", previous_criterion_response.result)
-                print("111111", previous_criterion_response.result)
-                print("111111", previous_criterion_response.result)
-                print("111111", previous_criterion_response.result)
-                print("111111", previous_criterion_response.result)
-                print("111111", previous_criterion_response.result)
 
                 return previous_criterion_response
             except IndexError:
@@ -246,26 +177,9 @@ class ProjectCriterionResponse(models.Model):
     @api.depends("submission")
     def _compute_previous_result(self):
         prev_response = self._get_nearest_respone()
-        print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
-        print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
-        print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
-        print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
-        print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
-        print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
-        print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
-        print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+
         for r in self:
             if prev_response is not None:
-                print("2222", prev_response.result)
-                print("2222", prev_response.result)
-                print("2222", prev_response.result)
-                print("2222", prev_response.result)
-                print("2222", prev_response.result)
-                print("2222", prev_response.result)
-                print("2222", prev_response.result)
-                print("2222", prev_response.result)
-                print("2222", prev_response.result)
-                print("2222", prev_response.result)
                 r.previous_result = prev_response.result
             else:
                 r.previous_result = "none"
