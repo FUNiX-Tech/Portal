@@ -17,9 +17,9 @@
             <!-- Copy to Clipboard button -->
             <button type="button" class="btn btn-secondary"
                     t-on-click="_onClickCopy" data-tooltip="Copy to Clipboard">Copy</button>
-            <!-- Upload -->
+            <!-- Import -->
             <button type="button" class="btn btn-secondary"
-            t-on-click="_onClickImport" data-tooltip="Upload">Import</button>
+            t-on-click="_onClickImport" data-tooltip="Import">Import</button>
 
         </xpath>
     </t>
