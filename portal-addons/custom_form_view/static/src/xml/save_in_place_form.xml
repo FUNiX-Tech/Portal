@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-inherit="web.FormView" t-inherit-mode="extension">
+        <!-- Replace Save Button Icon with Text -->
+        <xpath expr="//button[@class='btn btn-outline-primary o_form_button_create']" position="after">
+            <button class="btn btn-outline-primary o_form_button_create" t-on-click.stop="() => this.saveButtonClicked({closable: true})" t-att-disabled="state.isDisabled">Save</button>
+        </xpath>
+    </t>
+</templates>
