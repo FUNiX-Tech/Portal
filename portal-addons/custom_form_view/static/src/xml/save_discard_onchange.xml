@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-inherit="web.FormStatusIndicator" t-inherit-mode="extension">
+        <!-- Replace Save Button Icon with Text -->
+        <xpath expr="//button[@class='o_form_button_save btn btn-light py-0']" position="replace">
+            <button
+                type="button"
+                class="o_form_button_save btn btn-info py-1 mr-2"
+                style="margin-right:10px"
+                t-att-disabled="props.isDisabled"
+                data-hotkey="s"
+                t-on-click.stop="save"
+                data-tooltip="Save manually"
+                aria-label="Save manually">
+                Save
+            </button>
+        </xpath>
+        <xpath expr="//button[@class='o_form_button_cancel btn btn-light py-0']" position="replace">
+            <button
+            type="button"
+            class="o_form_button_cancel btn btn-warning py-1"
+            t-att-disabled="props.isDisabled"
+            data-hotkey="j"
+            t-on-click.stop="discard"
+            data-tooltip="Discard changes"
+            aria-label="Discard changes">
+            Discard
+        </button>
+        </xpath>
+
+    </t>
+</templates>
