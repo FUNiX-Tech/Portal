@@ -194,7 +194,7 @@ const patchingObj = {
             const resIds = await this.getSelectedResIds();
 
             // Use the jsonrpc to make JSON-RPC request for /get-data/copy in controller.py
-
+            // console.log(this.model.root.resModel)
             const data_body = {
                 'model': this.model.root.resModel,
                 'res_ids':resIds.length > 0 && resIds,
@@ -221,7 +221,12 @@ const patchingObj = {
         } catch (error) {
             console.error("Error: ", error);
         }
+    },
+
+    _onClickImport: async function() {
+            window.location.href = `/web#model=${this.model.root.resModel}&action=import`
     }
+
 }
 
 patch(ListController.prototype,"CustomListView", patchingObj)

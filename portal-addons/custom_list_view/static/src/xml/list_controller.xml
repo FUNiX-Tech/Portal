@@ -17,7 +17,10 @@
             <!-- Copy to Clipboard button -->
             <button type="button" class="btn btn-secondary"
                     t-on-click="_onClickCopy" data-tooltip="Copy to Clipboard">Copy</button>
+            <!-- Upload -->
+            <button type="button" class="btn btn-secondary"
+            t-on-click="_onClickImport" data-tooltip="Upload">Import</button>
+
         </xpath>
     </t>
-
 </templates>
