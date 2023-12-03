@@ -1,0 +1,405 @@
+openapi: 3.0.0
+info:
+  title: Portal API Swagger Documentation
+  description:
+    Explore the API Swagger Documentation for Funix's Portal. This collection of APIs is designed to support various aspects of Funix's operations, enabling seamless integration and interaction with its business processes.
+    <br/>
+    <br/>
+    The purpose of this documentation is to assist developers, integrators, and stakeholders in understanding the available endpoints, data structures, and interaction patterns for seamless integration and efficient development with Odoo.
+    <br />
+    <br/>
+    This documentation is written based on Swagger OAS 3.0
+  version: 1.0.0
+servers:
+  - url: https://staging-portal.funix.edu.vn/
+    description: Staging Server
+  - url: http://localhost:8069
+    description: Local Server (test on local only)
+externalDocs:
+  description: Find out more about swagger
+  url: https://swagger.io
+tags:
+  - name: Student Management
+    description: API collections in student management module
+  - name: Course Management
+    description: API collections in course management module
+  - name: Learning Project
+    description: API collections in learning project module
+  - name: Feedback Ticket
+    description: API collections in ticket feedback module
+  - name: Student Organization
+    description: API collections in student organization module
+paths:
+  /api/course_management/enroll:
+    post:
+      tags:
+        - Course Management
+      summary: Enroll student to course
+      description: enroll student to course by student id and course id
+      operationId: course_enroll
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/courseenroll"
+      responses:
+        "200":
+          description: "Student enrolled successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Enrolled successfully!"
+        "400":
+          description: "Missing Data"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Please make sure the request body include key-value pairs of student_id and course_id"
+  /api/course_management/unenroll:
+    post:
+      tags:
+        - Course Management
+      summary: Unenroll student to course
+      description: Uenroll student to course by student id and course id
+      operationId: course_unenroll
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/courseenroll"
+      responses:
+        "200":
+          description: "Student unenrolled successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unenrolled successfully!"
+        "400":
+          description: "Missing Data"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Please make sure the request body include key-value pairs of student_id and course_id"
+  /api/course_management/check_enroll?course_id=<int>&student_id=<int>:
+    get:
+      tags:
+        - Course Management
+      summary: Check enrolled student
+      description: Check student was enrolled to course or not
+      operationId: enroll_check
+      parameters:
+        - name: course_id
+          in: query
+          required: true
+          schema:
+            type: integer
+            example: 1
+          description: ID of the course to check enrollment
+        - name: student_id
+          in: query
+          required: true
+          schema:
+            type: integer
+            example:
+          description: ID of the student to check enrollment
+      responses:
+        "200":
+          description: "Student unenrolled successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unenrolled successfully!"
+        "400":
+          description: "Missing Data"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Please make sure the request body include key-value pairs of student_id and course_id"
+  /api/student/register:
+    post:
+      tags:
+        - Student Management
+      summary: Student Register
+      description: Student Register
+      operationId: student_register
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Name of the student
+                  example: An Phan
+                username:
+                  type: string
+                  format: username
+                  description: username of the student
+                  example: anph1
+                email:
+                  type: string
+                  format: email
+                  description: Email of the student
+                  example: 0Q7Qh@example.com
+                student_code:
+                  type: string
+                  description: Code of the student
+                  example: 031374
+      responses:
+        "200":
+          description: "Call Api successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: string
+                  status:
+                    type: integer
+                    example: 200
+
+        "404":
+          description: "Not Found"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: string
+                  status:
+                    type: integer
+                    example: 404
+  /api/feedback-ticket-management/create:
+    post:
+      tags:
+        - Feedback Ticket
+      summary: Create a feedback ticket
+      operationId: createTicket
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                student_email:
+                  type: string
+                  format: email
+                  description: Email of the student creating the ticket
+                  example: anph1@funix.edu.vn
+                ticket_category:
+                  type: string
+                  enum:
+                    - outdated
+                    - bad_explain
+                    - insufficient_details
+                    - broken_resource
+                    - error_translation
+                  description: Category of the feedback ticket
+                  example: outdated
+                course_id:
+                  type: string
+                  description: related course code to the ticket
+                  example: course-v1:FUNiX+PYB101x_1.1-A_VN+2021_T12
+                lesson_url:
+                  type: string
+                  format: url
+                  description: URL of the lesson related to the ticket
+                  example: https://apps.test-xseries.funix.edu.vn/learning/course/course-v1:FUNiX+WEB101x_2.1-A_VN+2022_T7/home
+                ticket_description:
+                  type: string
+                  description: Description of the feedback ticket
+                  example: I encountered an issue with the video playback.
+                image:
+                  type: string
+                  example: https://test-xseries.funix.edu.vn/media/sontnfx18388funix.edu.vn_20231201035346_9ac81481b137fc2978a95a2c299b2b88.jpg
+                  format: url
+                  description: url of image attachment
+      responses:
+        "200":
+          description: Ticket created successfully
+          content:
+            application/json:
+              example:
+                message: Your ticket has been generated!
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                example1:
+                  summary: Invalid filed url
+                  value:
+                    message: "Invalid field: 'image': 'htp:/wrong-url'"
+                example2:
+                  summary: Invalid filed category
+                  value:
+                    message: "Invalid field: 'ticket_category': 'bad_explain', Required: Category must be one of the following: outdated, bad_explain, insufficient_details, broken_resource, error_translation"
+                example3:
+                  summary: Course not found
+                  value:
+                    message: "Not found course with code Dummy_course"
+                example4:
+                  summary: Not found student email
+                  value:
+                    message: "Not found student with email anph1@funix.edu.vn"
+                example5:
+                  summary: Missing field
+                  value:
+                    message: "Missing field: '{field-name}'"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              example:
+                message: Internal Server Error
+  /api/student_organization/search_org:
+    get:
+      tags:
+        - Student Organization
+      summary: Search Organization
+      description: Search Organization By Name
+      operationId: searchOrg
+      parameters:
+        - name: org_name
+          in: query
+          required: true
+          schema:
+            type: string
+            example: MarketingOrg
+          description: Name of the organization
+      responses:
+        "200":
+          description: "Search Organization Successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: MarketingOrg
+                  creator:
+                    type: string
+                    example: Administrator
+                  note:
+                    type: string
+                    format: multiline
+                    example: "This is an introduction of organization"
+                  students_enrolled:
+                    type: array
+                    items:
+                      type: string
+                      format: email
+                      example: anph1@funix.edu.vn
+                  courses_enrolled:
+                    type: array
+                    items:
+                      type: string
+                      example: "course-v1:FUNiX+WEB101x_2.1-A_VN+2022_T7"
+                  created_at:
+                    type: string
+                    format: date-time
+        "400":
+          description: "Organization Was Not Found!"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Organization Was Not Found!
+  /api/student_organization/add_student:
+    post:
+      tags:
+        - Student Organization
+      summary: Add Student
+      description: Add Student To Organization
+      operationId: addStuToOrg
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                organization:
+                  type: string
+                  example: MarketingOrg
+                student:
+                  type: array
+                  example:
+                    - anph1@funix.edu.vn
+                    - teststuednt@funix.edu.vn
+      responses:
+        "200":
+          description: "Add Student To Organization Successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Student added successfully
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              examples:
+                example1:
+                  summary: Not found organization
+                  value:
+                    message: Organization Was Not Found!
+                example2:
+                  summary: Missing field
+                  value:
+                    message: Please make sure the request body includes key-value pairs of student and organization
+                example3:
+                  summary: student not found
+                  value:
+                    message: anph1@funix.edu.vn, teststuednt@funix.edu.vn were not found!
+components:
+  schemas:
+    courseenroll:
+      type: object
+      properties:
+        student_id:
+          type: integer
+          description: id of the student
+          example: 1
+        course_id:
+          type: integer
+          description: id of the course
+          example: 1
