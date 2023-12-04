@@ -64,6 +64,15 @@ class Student(models.Model):
 
         return student_code
 
+    @api.model
+    def _gender_generator(self, student_dict):
+        gender = student_dict.get("gender")
+
+        if not gender:
+            gender = "unknown"
+
+        return gender
+
     def _generate_fixed_length_password(self, length):
         # Define the character set from which to generate the password
         characters = string.ascii_letters + string.digits + string.punctuation
@@ -146,6 +155,8 @@ class Student(models.Model):
         student_dict["student_code"] = self._student_code_generator(
             student_dict
         )
+
+        student_dict["gender"] = self._gender_generator(student_dict)
 
         if student_dict["email"] and self.env["portal.student"].search(
             [("email", "=", student_dict["email"])]
