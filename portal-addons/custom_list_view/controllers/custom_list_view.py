@@ -24,7 +24,7 @@ class ExportData(http.Controller):
         if kw["res_ids"]:
             domain = [("id", "in", kw["res_ids"])]
             records = model.browse(
-                kw["res.ids"]
+                kw["res_ids"]
             )  # Get records based on res_ids
         else:
             domain = kw["domain"]
@@ -53,7 +53,7 @@ class ExportData(http.Controller):
         if kw["res_ids"]:
             domain = [("id", "in", kw["res_ids"])]
             records = model.browse(
-                kw["res.ids"]
+                kw["res_ids"]
             )  # Get records based on res_ids
         else:
             domain = kw["domain"]
