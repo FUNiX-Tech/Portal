@@ -23,10 +23,27 @@
                         </field>
                     </group>
                 </sheet>
+
+                <footer>
+                    <span string="Preview and Save" class="btn btn-primary preview_and_save_btn oe_highlight">Preview and Save</span>
+                    <button string="Cancel" special="cancel" onclick='document.querySelector("button.btn-close").click()'/>
+                </footer>
+
+                <div id='templates_lib_container'></div>
+
+                <div id='preview_criterion_modal' class='disable_grading_template_html_field_css d-none'>
+                    <div id='preview_criterion_container'>
+                        <div id='preview_criterion_container_inner'></div>
+                        <div class='footer py-2'>
+                            <span string="Save" class="btn save_feedback_btn_trigger btn-primary oe_highlight">Save</span>
+                            <button string="Save" name="button_save" type="object" class="d-none btn save_feedback_btn btn-primary oe_highlight">Save</button>
+                            <span id="close_preview_btn" class="btn">Cancel</span>
+                        </div>
+                    </div>
+                </div>
             </form>
         </field>
     </record>
-
 
     <record id="project_criterion_response_action" model="ir.actions.act_window">
         <field name="name">Project Criterion Response</field>

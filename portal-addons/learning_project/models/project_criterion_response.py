@@ -183,3 +183,19 @@ class ProjectCriterionResponse(models.Model):
                 r.previous_result = prev_response.result
             else:
                 r.previous_result = "none"
+
+    def button_save(self):
+        self.write(
+            {
+                "feed_back": self.feed_back,
+                "result": self.result,
+            }
+        )
+        for r in self:
+            return {
+                "type": "ir.actions.act_window",
+                "res_model": "project_submission",
+                "domain": [],
+                "view_mode": "form",
+                "res_id": r.submission.id,
+            }

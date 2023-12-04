@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Serif:opsz,wght@8..144,500&family=Roboto:wght@400;500&display=swap');
+
+
 /* templates lib modal  */
 #templates-lib-modal {
     top: calc(100vh - 85px);
@@ -92,6 +95,7 @@
     display: none;
 }
 
+
 /* preview  */
 #preview_criterion_modal {
     font-size: 16px;
@@ -103,6 +107,20 @@
     background: #0000008f;
     z-index: 2001;
 }
+
+#preview_criterion_modal p,
+#preview_criterion_modal h1,
+#preview_criterion_modal h2,
+#preview_criterion_modal h3,
+#preview_criterion_modal h4,
+#preview_criterion_modal h5,
+#preview_criterion_modal h6,
+#preview_criterion_modal span,
+#preview_criterion_modal strong,
+#preview_criterion_modal a {
+    font-family: 'Roboto', sans-serif;
+}
+
 
 #preview_criterion_container {
     padding: 2em 1em 1em 1em;
@@ -197,27 +215,16 @@
     border: 0.75rem solid #5AA447;
 }
 
-#close_preview_criterion_modal {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    border: 1px solid #e5e5e5;
-    border-radius: 6px;
-    background: white;
-    outline: none;
-    cursor: pointer;
-    width: 2em;
-    height: 2em;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-#close_preview_criterion_modal:hover {
-    background: rgb(241, 241, 241);
-}
-
 .preview_criterion_error_message {
     text-align: center;
     color: #D82C0D;
+}
+
+.preview_criterion_feedback a {
+    font-weight: 500;
+    color: #0086ff;
+}
+
+header.modal-header button.btn-close {
+    display: none;
 }

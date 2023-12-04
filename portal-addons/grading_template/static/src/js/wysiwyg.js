@@ -15,10 +15,7 @@ const SVG_FAIL = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
 const SVG_ANGLE = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
 <path d="M12 14.95c-.133 0-.258-.02-.374-.062a.877.877 0 0 1-.325-.213l-4.6-4.6a.948.948 0 0 1-.275-.7c0-.283.091-.516.275-.7a.948.948 0 0 1 .7-.275c.283 0 .516.092.7.275l3.9 3.9 3.9-3.9a.948.948 0 0 1 .7-.275c.283 0 .516.092.7.275a.948.948 0 0 1 .275.7.948.948 0 0 1-.275.7l-4.6 4.6c-.1.1-.209.171-.325.213a1.106 1.106 0 0 1-.375.062z" fill="#576F8A"/>
 </svg>`
-const SVG_CLOSE = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-</svg>
-`
+
 
 // fetch components
 async function _getComponents() {
@@ -54,9 +51,7 @@ odoo.define('grading_template.wysiwyg', function (require) {
          */
         async startEdition() {
             await this._super();
-
             this._loadCss();
-
             this._enableDraggableAllLibComponentsInEditor();
 
             const editor = this.$el[0];
@@ -72,8 +67,25 @@ odoo.define('grading_template.wysiwyg', function (require) {
                 }
             }
 
+            const previewBtn = document.querySelector('.preview_and_save_btn')
+            previewBtn.onclick = () => {
+                this._renderFeedbackPreview();
+            }
+
+            const save_btn = document.querySelector('.save_feedback_btn_trigger')
+            save_btn.onclick = (e) => {
+                this._closePreviewModal()
+                document.querySelector('.save_feedback_btn').click()
+            }
+
+            const close_preview_btn = document.getElementById('close_preview_btn')
+            close_preview_btn.onclick = () => {
+                this._closePreviewModal()
+            }
+
             await this._renderTemplatesLib();
             await this._updateTemplatesList();
+
         },
         /**
          * Check mouse pointer đang gần top hay bottom của element
@@ -147,14 +159,14 @@ odoo.define('grading_template.wysiwyg', function (require) {
             return templates
         },
         _renderTemplatesLib: async function () {
-            const wysisyg = this;
+            const container = document.getElementById('templates_lib_container')
 
             // create modal
             const modal = document.createElement("div");
             modal.id = TEMPLATES_LIB_MODAL_ID;
             modal.classList.add('is-show')
             modal.innerHTML = "Loading...."
-            document.body.appendChild(modal)
+            container.appendChild(modal)
 
             // fetch templates and components
             const templates = await this._getTemplates();
@@ -231,39 +243,16 @@ odoo.define('grading_template.wysiwyg', function (require) {
                 }
             }
 
-            // preview btn
-            const previewBtn = document.createElement('button')
-            previewBtn.innerText = 'Preview'
-            previewBtn.classList.add(BUTTON_CLASS)
-            previewBtn.onclick = function () {
-                wysisyg._renderFeedbackPreview();
-            }
-
             // finally
             modal.appendChild(toggleBtn)
-            modal.appendChild(previewBtn)
             modal.appendChild(templatesContainer)
             modal.appendChild(componentsContainer)
         },
         _renderFeedbackPreview() {
-            const backdrop = document.createElement('div')
-            backdrop.id = 'preview_criterion_modal';
-            backdrop.classList.add('disable_grading_template_html_field_css')
+            document.getElementById('preview_criterion_modal').classList.remove('d-none')
+            const modal = document.getElementById('preview_criterion_container_inner')
 
-
-            const modal = document.createElement('div')
-            modal.id = 'preview_criterion_container'
-            backdrop.appendChild(modal)
-
-            // close modal btn
-            const btn = document.createElement('button')
-            btn.id = 'close_preview_criterion_modal'
-            btn.innerHTML = SVG_CLOSE
-            btn.onclick = () => {
-                this._closePreviewModal();
-            }
-            modal.appendChild(btn)
-
+            // render criterion
             const criterion = document.createElement('div')
             criterion.id = 'preview_criterion'
 
@@ -281,7 +270,6 @@ odoo.define('grading_template.wysiwyg', function (require) {
                 errorMsg.classList.add('preview_criterion_error_message')
                 errorMsg.innerText = "You haven't grade this criterion."
                 modal.appendChild(errorMsg)
-                document.body.appendChild(backdrop)
                 return
             } else if (criterionResult === 'passed') {
                 svg = SVG_SUCCESS
@@ -313,14 +301,15 @@ odoo.define('grading_template.wysiwyg', function (require) {
             criterion.appendChild(criterionHeader)
             criterion.appendChild(criterionBody)
             modal.appendChild(criterion)
-            document.body.appendChild(backdrop)
+            console.log('at the end of render', modal)
         },
         _generateUniqueId() {
             // need to change lib?
             return String(Date.now()) + String(Math.round(Math.random() * 100000))
         },
         _closePreviewModal() {
-            document.getElementById('preview_criterion_modal').remove();
+            document.getElementById('preview_criterion_modal').classList.add('d-none')
+            document.getElementById('preview_criterion_container_inner').innerHTML = ''
         },
         _getCriterionResult() {
             // result sẽ có double quotes ở 2 đầu, vd: "passed" thay vì passed, nên slice để bỏ double quotes đi
