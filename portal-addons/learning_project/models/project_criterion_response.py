@@ -73,7 +73,7 @@ class ProjectCriterionResponse(models.Model):
     feedback = fields.Html(
         string="Feedback Total",
         compute="_compute_feedback",
-        readlonly=False,
+        readonly=False,
         store=True,
     )
 
@@ -119,6 +119,12 @@ class ProjectCriterionResponse(models.Model):
         required=True,
     )
 
+    display_result = fields.Selection(
+        [NOT_GRADED, PASSED, DID_NOT_PASS, INCOMPLETE],
+        string="Display Result",
+        compute="_compute_display_result",
+    )
+
     computed_result = fields.Selection(
         [
             NOT_GRADED,
@@ -139,6 +145,8 @@ class ProjectCriterionResponse(models.Model):
     is_abnormal_result = fields.Boolean(
         string="Is Abnormal Result", compute="_compute_is_abnormal_result"
     )
+
+    step = fields.Integer(default=1, string="Step", required=True)
 
     _sql_constraints = [
         (
@@ -269,20 +277,19 @@ class ProjectCriterionResponse(models.Model):
             if r.is_final_step:
                 return
 
-            result = PASSED[0]
-            for spec in r.specifications:
-                if spec.result in [
-                    INCOMPLETE[0],
-                    DID_NOT_PASS[0],
-                    NOT_GRADED[0],
-                ]:
-                    if spec.result == NOT_GRADED[0]:
-                        r.result = NOT_GRADED[0]
-                        return
-                    else:
-                        result = DID_NOT_PASS[0]
+            results = list(map(lambda spec: spec.result, r.specifications))
 
-            r.result = result
+            if NOT_GRADED[0] in results:
+                r.result = NOT_GRADED[0]
+
+            elif INCOMPLETE[0] in results:
+                r.result = INCOMPLETE[0]
+
+            elif DID_NOT_PASS[0] in results:
+                r.result = DID_NOT_PASS[0]
+
+            else:
+                r.result = PASSED[0]
 
     @api.depends("specifications.result")
     def _compute_computed_result(self):
@@ -328,27 +335,12 @@ class ProjectCriterionResponse(models.Model):
             if result == INCOMPLETE[0]:
                 template_category = CAT_INCOMPLETE[0]
 
-            print(template_category)
-            print(template_category)
-            print(template_category)
-            print(template_category)
-            print(template_category)
-            print(template_category == "pass_fail")
-            print(template_category == "pass_fail")
-            print(template_category == "pass_fail")
-            print(template_category == "pass_fail")
-            print(template_category == "pass_fail")
-
             templates = (
                 self.env["grading_template"]
                 .sudo()
                 .search([("category.code", "=", template_category)])
             )
-            print(templates)
-            print(templates)
-            print(templates)
-            print(templates)
-            print(templates)
+
             r.templates = templates
 
     @api.depends("result", "templates")
@@ -380,8 +372,11 @@ class ProjectCriterionResponse(models.Model):
 
             r.feedback_body = html.unescape(result)
 
-    def button_save_step_1(self):
-        self.write({})
+    def button_save(self):
+        for r in self:
+            if r.step == 1:
+                self.write({})
+
         for r in self:
             return {
                 "type": "ir.actions.act_window",
@@ -389,15 +384,18 @@ class ProjectCriterionResponse(models.Model):
                 "domain": [],
                 "view_mode": "form",
                 "res_id": r.submission.id,
+                "target": "current",
+                "reload": True,
             }
 
-    def button_save_step_2(self):
+    def button_finish_grading(self):
         self.ensure_one()
         self.write(
             {
                 "feedback_lead": self.feedback_lead,
                 "feedback_body": self.feedback_body,
                 "result": self.result,
+                "step": 4,
             }
         )
 
@@ -409,16 +407,16 @@ class ProjectCriterionResponse(models.Model):
             "res_id": self.submission.id,
         }
 
-    def button_next_step(self):
+    def button_next(self):
         for r in self:
             if r.graded_all is True:
-                r.is_final_step = True
+                r.step += 1
             else:
                 raise Exception("You haven't graded all the specifications.")
 
-    def button_previous_step(self):
+    def button_back(self):
         for r in self:
-            r.is_final_step = False
+            r.step -= 1
 
     @api.depends("specifications.result")
     def _compute_graded_all(self):
@@ -438,17 +436,32 @@ class ProjectCriterionResponse(models.Model):
     @api.depends("result")
     def _compute_is_abnormal_result(self):
         for r in self:
-            computed_result = PASSED[0]
-            for spec in r.specifications:
-                if spec.result in [
-                    INCOMPLETE[0],
-                    DID_NOT_PASS[0],
-                    NOT_GRADED[0],
-                ]:
-                    if spec.result == NOT_GRADED[0]:
-                        computed_result = NOT_GRADED[0]
-                        break
-                    else:
-                        computed_result = DID_NOT_PASS[0]
+            results = list(map(lambda spec: spec.result, r.specifications))
+
+            computed_result = ""
+
+            if NOT_GRADED[0] in results:
+                computed_result = NOT_GRADED[0]
+
+            elif INCOMPLETE[0] in results:
+                computed_result = INCOMPLETE[0]
+
+            elif DID_NOT_PASS[0] in results:
+                computed_result = DID_NOT_PASS[0]
+
+            else:
+                computed_result = PASSED[0]
 
             self.is_abnormal_result = computed_result != r.result
+
+    def button_double_back(self):
+        for r in self:
+            r.step -= 2
+
+    @api.depends("result", "step")
+    def _compute_display_result(self):
+        for r in self:
+            if r.step < 4:
+                r.display_result = NOT_GRADED[0]
+            else:
+                r.display_result = r.result

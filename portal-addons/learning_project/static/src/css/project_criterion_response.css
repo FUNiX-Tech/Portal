@@ -122,7 +122,7 @@
 }
 
 
-#preview_criterion_container {
+/* #preview_criterion_container {
     padding: 2em 1em 1em 1em;
     background: white;
     width: 900px;
@@ -134,7 +134,7 @@
     box-sizing: border-box;
     position: relative;
     border-radius: 6px;
-}
+} */
 
 #preview_criterion {
     background: white;

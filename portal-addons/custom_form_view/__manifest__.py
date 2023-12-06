@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
 {
-    "name": "Funix Learning ProjectGrading Template",
-    "summary": "Learning Project Feedback Template",
-    "description": "Learning Project Feedback Template",
+    "name": "Custom Form View",
+    "summary": """
+        Short (1 phrase/line) summary of the module's purpose, used as
+        subtitle on modules listing or apps.openerp.com""",
+    "description": """
+        Long description of module's purpose
+    """,
     "author": "My Company",
     "website": "https://www.yourcompany.com",
     # Categories can be used to filter modules in modules listing
@@ -11,12 +15,10 @@
     "category": "Uncategorized",
     "version": "0.1",
     # any module necessary for this one to work correctly
-    "depends": ["base"],
-    # always loaded
-    "data": [
-        "security/security.xml",
-        "security/ir.model.access.csv",
-        "views/grading_template_category_views.xml",
-        "views/grading_template_views.xml",
-    ],
+    "depends": ["web"],
+    "assets": {
+        "web.assets_backend": [
+            "custom_form_view/static/src/**/*",
+        ]
+    },
 }

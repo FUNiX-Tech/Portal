@@ -9,7 +9,6 @@
                     <group>
                         <field name="code" string="Code" class="border bg-light"/>
                         <field name="name" string="Name" class="border bg-light"/>
-                        <!-- <field name="templates" string="Templates" class="border bg-light"/> -->
                     </group>
                 </sheet>
             </form>

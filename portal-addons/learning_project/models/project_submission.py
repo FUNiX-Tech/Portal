@@ -72,12 +72,11 @@ class ProjectSubmission(models.Model):
     def _has_graded_all_criteria(self):
         for record in self:
             graded_all = True
-            for repsonse in record.criteria_responses:
-                if repsonse.result == NOT_GRADED[0]:
+            for response in record.criteria_responses:
+                if response.result == NOT_GRADED[0] or response.step < 4:
                     graded_all = False
                     break
 
-            logger.info(record.general_response)
             record.has_graded_all_criteria = (
                 graded_all
                 and text_from_html(record.general_response).strip() != ""
