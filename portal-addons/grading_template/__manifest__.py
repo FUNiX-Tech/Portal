@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    "name": "grading_template",
+    "name": "Funix Learning Project Grading Template",
     "summary": "Learning Project Feedback Template",
     "description": "Learning Project Feedback Template",
     "author": "My Company",
@@ -24,8 +24,6 @@
     "data": [
         "security/security.xml",
         "security/ir.model.access.csv",
-        "views/grading_component_category_views.xml",
-        "views/grading_component_views.xml",
         "views/grading_template_category_views.xml",
         "views/grading_template_views.xml",
     ],

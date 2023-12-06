@@ -58,14 +58,16 @@ odoo.define('grading_template.wysiwyg', function (require) {
             editor.ondrop = e => this._onDropHandler(e)
             editor.onclick = e => this._onClickHandler(e)
             editor.ondragstart = e => this._onDragStartHandler(e)
-            document.querySelector('.criterion_result select').onchange = async () => {
-                const templates = await this._updateTemplatesList();
-                if (templates.length > 0) {
-                    this.setValue(templates[0].content)
-                } else {
-                    this.setValue('')
-                }
-            }
+
+            // uuuuv
+            // document.querySelector('.criterion_result select').onchange = async () => {
+            //     const templates = await this._updateTemplatesList();
+            //     if (templates.length > 0) {
+            //         this.setValue(templates[0].content)
+            //     } else {
+            //         this.setValue('')
+            //     }
+            // }
 
             const previewBtn = document.querySelector('.preview_and_save_btn')
             previewBtn.onclick = () => {

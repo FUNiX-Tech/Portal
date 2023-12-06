@@ -54,9 +54,9 @@
                             <tree string="Criterion Response" create="false" delete="false" default_order="criteria_group">
                                 <field name="criteria_group" class="col-2"/>
                                 <field name="criterion" class="col-3"/>
-                                <field name="feed_back" class="col-5"/>
+                                <field name="feedback" class="col-5"/>
                                 <field name="result" class="col-1 text-center" widget="badge" decoration-success="result == 'passed'" decoration-danger="result == 'did_not_pass'" decoration-warning="result == 'incomplete'" />
-                                <field name="previously_passed" class="col-1"/>
+                                <field name="is_final_step" class="col-1 text-center" />
                             </tree>
                         </field>
                     </group>

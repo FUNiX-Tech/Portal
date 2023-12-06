@@ -21,7 +21,7 @@
         <field name="name">grading_template.tree</field>
         <field name="model">grading_template</field>
         <field name="arch" type="xml">
-            <tree limit="20" string="grading_template" edit="false" class="text-center">
+            <tree limit="20" string="grading_template" edit="false">
                 <field name="category" />
                 <field name="code" />
                 <field name="name" />
@@ -38,8 +38,6 @@
 
     <menuitem id="menu_grading_template_root" name="Grading Template">
         <menuitem id="menu_action_grading_template_action" name="Template" action="grading_template_action"/>
-        <menuitem id="menu_action_grading_component_category_action" name="Component Category" action="grading_component_category_action"/>
-        <menuitem id="menu_action_grading_component_action" name="Component" action="grading_component_action"/>
         <menuitem id="menu_action_grading_template_category_action" name="Template Category" action="grading_template_category_action"/>
     </menuitem>
 </odoo>

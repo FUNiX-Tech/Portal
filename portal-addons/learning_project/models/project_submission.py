@@ -10,6 +10,14 @@ import requests
 from odoo import models, fields, api
 from odoo.tools import config
 from odoo.addons.website.tools import text_from_html
+from ..common import (
+    NOT_GRADED,
+    CANCELED,
+    PASSED,
+    DID_NOT_PASS,
+    UNABLE_TO_REVIEW,
+    INCOMPLETE,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -19,14 +27,6 @@ class ProjectSubmission(models.Model):
     _description = "project_submission"
     _inherit = ["mail.thread", "mail.activity.mixin"]
 
-    MAIL_SENDER = config.get("email_from")
-
-    NOT_GRADED = ("not_graded", "Not Graded")
-    CANCELED = ("submission_cancelled", "Submission cancelled")
-    PASSED = ("passed", "Passed")
-    DID_NOT_PASS = ("did_not_pass", "Did Not Pass")
-    UNABLE_TO_REVIEW = ("unable_to_review", "Unable to Review")
-    INCOMPLETE = ("incomplete", "Incomplete")
     DEFAULT_RESULT = NOT_GRADED[0]
 
     student = fields.Many2one(
@@ -35,13 +35,17 @@ class ProjectSubmission(models.Model):
         readonly=True,
         track_visibility=True,
     )
+
     project = fields.Many2one("project", string="Project", readonly=True)
+
     submission_url = fields.Char(string="Submission Url", readonly=True)
+
     criteria_responses = fields.One2many(
         "project_criterion_response",
         inverse_name="submission",
         string="Criteria",
     )
+
     result = fields.Selection(
         [NOT_GRADED, PASSED, DID_NOT_PASS, UNABLE_TO_REVIEW, CANCELED],
         required=True,
@@ -51,11 +55,15 @@ class ProjectSubmission(models.Model):
     )
 
     submission_note = fields.Text("Submission Note", readonly=True, default="")
+
     general_response = fields.Html(string="General Response", default="")
+
     has_graded_all_criteria = fields.Boolean(
         compute="_has_graded_all_criteria", store=True
     )
+
     course = fields.Char(related="project.course.course_name")
+
     lms_grade_update_status = fields.Char(
         string="LMS Grade Update LMS", default="Idle"
     )
@@ -65,7 +73,7 @@ class ProjectSubmission(models.Model):
         for record in self:
             graded_all = True
             for repsonse in record.criteria_responses:
-                if repsonse.result == self.NOT_GRADED[0]:
+                if repsonse.result == NOT_GRADED[0]:
                     graded_all = False
                     break
 
@@ -107,7 +115,7 @@ class ProjectSubmission(models.Model):
                 submission_url = record.submission_url
 
                 if is_unable_to_review:
-                    record.result = self.UNABLE_TO_REVIEW[0]
+                    record.result = UNABLE_TO_REVIEW[0]
                     email_body = f"""<div>
                     <h2>Hello {record.student.name},</h2>
                     <p>Project: {project_title}</p>
@@ -120,11 +128,10 @@ class ProjectSubmission(models.Model):
                     </div>"""
 
                 elif any(
-                    response.result
-                    in [self.DID_NOT_PASS[0], self.INCOMPLETE[0]]
+                    response.result in [DID_NOT_PASS[0], INCOMPLETE[0]]
                     for response in record.criteria_responses
                 ):
-                    record.result = self.DID_NOT_PASS[0]
+                    record.result = DID_NOT_PASS[0]
                     email_body = f"""<div>
                     <h2>Hello {record.student.name},</h2>
                     <p>Project: {project_title}</p>
@@ -136,7 +143,7 @@ class ProjectSubmission(models.Model):
                     <strong>Thank you!</strong>
                     </div>"""
                 else:
-                    record.result = self.PASSED[0]
+                    record.result = PASSED[0]
                     email_body = f"""<div>
                     <h2>Hello {record.student.name},</h2>
                     <p>Project: {project_title}</p>

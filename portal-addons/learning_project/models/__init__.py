@@ -7,4 +7,6 @@ from . import (
     project_submission,
     project_criterion_response,
     project_criterion_material,
+    project_specification_response,
+    project_specification,
 )

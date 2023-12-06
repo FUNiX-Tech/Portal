@@ -5,39 +5,126 @@
         <field name="model">project_criterion_response</field>
         <field name="arch" type="xml">
             <form string="Project Criterion Response">
+
+                <xpath expr="." position="inside">
+                    <link rel="stylesheet" href="learning_project/static/src/css/project_criterion_response.css" />
+                </xpath>
+
+                <xpath expr="." position="inside">
+                    <script src="learning_project/static/src/js/project_criterion_response.js">
+                    </script>
+                </xpath>
+
                 <sheet>
-                    <group>
-                        <field name="submission" readonly="1" string="Submission" />
-                        <field name="criterion" class='criterion_name' readonly="1" string="Criterion" />
-                        <field name="specifications" readonly="1" string="Specifications" class='criterion_specifications' />
-                        <field name="result" class='criterion_result' attrs="{'invisible': [('submission_result', '=', 'not_graded')]}" string="Result" widget="badge" decoration-success="result == 'passed'" decoration-danger="result == 'did_not_pass'" decoration-warning="result == 'incomplete'" />
-                        <field name="result" required="1" class='criterion_result' attrs="{'invisible': [('submission_result', '!=', 'not_graded')]}" string="Result" />
-                        <field name="submission_result" string="Submission Result" invisible="1"/>
-                        <field name="previous_result" readonly="1" string="Previously Result" class='previous_result' />
-                        <field name="previously_feedback" readonly="1" string="Previously Feedback" class='disable_grading_template_html_field_css' />
-                        <field name="feed_back" widget="grading_template_html" string="Feedback"/>
-                        <field name="material" string="Material" readonly='1'>
-                            <tree>
-                                <field name="name" />
-                            </tree>
-                        </field>
-                    </group>
+                    <field name="is_final_step" invisible="1" string="Is Final Step" />
+                    <field name="graded_all" invisible="1" string="Graded All" />
+
+                    <div attrs="{'invisible': [('is_final_step', '=', True )]}" id="form_group_step_1">
+                        <group>
+                            <field name="submission" readonly="1" string="Submission" />
+                            <field name="criterion" class='criterion_name' readonly="1" string="Criterion" />
+                            <field name="submission_result" string="Submission Result" invisible="1"/>
+                            <field name="previous_result" readonly="1" string="Previous Result" class='previous_result' />
+                            <field name="previous_feedback" readonly="1" string="Previous Feedback" class='html_field disable_grading_template_html_field_css' />
+
+                            <field name="specifications" string="Specifications" class='criterion_specifications' >
+                                <tree create="false" delete="false" class="row">
+                                    <field name="specification_content" class="col-4" readonly="1" />
+                                    <field name="feedback" class="col-6 html_field"/>
+                                    <field name="result" class="col-2"/>
+                                </tree>
+                            </field>
+
+                            <field name="material" string="Material">
+                                <tree>
+                                    <field name="name" readonly='1'/>
+                                </tree>
+                            </field>
+                        </group>
+                    </div>
+
+                    <div attrs="{'invisible': [('is_final_step', '=', False )]}" id="form_group_step_2">
+
+                        <group>
+                            <field name="result" class="border bg-light"/>
+
+                            <span attrs="{'invisible': [('is_abnormal_result', '=', False)]}">Warning</span>
+                            <span attrs="{'invisible': [('is_abnormal_result', '=', False)]}" class="text-warning">Your final result is different from the computed result.</span>
+
+                            <field name="computed_result" invisible="1" />
+                            <field name="is_abnormal_result" invisible="1" />
+                            <field name="templates">
+                                <tree >
+                                    <field name="content" invisible="1" />
+                                    <field name="name" class="border bg-light col-10" readonly="1" />
+                                    <button name="button_apply_template" context="{'picked_template': content, 'criterion_response_id': parent.id }" string="Apply Template" type="object" class="btn btn-primary" />
+                                </tree>
+                            </field>
+                            <field name="feedback_lead" class="border bg-light html_field"/>
+                            <field name="feedback_body" class="bg-light border html_field" />
+                            <field name="material">
+                                <tree>
+                                    <field name="name" readonly='1'/>
+                                </tree>
+                            </field>
+                        </group>
+                    </div>
                 </sheet>
 
-                <footer>
-                    <span string="Preview and Save" class="btn btn-primary preview_and_save_btn oe_highlight">Preview and Save</span>
-                    <button string="Cancel" special="cancel" onclick='document.querySelector("button.btn-close").click()'/>
-                </footer>
+                <footer class="d-flex gap-1">
+                    <span attrs="{'invisible': [('is_final_step','=', False)]}" class="btn btn-primary preview_and_save_btn oe_highlight mx-1" onclick='document.getElementById("preview_criterion_modal").classList.remove("d-none")'>Preview and Finish</span>
 
-                <div id='templates_lib_container'></div>
+                    <div attrs="{'invisible': [('is_final_step','=', True)]}">
+                        <button attrs="{'invisible': [('graded_all', '=', True)]}" string="Next" name="button_next_step" class="disabled summarize_btn btn btn-primary mx-1" type="object" />
+                        <button attrs="{'invisible': [('graded_all', '=', False)]}" string="Next" name="button_next_step" class="summarize_btn btn btn-primary mx-1" type="object" />
+                    </div>
+
+                    <button attrs="{'invisible': [('is_final_step','=', False)]}" string="Back" name="button_previous_step" type="object" class="back_btn btn btn-secondary mx-1" />
+                    <button attrs="{'invisible': [('is_final_step','=', True)]}" string="Save" class="btn btn-primary o_form_button_save" name="button_save_step_1" type="object" />
+                </footer>
 
                 <div id='preview_criterion_modal' class='disable_grading_template_html_field_css d-none'>
                     <div id='preview_criterion_container'>
-                        <div id='preview_criterion_container_inner'></div>
-                        <div class='footer py-2'>
-                            <span string="Save" class="btn save_feedback_btn_trigger btn-primary oe_highlight">Save</span>
-                            <button string="Save" name="button_save" type="object" class="d-none btn save_feedback_btn btn-primary oe_highlight">Save</button>
-                            <span id="close_preview_btn" class="btn">Cancel</span>
+                        <div id='preview_criterion_container_inner'>
+
+                            <div id="preview_criterion">
+                                <field class="did_not_pass d-none" name="result" attrs="{'invisible': [('result', '=', 'passed')]}" />
+                                <field class="passed d-none" name="result" attrs="{'invisible': [('result', '!=', 'passed')]}" />
+
+                                <div class='preview_criterion_header'>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                        <path d="m10.6 13.8-2.15-2.15a.948.948 0 0 0-.7-.275.948.948 0 0 0-.7.275.948.948 0 0 0-.275.7c0 .283.092.517.275.7L9.9 15.9c.2.2.433.3.7.3.267 0 .5-.1.7-.3l5.65-5.65a.948.948 0 0 0 .275-.7.948.948 0 0 0-.275-.7.948.948 0 0 0-.7-.275.948.948 0 0 0-.7.275L10.6 13.8zM12 22a9.738 9.738 0 0 1-3.9-.788 10.099 10.099 0 0 1-3.175-2.137c-.9-.9-1.612-1.958-2.137-3.175A9.738 9.738 0 0 1 2 12c0-1.383.263-2.683.788-3.9a10.099 10.099 0 0 1 2.137-3.175c.9-.9 1.958-1.612 3.175-2.137A9.738 9.738 0 0 1 12 2c1.383 0 2.683.263 3.9.788a10.098 10.098 0 0 1 3.175 2.137c.9.9 1.613 1.958 2.137 3.175A9.738 9.738 0 0 1 22 12a9.738 9.738 0 0 1-.788 3.9 10.098 10.098 0 0 1-2.137 3.175c-.9.9-1.958 1.613-3.175 2.137A9.738 9.738 0 0 1 12 22z" fill="#5AA447"/>
+                                    </svg>
+
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                        <path d="m12 13.4 2.9 2.9a.948.948 0 0 0 .7.275.948.948 0 0 0 .7-.275.948.948 0 0 0 .275-.7.948.948 0 0 0-.275-.7L13.4 12l2.9-2.9a.948.948 0 0 0 .275-.7.948.948 0 0 0-.275-.7.948.948 0 0 0-.7-.275.948.948 0 0 0-.7.275L12 10.6 9.1 7.7a.948.948 0 0 0-.7-.275.948.948 0 0 0-.7.275.948.948 0 0 0-.275.7c0 .283.092.517.275.7l2.9 2.9-2.9 2.9a.948.948 0 0 0-.275.7c0 .283.092.517.275.7a.948.948 0 0 0 .7.275.948.948 0 0 0 .7-.275l2.9-2.9zm0 8.6a9.738 9.738 0 0 1-3.9-.788 10.099 10.099 0 0 1-3.175-2.137c-.9-.9-1.612-1.958-2.137-3.175A9.738 9.738 0 0 1 2 12c0-1.383.263-2.683.788-3.9a10.099 10.099 0 0 1 2.137-3.175c.9-.9 1.958-1.612 3.175-2.137A9.738 9.738 0 0 1 12 2c1.383 0 2.683.263 3.9.788a10.098 10.098 0 0 1 3.175 2.137c.9.9 1.613 1.958 2.137 3.175A9.738 9.738 0 0 1 22 12a9.738 9.738 0 0 1-.788 3.9 10.098 10.098 0 0 1-2.137 3.175c-.9.9-1.958 1.613-3.175 2.137A9.738 9.738 0 0 1 12 22z" fill="#D82C0D"/>
+                                    </svg>
+
+                                    <field name="criterion" readonly="1" nolabel="1"/>
+                                </div>
+                                <div class="preview_criterion_body">
+                                    <div class="preview_criterion_feedback">
+                                        <field name="feedback" readonly="1" class="html_field"/>
+                                    </div>
+                                    <field name="specifications_description" readonly="1"/>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        <br />
+                        <sheet>
+                            <group>
+                                <field name="specifications" string="">
+                                    <tree create="false" delete="false" class="row">
+                                        <field name="specification_content" class="col-10" readonly="1" />
+                                        <field name="result" class="col-2" />
+                                    </tree>
+                                </field>
+                            </group>
+                        </sheet>
+                        <div class='py-2 mt-2'>
+                            <button string="Finish" name="button_save_step_2" type="object" class="btn save_feedback_btn btn-primary oe_highlight" />
+                            <span id="close_preview_btn" class="btn" onclick='document.getElementById("preview_criterion_modal").classList.add("d-none")'>Cancel</span>
                         </div>
                     </div>
                 </div>

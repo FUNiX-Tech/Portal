@@ -4,7 +4,11 @@ from odoo import http
 from odoo.http import request
 from ..utils.utils import json_response
 from ..validators import request_validators, project_validators
+from odoo.addons.portal_student_management.middlewares.middlewares import (
+    verify_access_token,
+)
 from datetime import datetime
+from ..common import PASSED, DID_NOT_PASS, NOT_GRADED, CANCELED
 
 logger = logging.getLogger(__name__)
 
@@ -18,6 +22,7 @@ class ProjectSubmissionController(http.Controller):
         cors="*",
         csrf=False,
     )
+    # @verify_access_token
     @request_validators.check_fields_presence(
         "submission_url",
         "email",
@@ -31,9 +36,8 @@ class ProjectSubmissionController(http.Controller):
     @project_validators.check_has_project()
     @project_validators.check_student_has_enrolled_course()
     @project_validators.check_allowed_to_submit()
-    def submit_submission(self):
+    def submit_submission(self, *args, **kwargs):
         try:
-            # raise Exception("Test Exception")
             request_data = json.loads(request.httprequest.data)
 
             created_submission = (
@@ -127,7 +131,7 @@ class ProjectSubmissionController(http.Controller):
                         [
                             ("student", "=", self.student.id),
                             ("project", "=", self.project.id),
-                            ("result", "!=", "submission_canceled"),
+                            ("result", "!=", CANCELED[0]),
                         ]
                     )
                 ).sorted("id")[0]
@@ -168,6 +172,7 @@ class ProjectSubmissionController(http.Controller):
         cors="*",
         csrf=False,
     )
+    # @verify_access_token
     @project_validators.skip_authentication()
     @request_validators.check_fields_presence(
         "course_code", "project_name", "email"
@@ -184,7 +189,7 @@ class ProjectSubmissionController(http.Controller):
                     [
                         ("student", "=", self.student.id),
                         ("project", "=", self.project.id),
-                        ("result", "!=", "submission_canceled"),
+                        ("result", "!=", CANCELED[0]),
                     ]
                 )
             ).sorted("id")
@@ -236,17 +241,17 @@ class ProjectSubmissionController(http.Controller):
 
             if submission:
                 responses = []
-                if submission.result in ["passed", "did_not_pass"]:
+                if submission.result in [PASSED[0], DID_NOT_PASS[0]]:
                     for response in submission.criteria_responses:
                         responses.append(
                             {
                                 "title": response.criterion.title,
                                 "result": response.result,
-                                "feedback": response.feed_back,
+                                "feedback": response.feedback,
                                 "number": response.number,
                                 "criteria_group": response.criteria_group.title,
                                 "group_number": response.criteria_group.number,
-                                "specifications": response.criterion.specifications,
+                                "specifications": response.criterion.sumarized_content,
                             }
                         )
 
@@ -302,12 +307,12 @@ class ProjectSubmissionController(http.Controller):
         try:
             submission = self.submission
 
-            if submission.result == "submission_cancelled":
+            if submission.result == CANCELED[0]:
                 return json_response(
                     400, "This submission has already canceled."
                 )
 
-            if submission.result != "not_graded":
+            if submission.result != NOT_GRADED[0]:
                 return json_response(
                     400,
                     "You cannot cancel this submission because the submission has been graded.",
@@ -328,7 +333,7 @@ class ProjectSubmissionController(http.Controller):
                     "You cannot cancel this submission because a mentor is reviewing it.",
                 )
 
-            submission.result = "submission_cancelled"
+            submission.result = CANCELED[0]
 
             try:
                 request.env["submission_history"].sudo().create(

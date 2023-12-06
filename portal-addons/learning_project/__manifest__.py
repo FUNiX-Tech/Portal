@@ -18,6 +18,7 @@
         "course_management",
         "mail",
         "mail_service",
+        "grading_template",
         "service_key",
     ],
     "assets": {
@@ -29,6 +30,8 @@
     "data": [
         "security/security.xml",
         "security/ir.model.access.csv",
+        "views/project_specification_views.xml",
+        "views/project_specification_response_views.xml",
         "views/project_criteria_group_views.xml",
         "views/project_criterion_material_views.xml",
         "views/project_criterion_response_views.xml",
