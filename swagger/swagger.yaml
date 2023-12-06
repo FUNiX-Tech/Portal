@@ -98,7 +98,7 @@ paths:
                   message:
                     type: string
                     example: "Please make sure the request body include key-value pairs of student_id and course_id"
-  /api/course_management/check_enroll?course_id=<int>&student_id=<int>:
+  /api/course_management/check_enroll:
     get:
       tags:
         - Course Management
@@ -118,7 +118,7 @@ paths:
           required: true
           schema:
             type: integer
-            example:
+            example: 1
           description: ID of the student to check enrollment
       responses:
         "200":
@@ -361,7 +361,7 @@ paths:
                   type: array
                   example:
                     - anph1@funix.edu.vn
-                    - teststuednt@funix.edu.vn
+                    - teststudent@funix.edu.vn
       responses:
         "200":
           description: "Add Student To Organization Successfully"
@@ -390,6 +390,220 @@ paths:
                   summary: student not found
                   value:
                     message: anph1@funix.edu.vn, teststuednt@funix.edu.vn were not found!
+  /api/v1/project/submission:
+    post:
+      tags:
+        - Learning Project
+      summary: Submit project
+      description: Endpoint for submitting a project
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                project_name:
+                  type: string
+                submission_url:
+                  type: string
+                course_code:
+                  type: string
+      responses:
+        "200":
+          description: Successful submission
+          content:
+            application/json:
+              example:
+                data:
+                  id: 1
+                  student: 1
+                  project: 1
+                  submission_url: "http://google.com"
+                status: 200
+                message: "Submission saved!"
+                metadata: null
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                invalid_url:
+                  value:
+                    data: null
+                    status: 400
+                    message: "Invalid field: 'submission_url': 'htp:/wrong-url'."
+                    metadata: null
+                not_found:
+                  value:
+                    data: null
+                    status: 400
+                    message: "Not found student/project with id 100"
+                    metadata: null
+                not_enrolled:
+                  value:
+                    data: null
+                    status: 400
+                    message: "Student with id 1 has not enrolled the course with id 1"
+                    metadata: null
+                missing_field:
+                  value:
+                    data: null
+                    status: 400
+                    message: "Missing field: 'student_id'"
+                    metadata: null
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              example:
+                data: null
+                status: 500
+                message: "Internal Server Error"
+                metadata: null
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              examples:
+                unauthorized:
+                  value:
+                    data: null
+                    status: 401
+                    message: "Unauthorized"
+                    metadata: null
+                expired_token:
+                  value:
+                    data: null
+                    status: 401
+                    message: "Expired token"
+                    metadata: null
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              example:
+                data: null
+                status: 403
+                message: "Forbidden"
+                metadata: null
+  /api/v1/project/user:
+    post:
+      tags:
+        - Learning Project
+      summary: Project user info
+      description: Endpoint for retrieving information about a user's project
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                project_name:
+                  type: string
+                course_code:
+                  type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              example:
+                data:
+                  status: not_graded
+                  submissions:
+                    - create_date: 1699514260.783212
+                      id: 5
+                    - create_date: 1699515448.341491
+                      id: 6
+                  submission:
+                    date: 1699515718.378184
+                    general_response: ""
+                    responses: []
+                    result: not_graded
+                    url: "http://google.com"
+                status: 200
+                message: "ok"
+                metadata: null
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              example:
+                data: null
+                status: 500
+                message: "Internal Server Error"
+                metadata: null
+  /api/v1/project/submission/cancel:
+    post:
+      tags:
+        - Learning Project
+      summary: Cancel project submission
+      description: Endpoint for canceling a project submission
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                submission_id:
+                  type: integer
+                email:
+                  type: string
+      responses:
+        "200":
+          description: Successful cancellation
+          content:
+            application/json:
+              example:
+                data: null
+                status: 200
+                message: "Canceled submission successfully."
+                metadata: null
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                already_cancelled:
+                  value:
+                    data: null
+                    status: 400
+                    message: "This submission has already been canceled."
+                    metadata: null
+                graded_submission:
+                  value:
+                    data: null
+                    status: 400
+                    message: "You cannot cancel this submission because it has been graded."
+                    metadata: null
+                time_limit_exceeded:
+                  value:
+                    data: null
+                    status: 400
+                    message: "You cannot cancel this submission because it was submitted more than 30 minutes ago."
+                    metadata: null
+                mentor_review:
+                  value:
+                    data: null
+                    status: 400
+                    message: "You cannot cancel this submission because a mentor is reviewing it."
+                    metadata: null
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              example:
+                data: null
+                status: 500
+                message: "Internal Server Error"
+                metadata: null
 components:
   schemas:
     courseenroll:
