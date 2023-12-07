@@ -15,7 +15,7 @@
                     <button name="re_update_lms_grade" attrs="{'invisible':['|',('lms_grade_update_status','=','Updated'),('lms_grade_update_status','=','Idle')]}" class="mx-2 oe_highlight" string="Re-update LMS Grade" type="object" />
                     <button attrs="{'invisible':[('lms_grade_update_status','=like','Error%')]}" class="disabled mx-2 oe_highlight" string="Re-update LMS Grade" />
 
-                    <button groups_id="base.user_root,base.user_admin" attrs="{'invisible':[('should_display_approve_btn','=',False)]}" string="Approve" type="object" name="button_approve" class="btn btn-warning" confirm="This is an abnormal result. Are you sure? You can not re-grade this submission after clicking OK." />
+                    <button groups="mentor_management.group_mentor_management_admin" attrs="{'invisible':[('should_display_approve_btn','=',False)]}" string="Approve" type="object" name="button_approve" class="btn btn-warning" confirm="This is an abnormal result. Are you sure? You can not re-grade this submission after clicking OK." />
                 </header>
                 <sheet>
                     <h3 style="color:#66598f">Genaral Information</h3>

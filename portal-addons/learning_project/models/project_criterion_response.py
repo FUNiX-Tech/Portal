@@ -411,14 +411,20 @@ class ProjectCriterionResponse(models.Model):
 
     def button_next(self):
         for r in self:
+            if r.step == 4:
+                return False
+
             if r.graded_all is True:
                 r.step += 1
+                return True
             else:
                 raise Exception("You haven't graded all the specifications.")
 
     def button_back(self):
         for r in self:
-            r.step -= 1
+            if r.step > 1:
+                r.step -= 1
+            return True
 
     @api.depends("specifications.result")
     def _compute_graded_all(self):
