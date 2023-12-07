@@ -166,21 +166,29 @@ class Student(models.Model):
                 }
             ]
 
-            response = self.send_api_request(
+            # uuuuv
+            self.send_api_request(
                 data_body,
                 headers,
                 endpoint="api/funix_portal/user/create_user",
             )
 
+            # response = self.send_api_request(
+            #     data_body,
+            #     headers,
+            #     endpoint="api/funix_portal/user/create_user",
+            # )
+
+            # uuuuv
             # Check response status
-            if (
-                not response
-                or response.status_code < 200
-                or response.status_code >= 300
-            ):
-                raise exceptions.ValidationError(
-                    "Failed to create student in LMS"
-                )
+            # if (
+            #     not response
+            #     or response.status_code < 200
+            #     or response.status_code >= 300
+            # ):
+            #     raise exceptions.ValidationError(
+            #         "Failed to create student in LMS"
+            #     )
 
         return super(Student, self).create(student_dict)
 

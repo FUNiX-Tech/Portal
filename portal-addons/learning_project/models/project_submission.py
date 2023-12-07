@@ -68,6 +68,18 @@ class ProjectSubmission(models.Model):
         string="LMS Grade Update LMS", default="Idle"
     )
 
+    approved = fields.Boolean(string="Approved", default=False)
+
+    has_abnormal_result = fields.Boolean(
+        string="Has Abnormal Result",
+        compute="_compute_has_abnormal_result",
+    )
+
+    should_display_approve_btn = fields.Boolean(
+        string="Should display approve button",
+        compute="_compute_should_display_approve_btn",
+    )
+
     @api.depends(
         "criteria_responses.result",
         "criteria_responses.step",
@@ -91,8 +103,12 @@ class ProjectSubmission(models.Model):
         After graded all the criteria, mentor should click the submit button to trigger this function.
         TODO:
             - Calculate and set the final result to the submission according to its criteria.
-            - Send notification email to the student.
-            - Send notification request to lms.
+            - check if any abnormal result. If there is:
+                + Send notification email to admin
+                + Waiting for approving to grade
+            - Otherwise:
+                + Send notification email to the student.
+                + Send notification request to lms.
         """
         for record in self:
             # Chưa nhập nhận xét tổng thì không cho submit + thông báo
@@ -106,6 +122,45 @@ class ProjectSubmission(models.Model):
                         "sticky": True,
                     },
                 }
+
+            # Kiểm tra kết quả bất thường
+            if record.has_abnormal_result and record.approved is False:
+                # send notification email to admin
+                admin_email = "vuntafx17889@funix.edu.vn"
+                email_body = f"""<div>
+                    <h2>Hello Admin,</h2>
+                    <h3 style="color: red;"><strong>There is an abnormal grading result!</strong></h3>
+                    <p>Project: {record.project.title}</p>
+                    <p>Course name: {record.project.course.course_name}</p>
+                    <p>Course code: {record.project.course.course_code}</p>
+                    <p>Submission Note: {record.submission_note}</p>
+                    <p>General Response: {record.general_response}</p>
+                    <p>Submission Url: {record.submission_url}</p>
+                    </div>"""
+                self.send_email(
+                    self,
+                    admin_email,
+                    "Notification: Abnormal Project Grading Result",
+                    "Notification: Abnormal Project Grading Result",
+                    email_body,
+                    "Notification: Abnormal Project Grading Result",
+                    record.submission_url,
+                    "Go to Project Submission",
+                )
+
+                # Thông báo cho mentor về việc này
+                return {
+                    "type": "ir.actions.client",
+                    "tag": "display_notification",
+                    "params": {
+                        "title": "Notification",
+                        "message": "This is an abnormal project grading result. An email was sent to admin. You'll get notification email when we're done with checking it.",
+                        "sticky": True,
+                    },
+                }
+
+            if record.approved is False:
+                record.approved = True
 
             is_unable_to_review = self.env.context.get("unable_to_review")
             if record.has_graded_all_criteria or is_unable_to_review:
@@ -293,3 +348,32 @@ class ProjectSubmission(models.Model):
                     "sticky": True,
                 },
             }
+
+    @classmethod
+    def _send_notification_email_to_admin():
+        pass
+
+    @api.depends("criteria_responses.is_abnormal_result")
+    def _compute_has_abnormal_result(self):
+        for record in self:
+            has_abnormal_result = False
+            for c in record.criteria_responses:
+                if c.is_abnormal_result is True:
+                    has_abnormal_result = True
+                    break
+
+            record.has_abnormal_result = has_abnormal_result
+
+    def button_approve(self):
+        for record in self:
+            record.approved = True
+
+        self.submit_grade()
+
+    @api.depends("has_abnormal_result", "approved")
+    def _compute_should_display_approve_btn(self):
+        is_admin = self.env.su or self.env.user._is_admin()
+        for r in self:
+            r.should_display_approve_btn = (
+                is_admin and r.has_abnormal_result and not r.approved
+            )

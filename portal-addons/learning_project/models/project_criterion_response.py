@@ -143,7 +143,9 @@ class ProjectCriterionResponse(models.Model):
     )
 
     is_abnormal_result = fields.Boolean(
-        string="Is Abnormal Result", compute="_compute_is_abnormal_result"
+        string="Is Abnormal Result",
+        compute="_compute_is_abnormal_result",
+        store=True,
     )
 
     step = fields.Integer(default=1, string="Step", required=True)
