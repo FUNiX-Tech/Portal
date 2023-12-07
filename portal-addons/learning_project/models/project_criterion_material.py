@@ -15,7 +15,9 @@ class ProjectCriterionMaterial(models.Model):
     _rec_name = "name"
 
     content = fields.Html("Content", required=True)
-    name = fields.Char("Name")
+
+    name = fields.Char(string="Name")
+
     criterion = fields.Many2one(
         "project_criterion", string="Criterion", required=True
     )

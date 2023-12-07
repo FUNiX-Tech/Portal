@@ -19,13 +19,16 @@ class ProjectCriteriaGroup(models.Model):
     _description = "project_criteria_group"
     _rec_name = "title"
 
-    title = fields.Char("Criteria Group Name", required=True)
+    title = fields.Char(string="Criteria Group Name", required=True)
+
     criteria = fields.One2many(
         "project_criterion",
         inverse_name="criteria_group",
         string="Criteria",
     )
+
     number = fields.Integer(string="Number", required=True, default=1)
+
     project = fields.Many2one("project", required=True, ondelete="cascade")
 
     _sql_constraints = [
