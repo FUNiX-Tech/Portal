@@ -134,7 +134,7 @@ class ProjectSubmissionController(http.Controller):
                             ("result", "!=", CANCELED[0]),
                         ]
                     )
-                ).sorted("id")[0]
+                ).sorted("id")[-2]
                 created_submission.mentor_id = last_submission.mentor_id
             except IndexError:
                 pass
