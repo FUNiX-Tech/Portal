@@ -68,7 +68,11 @@ class ProjectSubmission(models.Model):
         string="LMS Grade Update LMS", default="Idle"
     )
 
-    @api.depends("criteria_responses.result", "general_response")
+    @api.depends(
+        "criteria_responses.result",
+        "criteria_responses.step",
+        "general_response",
+    )
     def _has_graded_all_criteria(self):
         for record in self:
             graded_all = True
