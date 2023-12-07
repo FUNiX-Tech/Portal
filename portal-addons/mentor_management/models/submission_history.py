@@ -82,9 +82,9 @@ class SubmissionHistory(models.Model):
             body = f"""<div>
             <h2>Hello {submission.submission_id.mentor_id.full_name},</h2>
             <h3>You have an Project Submission to evaluate</h3>
-            <p>Assignment: {submission.assignment_id.title}</p>
-            <p>Course name: {submission.assignment_id.course.course_name}</p>
-            <p>Couse code: {submission.assignment_id.course.course_code}</p>
+            <p>Assignment: {submission.project_id.title}</p>
+            <p>Course name: {submission.project_id.course.course_name}</p>
+            <p>Couse code: {submission.project_id.course.course_code}</p>
             <p>I hope you happy with that</p>
             <strong>Thank you!</strong>
             <div>"""

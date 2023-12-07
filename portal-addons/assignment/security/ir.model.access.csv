@@ -1,5 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_assignment,access_assignment,model_assignment,group_assignment_admin,1,1,1,1
-access_assignment_criterion,access_assignment_criterion,model_assignment_criterion,group_assignment_admin,1,1,1,1
-access_assignment_submission,access_assignment_submission,assignment.model_assignment_submission,group_assignment_admin,1,1,1,1
-access_assignment_criterion_response,access_assignment_criterion_response,assignment.model_assignment_criterion_response,group_assignment_admin,1,1,1,1

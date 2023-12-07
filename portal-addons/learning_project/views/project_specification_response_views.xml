@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="project_specification_response_view_form" model="ir.ui.view">
+        <field name="name">project_specification_response.form</field>
+        <field name="model">project_specification_response</field>
+        <field name="arch" type="xml">
+            <form string="Project Criterion">
+                <sheet>
+                    <group>
+                        <field name="specification_content" class="border bg-light" readonly="1"/>
+                        <field name="result" class="border bg-light"/>
+                        <field name="feedback" class="border bg-light"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="project_specification_response_view_tree" model="ir.ui.view">
+        <field name="name">project_specification_response.tree</field>
+        <field name="model">project_specification_response</field>
+        <field name="arch" type="xml">
+            <tree string="Project Criterion" edit="false" class="text-center">
+                <field name="feedback" class="border bg-light"/>
+                <field name="criterion_response" class="border bg-light"/>
+                <field name="result" class="border bg-light"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="project_specification_response_action" model="ir.actions.act_window">
+        <field name="name">Project Specification Response</field>
+        <field name="res_model">project_specification_response</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>

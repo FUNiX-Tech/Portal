@@ -5,6 +5,7 @@ from odoo.http import request
 from odoo.tools import config
 from ..utils.utils import json_response
 from ...portal_student_management.utils.jwt_encode import JWTEncoder
+from ..common import PASSED
 
 logger = logging.getLogger(__name__)
 
@@ -212,7 +213,7 @@ def check_allowed_to_submit():
                 )
 
                 if last_submission and not should_skip:
-                    if last_submission.result == "passed":
+                    if last_submission.result == PASSED[0]:
                         return json_response(
                             403,
                             "You are not allowed to submit this project because you have already passed this project!",

@@ -10,4 +10,10 @@ def json_response(status=200, message="success", data=None, metadata=None):
         "metadata": metadata,
     }
 
-    return Response(json.dumps(response), status=status)
+    http_response = Response(json.dumps(response), status=status)
+
+    http_response.headers.add("Access-Control-Allow-Credentials", "true")
+
+    return http_response
+
+    # return Response(json.dumps(response), status=status)
