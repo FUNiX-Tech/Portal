@@ -2,7 +2,7 @@
 
 import logging
 from odoo import models, fields, api
-from odoo.exceptions import ValidationError
+from odoo.exceptions import ValidationError, UserError
 from odoo.addons.website.tools import text_from_html
 from odoo.tools import config
 import html
@@ -381,6 +381,10 @@ class ProjectCriterionResponse(models.Model):
 
         for r in self:
             return {
+                "type": "ir.actions.client",
+                "tag": "soft_reload",
+            }
+            return {
                 "type": "ir.actions.act_window",
                 "res_model": "project_submission",
                 "domain": [],
@@ -402,11 +406,8 @@ class ProjectCriterionResponse(models.Model):
         )
 
         return {
-            "type": "ir.actions.act_window",
-            "res_model": "project_submission",
-            "domain": [],
-            "view_mode": "form",
-            "res_id": self.submission.id,
+            "type": "ir.actions.client",
+            "tag": "soft_reload",
         }
 
     def button_next(self):
@@ -473,3 +474,14 @@ class ProjectCriterionResponse(models.Model):
                 r.display_result = NOT_GRADED[0]
             else:
                 r.display_result = r.result
+
+    def write(self, values):
+        if (
+            self.env.su
+            or self.env.user.login == self.submission.mentor_id.email
+        ):
+            return super(ProjectCriterionResponse, self).write(values)
+        else:
+            raise UserError(
+                "This submission is already assigned to another mentor. You are not allowed to grade it."
+            )
