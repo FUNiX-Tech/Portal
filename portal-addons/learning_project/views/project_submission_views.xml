@@ -5,29 +5,30 @@
         <field name="model">project_submission</field>
         <field name="arch" type="xml">
             <form string="Project Submission">
-                <header >
-                    <span attrs="{'invisible': [('lms_grade_update_status','=','waiting_for_approving')]}">
+                <header>
+                    <span attrs="{'invisible': [('grading_status','=','waiting_for_approving')]}">
                         <button name="submit_grade" attrs="{'invisible':[('has_graded_all_criteria','=',True),('result','=','not_graded')]}" string="Submit" confirm="Are you sure? You can not re-grade this submission after clicking OK." type="object" class="oe_highlight disabled"/>
                         <button name="submit_grade" attrs="{'invisible':['|',('has_graded_all_criteria','=',False),('result','!=','not_graded')]}" string="Submit" confirm="Are you sure? You can not re-grade this submission after clicking OK." type="object" class="oe_highlight"/>
                     </span>
 
-                    <span attrs="{'invisible': [('lms_grade_update_status','!=','waiting_for_approving')]}">
+                    <span attrs="{'invisible': [('grading_status','!=','waiting_for_approving')]}">
                         <button name="button_fake_submit" string="Submit" class="mx-2 disabled btn btn-primary" />
                         <button name="button_fake_unable_to_review" string="Unable To Review" class="mx-2 disabled btn btn-danger" />
                     </span>
 
-                    <span attrs="{'invisible': [('lms_grade_update_status','=','waiting_for_approving')]}">
+                    <span attrs="{'invisible': [('grading_status','=','waiting_for_approving')]}">
                         <button name="submit_grade" attrs="{'invisible':[('result','!=','not_graded')]}" context="{'unable_to_review': True}" type="object" class="mx-2 btn-danger " string="Unable To Review" confirm="Are you sure? You can not re-grade this submission after clicking OK."/>
                     </span>
                     <button attrs="{'invisible':[('result','=','not_graded')]}" class="disabled mx-2 btn-danger oe_highlight" string="Unable To Review" />
 
-                    <span attrs="{'invisible': [('lms_grade_update_status','=','waiting_for_approving')]}">
-                        <button name="re_update_lms_grade" attrs="{'invisible':['|',('lms_grade_update_status','=','Updated'),('lms_grade_update_status','=','Idle')]}" class="mx-2 btn btn-primary" string="Re-update LMS Grade" type="object" />
+                    <span attrs="{'invisible': [('grading_status','=','waiting_for_approving')]}">
+                        <button name="re_update_lms_grade" attrs="{'invisible':['|',('grading_status','=','success'),('grading_status','=','idle')]}" class="mx-2 btn btn-primary" string="Re-update LMS Grade" type="object" />
                     </span>
-                    <button attrs="{'invisible':[('lms_grade_update_status','=like','Error%')]}" class="disabled mx-2 oe_highlight" string="Re-update LMS Grade" />
+                    <span>
+                        <button attrs="{'invisible':[('grading_status','=','failed')]}" class="disabled mx-2 oe_highlight" string="Re-update LMS Grade" />
+                    </span>
 
-
-                    <span attrs="{'invisible': [('lms_grade_update_status','!=','waiting_for_approving')]}">
+                    <span attrs="{'invisible': [('grading_status','!=','waiting_for_approving')]}">
                         <button groups="mentor_management.group_mentor_management_admin,base.group_system" attrs="{'invisible':[('should_display_approve_btn','=',False)]}" string="Approve" type="object" name="button_approve" class="mx-2 btn btn-warning" confirm="This is an abnormal result. Are you sure? You can not re-grade this submission after clicking OK." />
                         <button groups="mentor_management.group_mentor_management_admin,base.group_system" attrs="{'invisible':[('should_display_approve_btn','=',False)]}" string="Disapprove" type="object" name="button_disapprove" class="mx-2 btn btn-warning" confirm="Are you sure that you want to disapprove this submsision result?" />
                     </span>
@@ -52,7 +53,7 @@
                             <field name="submission_url" string="Submission URL" write="false" text="View File" widget="url" attrs="{'invisible':[('submission_url','==',False)]}"/>
                             <field name="submission_url" string="Submission URL" write="false" attrs="{'invisible':[('submission_url','!=',False)]}"/>
 
-                            <field name="lms_grade_update_status" string="LMS Status" readonly="1"/>
+                            <field name="grading_status" readonly="1"/>
                         </group>
                     </group>
 

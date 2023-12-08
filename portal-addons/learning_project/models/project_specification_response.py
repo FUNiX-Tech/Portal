@@ -44,6 +44,4 @@ class ProjectSpecificationResponse(models.Model):
         ):
             return super(ProjectSpecificationResponse, self).write(values)
         else:
-            raise UserError(
-                "This submission is already assigned to another mentor. You are not allowed to grade it."
-            )
+            raise UserError("You are not assigned to this submission.")

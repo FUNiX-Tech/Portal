@@ -22,6 +22,8 @@ from ..common import (
     CANCELED,
 )
 
+from .project_submission import GRADE_STATUS
+
 logger = logging.getLogger(__name__)
 
 
@@ -53,21 +55,7 @@ class ProjectCriterionResponse(models.Model):
     )
 
     specifications_description = fields.Html(
-        "Specifications Description", related="criterion.sumarized_content"
-    )
-
-    feedback_lead = fields.Html(
-        string="Feedback Opening",
-        compute="_compute_feedback_lead",
-        readonly=False,
-        store=True,
-    )
-
-    feedback_body = fields.Html(
-        string="Feedback Body",
-        compute="_compute_feedback_body",
-        readonly=False,
-        store=True,
+        "Specifications Description", related="criterion.display_content"
     )
 
     feedback = fields.Html(
@@ -149,6 +137,10 @@ class ProjectCriterionResponse(models.Model):
     )
 
     step = fields.Integer(default=1, string="Step", required=True)
+
+    grading_status = fields.Selection(
+        GRADE_STATUS, related="submission.grading_status"
+    )
 
     _sql_constraints = [
         (
@@ -345,34 +337,23 @@ class ProjectCriterionResponse(models.Model):
 
             r.templates = templates
 
-    @api.depends("result", "templates")
-    def _compute_feedback_lead(self):
-        for r in self:
-            if len(r.templates) > 0:
-                r.feedback_lead = r.templates[0].content
-            else:
-                r.feedback_lead = ""
-
-    @api.depends("feedback_lead", "feedback_body")
+    @api.depends("result", "is_final_step", "templates")
     def _compute_feedback(self):
         for r in self:
-            r.feedback = r.feedback_lead + r.feedback_body
+            if len(r.templates) > 0:
+                feedback_lead = r.templates[0].content
+            else:
+                feedback_lead = ""
 
-    @api.depends("result", "is_final_step")
-    def _compute_feedback_body(self):
-        for r in self:
-            if r.is_final_step:
-                return
-
-            result = "<ul>"
+            feedback_body = "<ul>"
 
             for spec in r.specifications:
                 if text_from_html(spec.feedback).strip() != "":
-                    result += f"<li>{spec.feedback}</li>"
+                    feedback_body += f"<li>{spec.feedback}</li>"
 
-            result += "</ul>"
+            feedback_body += "</ul>"
 
-            r.feedback_body = html.unescape(result)
+            r.feedback = html.unescape(feedback_lead + feedback_body)
 
     def button_save(self):
         for r in self:
@@ -384,22 +365,12 @@ class ProjectCriterionResponse(models.Model):
                 "type": "ir.actions.client",
                 "tag": "soft_reload",
             }
-            return {
-                "type": "ir.actions.act_window",
-                "res_model": "project_submission",
-                "domain": [],
-                "view_mode": "form",
-                "res_id": r.submission.id,
-                "target": "current",
-                "reload": True,
-            }
 
     def button_finish_grading(self):
         self.ensure_one()
         self.write(
             {
-                "feedback_lead": self.feedback_lead,
-                "feedback_body": self.feedback_body,
+                "feedback": self.feedback,
                 "result": self.result,
                 "step": 4,
             }
@@ -482,6 +453,4 @@ class ProjectCriterionResponse(models.Model):
         ):
             return super(ProjectCriterionResponse, self).write(values)
         else:
-            raise UserError(
-                "This submission is already assigned to another mentor. You are not allowed to grade it."
-            )
+            raise UserError("You are not assigned to this submission.")

@@ -21,3 +21,14 @@ class ProjectCriterionMaterial(models.Model):
     criterion = fields.Many2one(
         "project_criterion", string="Criterion", required=True
     )
+
+    def button_insert_material(self):
+        material = self.env.context.get("material")
+        criterion_repsonse_id = self.env.context.get("criterion_response_id")
+        criterion_repsonse = (
+            self.env["project_criterion_response"]
+            .sudo()
+            .search([("id", "=", criterion_repsonse_id)])[0]
+        )
+        criterion_repsonse.feedback += material
+        return True

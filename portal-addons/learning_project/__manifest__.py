@@ -13,6 +13,7 @@
     # any module necessary for this one to work correctly
     "depends": [
         "base",
+        "portal_common",
         "email_server_config",
         "portal_student_management",
         "course_management",

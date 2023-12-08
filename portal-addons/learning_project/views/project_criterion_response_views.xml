@@ -12,6 +12,7 @@
 
                 <field name="graded_all" invisible="1" string="Graded All" />
                 <field name="step" invisible="1" string="Step" />
+                <field name="grading_status" invisible="1" />
 
                 <sheet >
                     <!-- <div attrs="{'invisible': [('is_final_step', '=', True )]}" id="form_group_step_1"> -->
@@ -56,11 +57,13 @@
                                     <button name="button_apply_template" context="{'picked_template': content, 'criterion_response_id': parent.id }" string="Apply Template" type="object" class="btn btn-primary" />
                                 </tree>
                             </field>
-                            <field name="feedback_lead" class="border bg-light html_field"/>
-                            <field name="feedback_body" class="bg-light border html_field" />
+                            <field name="feedback" class="bg-light border html_field" />
                             <field name="material">
                                 <tree>
                                     <field name="name" readonly='1'/>
+                                    <field name="content" invisible='1'/>
+                                    <button string="Insert" type="object" name="button_insert_material" context="{'material': content, 'criterion_response_id': parent.id }" class="btn btn-primary" />
+                                    <button string="Append" type="button" name="button_append_material" class="btn btn-primary" />
                                 </tree>
                             </field>
                         </group>
@@ -90,7 +93,7 @@
                             </div>
                         </div>
 
-                        <field name="specifications" string="">
+                        <field name="specifications" string="" attrs="{'readonly': [('step','&gt;',2)]}">
                             <tree create="false" delete="false" class="row">
                                 <field name="specification_content" class="col-10" readonly="1" />
                                 <field name="feedback" class="col-6 html_field" readonly="1" />
@@ -110,7 +113,7 @@
 
                     <button attrs="{'invisible': [('step','!=', 1)]}" string="Save" class="btn btn-primary o_form_button_save" name="button_save" type="object" />
                     <button attrs="{'invisible': [('step','!=', 3)]}" string="Finish" name="button_finish_grading" type="object" class="btn save_feedback_btn btn-primary oe_highlight" />
-                    <button attrs="{'invisible': [('step','!=', 4)]}" string="Edit" class="btn btn-primary o_form_button_save" name="button_double_back" type="object" />
+                    <button attrs="{'invisible': ['|','|',('grading_status','=','waiting_for_approving'),('step','!=', 4),('submission_result', '!=', 'not_graded')]}" string="Edit" class="btn btn-primary o_form_button_save" name="button_double_back" type="object" />
                     <button attrs="{'invisible': ['|',('step','=', 1),('step','=',4)]}" string="Back" name="button_back" type="object" class="back_btn btn btn-secondary mx-1" />
                 </footer>
             </form>

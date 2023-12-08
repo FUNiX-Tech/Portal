@@ -135,8 +135,6 @@ class course_management(models.Model):
         self._compute_temp_organization_ids()
 
     def api_call(self, values):
-        # uuuuv
-        return {"status_code": 200}
         LMS_BASE = self.env[
             "service_key_configuration"
         ].get_api_key_by_service_name("LMS_BASE")

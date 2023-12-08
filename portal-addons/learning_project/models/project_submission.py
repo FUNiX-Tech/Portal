@@ -8,7 +8,7 @@ Need to set the following variables to config file:
 import logging
 import requests
 from odoo import models, fields, api
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, Warning
 from odoo.tools import config
 from odoo.addons.website.tools import text_from_html
 from ..common import (
@@ -19,6 +19,14 @@ from ..common import (
     UNABLE_TO_REVIEW,
     INCOMPLETE,
 )
+
+
+GRADE_STATUS = [
+    ("idle", "Idle"),
+    ("waiting_for_approving", "Waiting For Approving"),
+    ("failed", "Failed"),
+    ("success", "Success"),
+]
 
 logger = logging.getLogger(__name__)
 
@@ -65,8 +73,8 @@ class ProjectSubmission(models.Model):
 
     course = fields.Char(related="project.course.course_name")
 
-    lms_grade_update_status = fields.Char(
-        string="LMS Grade Update LMS", default="Idle"
+    grading_status = fields.Selection(
+        GRADE_STATUS, string="Grading Status", default="idle"
     )
 
     approved = fields.Boolean(string="Approved", default=False)
@@ -129,7 +137,7 @@ class ProjectSubmission(models.Model):
                 and record.approved is False
                 and not is_unable_to_review
             ):
-                record.lms_grade_update_status = "waiting_for_approving"
+                record.grading_status = "waiting_for_approving"
                 admin_email = "vuntafx17889@funix.edu.vn"
                 email_body = f"""<div>
                     <h2>Hello Admin,</h2>
@@ -152,16 +160,10 @@ class ProjectSubmission(models.Model):
                     "Go to Project Submission",
                 )
 
-                # Thông báo cho mentor về việc này
-                return {
-                    "type": "ir.actions.client",
-                    "tag": "display_notification",
-                    "params": {
-                        "title": "Notification",
-                        "message": "This is an abnormal project grading result. An email was sent to admin. You'll get notification email when we're done with checking it.",
-                        "sticky": True,
-                    },
-                }
+                return self.env["portal_dialog"].info(
+                    "",
+                    "This is an abnormal project grading result. An email was sent to admin. You'll get notification email when we're done with checking it.",
+                )
 
             if record.approved is False:
                 record.approved = True
@@ -247,15 +249,8 @@ class ProjectSubmission(models.Model):
                 if lms_error != "":
                     error_message += lms_error
                 if error_message != "":
-                    return {
-                        "type": "ir.actions.client",
-                        "tag": "display_notification",
-                        "params": {
-                            "title": "Error",
-                            "message": error_message,
-                            "sticky": True,
-                        },
-                    }
+                    return self.env["portal_dialog"].error("", error_message)
+
             return True
 
     def _push_grade_result_to_lms(self):
@@ -267,7 +262,7 @@ class ProjectSubmission(models.Model):
                 and config.get("debug_mode") is True
             )
             if should_skip:
-                record.lms_grade_update_status = "Updated"
+                record.grading_status = "success"
                 logger.info(
                     "DEBUG MODE: skip PUSH GRADE TO LMS error because of debug_mode is True and skip_push_grade_to_lms is True"
                 )
@@ -291,11 +286,11 @@ class ProjectSubmission(models.Model):
                 response = requests.post(url, headers=headers, json=payload)
 
                 if response.status_code == 200:
-                    record.lms_grade_update_status = "Updated"
+                    record.grading_status = "success"
                     logger.info("Pushed project grading result to LMS")
                     return ""
                 else:
-                    record.lms_grade_update_status = f"Error: {response.text}"
+                    record.grading_status = "failed"
                     logger.error(
                         f"Failed to push project grading result to LMS: {response.text}"
                     )
@@ -303,7 +298,7 @@ class ProjectSubmission(models.Model):
                     return f"ERROR:Failed to push project grading result to LMS: {response.text}"
 
             except Exception as e:
-                record.lms_grade_update_status = f"Error: {str(e)}"
+                record.grading_status = "failed"
                 logger.error(
                     f"Failed to push project grading result to LMS: {str(e)}"
                 )
@@ -373,7 +368,7 @@ class ProjectSubmission(models.Model):
 
         mentor_email = record.mentor_id.email
         email_body = f"""<div>
-            <h2>Hello Admin,</h2>
+            <h2>Hello Mentor,</h2>
             <h3 style="color: red;"><strong>Admin Approved Your Project Grading Result!</strong></h3>
             <p>Project: {record.project.title}</p>
             <p>Course name: {record.project.course.course_name}</p>
@@ -397,10 +392,10 @@ class ProjectSubmission(models.Model):
 
     def button_disapprove(self):
         for record in self:
-            record.lms_grade_update_status = "Idle"
+            record.grading_status = "idle"
             mentor_email = record.mentor_id.email
             email_body = f"""<div>
-                <h2>Hello Admin,</h2>
+                <h2>Hello Mentor,</h2>
                 <h3 style="color: red;"><strong>Admin Disapproved Project Grading Result!</strong></h3>
                 <p>Project: {record.project.title}</p>
                 <p>Course name: {record.project.course.course_name}</p>
@@ -437,6 +432,4 @@ class ProjectSubmission(models.Model):
         if self.env.su or self.env.user.login == self.mentor_id.email:
             return super(ProjectSubmission, self).write(values)
         else:
-            raise UserError(
-                "This submission is already assigned to another mentor. You are not allowed to grade it."
-            )
+            raise UserError("You are not assigned to this submission.")
