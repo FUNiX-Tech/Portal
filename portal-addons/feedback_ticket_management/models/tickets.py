@@ -86,40 +86,59 @@ class FeedbackTicket(models.Model):
     # Action send email based on type
     def action_send_mail(self, ticket_id, email_type="assign"):
         if email_type == "assign" and self.ticket_assignee.email:
-            template = self.env.ref(
-                "feedback_ticket_management.assign_ticket_email_template"
+            email_body = f"""
+                            <div style='width:100%'>
+                                <h4>Dear { self.ticket_assignee.name },</h4>
+                                <p>There is new ticket which is assigned to you. Go to Portal and check it out for further details.</p>
+                            </div>
+                            """
+            self.call_send_email(
+                self.ticket_assignee.email,
+                "",
+                f"You Are Assigned To New Ticket! - { self.ticket_number }",
+                f"You Are Assigned To New Ticket! - {self.ticket_number}",
+                email_body,
+                "There is new ticket which is assigned to you",
+                self.get_url_record_form(),
+                "Go To Your Ticket",
             )
-            email = (
-                template.generate_email(
-                    ticket_id, fields=["subject", "body_html", "email_to"]
-                ),
-            )
-            self.message_log_email(email)
-            template.send_mail(ticket_id, force_send=True)
         elif email_type == "response" and self.ticket_requester.email:
-            template = self.env.ref(
-                "feedback_ticket_management.response_ticket_email_template"
+            email_body = f"""
+                            <div style='width:100%'>
+                                <h4>Dear {self.ticket_requester.name}>,</h4>
+                                <p>Your feedback has been acknowledged and resolved. Please see the response below and proceed again</p>
+                                <p>Response: {self.ticket_response}</p>
+                            </div>
+                            """
+            self.call_send_email(
+                self.ticket_requester.email,
+                "",
+                f"Your Feedback Is Resolve! - {self.ticket_number}",
+                f"Your Feedback Is Resolve! - {self.ticket_number}",
+                email_body,
+                "The ticket has been resolved. Make a response to requester",
+                self.env[
+                    "service_key_configuration"
+                ].get_api_key_by_service_name("LMS_BASE"),
+                "Go To FUNiX",
             )
-            email = (
-                template.generate_email(
-                    ticket_id, fields=["subject", "body_html", "email_to"]
-                ),
-            )
-            self.message_log_email(email)
-            template.send_mail(ticket_id, force_send=True)
         elif email_type == "reminder":
-            template = self.env.ref(
-                "feedback_ticket_management.email_assignee_reminder_template"
-            )
             date_diff = (datetime.now() - self.created_at).days
-            email = (
-                template.with_context({"date_diff": date_diff}).generate_email(
-                    ticket_id, fields=["subject", "body_html", "email_to"]
-                ),
-            )
-            self.message_log_email(email)
-            template.with_context({"date_diff": date_diff}).send_mail(
-                ticket_id, force_send=True
+            email_body = f"""
+                        <div style='width:100%'>
+                            <h4>Dear {self.ticket_assignee.name},</h4>
+                            <p>Your assigned ticket is pending for a long time . Please go to Portal to check it and proceed the next step.</p>
+                        </div>
+                            """
+            self.call_send_email(
+                self.ticket_assignee.email,
+                "",
+                f"Your Ticket Is Pending For {date_diff} days - {self.ticket_number}",
+                f"Your Ticket Is Pending For {date_diff} days - {self.ticket_number}",
+                email_body,
+                "The ticket is assigned for days, please check and handle it",
+                self.get_url_record_form(),
+                "Go To Your Ticket",
             )
 
     # Scheduled send email action as assignee reminder
@@ -236,11 +255,33 @@ class FeedbackTicket(models.Model):
         self.message_post(body=body)
 
     # format body of email and post it to tracing log message
-    def message_log_email(self, email_data):
-        print("asd")
-        body = f"<em>Subject : {email_data[0]['subject']}</em><br/><p>Email to: {email_data[0]['email_to']}</p><br/>{email_data[0]['body_html']}"
-        print(body)
-        self.message_post(body=body)
+    def call_send_email(
+        self,
+        recipient_email,
+        email_cc,
+        title,
+        subject,
+        body,
+        description,
+        external_link,
+        external_text,
+        ref_model="feedback_ticket_management.model_feedback_ticket",
+        email_from="no-reply@funix.edu.vn",
+    ):
+        self.env["mail_service"].send_email_with_sendgrid(
+            self.env["service_key_configuration"],
+            recipient_email,
+            email_cc,
+            title,
+            subject,
+            body,
+            description,
+            external_link,
+            external_text,
+            ref_model,
+            self,
+            email_from,
+        )
 
     def button_start_resolving(self):
         self.ticket_status = "in_progress"
@@ -255,3 +296,17 @@ class FeedbackTicket(models.Model):
         self.check_uid_assignee = (
             self.ticket_assignee.id == self.env.user.sudo().id
         )
+
+    def get_url_record_form(self):
+        """
+        Returns the URL of the record's form view.
+        """
+        base_url = (
+            self.env["ir.config_parameter"].sudo().get_param("web.base.url")
+        )
+        action_id = self.env.ref(
+            "feedback_ticket_management.feedback_ticket_management_action_window"
+        )
+        for record in self:
+            form_view_path = f"/web#id={record.id}&action={action_id.id}&model={record._name}&view_type=form"
+            return f"{base_url}{form_view_path}"
