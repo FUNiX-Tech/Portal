@@ -1,34 +1,49 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields
+from odoo import models, fields, api
+from odoo.exceptions import UserError, ValidationError
 
-UNIQUE_TITLE_PROJECT = (
-    "unique_project_criterion_material_name_criterion",
-    "unique(name, criterion)",
-    "The titles of criteria Groups must be unique within a project.",
+UNIQUE_LABEL_CRITERION = (
+    "unique_criterion_material_label",
+    "unique(label, criterion)",
+    "Unique material label in a criterion.",
+)
+
+UNIQUE_URL_CRITERION = (
+    "unique_criterion_material_url",
+    "unique(url, criterion)",
+    "Unique material url in a criterion.",
 )
 
 
 class ProjectCriterionMaterial(models.Model):
     _name = "project_criterion_material"
     _description = "project_criterion_material"
-    _rec_name = "name"
+    _rec_name = "label"
 
-    content = fields.Html("Content", required=True)
+    label = fields.Char(string="Label", required=True)
 
-    name = fields.Char(string="Name")
+    url = fields.Char(string="URL", required=True)
+
+    append = fields.Html(string="Content To Append")
+
+    auto_append = fields.Boolean(
+        string="Will be automatically appended", default=False
+    )
 
     criterion = fields.Many2one(
         "project_criterion", string="Criterion", required=True
     )
 
-    def button_insert_material(self):
-        material = self.env.context.get("material")
-        criterion_repsonse_id = self.env.context.get("criterion_response_id")
-        criterion_repsonse = (
-            self.env["project_criterion_response"]
-            .sudo()
-            .search([("id", "=", criterion_repsonse_id)])[0]
-        )
-        criterion_repsonse.feedback += material
-        return True
+    _sql_constraints = [UNIQUE_LABEL_CRITERION, UNIQUE_URL_CRITERION]
+
+    @api.constrains("auto_append")
+    def _check_unique_name(self):
+        for r in self:
+            if (
+                r.auto_append is True
+                and self.search_count([("auto_append", "=", True)]) >= 1
+            ):
+                raise ValidationError(
+                    "Auto append additional reading for this criterion already exists."
+                )

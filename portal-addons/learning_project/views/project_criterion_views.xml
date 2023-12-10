@@ -28,7 +28,7 @@
                         </field>
                         <field name="material" class="border bg-light">
                             <tree>
-                                <field name="name" class="border bg-light"/>
+                                <field name="label" class="border bg-light"/>
                             </tree>
                         </field>
                     </group>

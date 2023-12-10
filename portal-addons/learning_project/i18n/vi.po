@@ -1,12 +1,37 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* learning_project
+#
 msgid ""
 msgstr ""
+"Project-Id-Version: Odoo Server 16.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-12-09 03:19+0000\n"
+"PO-Revision-Date: 2023-12-09 03:19+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"X-Generator: POEditor.com\n"
-"Project-Id-Version: Odoo Server 16.0\n"
-"Language: vi\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
 
+#. module: learning_project
+#: model:mail.template,body_html:learning_project.submission_result_notification_email_template
+msgid ""
+"<h1>Dear {{object.student.name}},</h1>\n"
+"                <p>Your project submission has been graded. Go to LMS and check it out.</p>\n"
+"                <p>Best regards,</p>\n"
+"                <p>Best regards,</p>\n"
+"                <p>{{object.MAIL_SENDER}}</p>\n"
+"            "
+msgstr ""
+
+#. module: learning_project
+#: model_terms:ir.ui.view,arch_db:learning_project.project_criterion_response_view_form
+msgid ""
+"<span attrs=\"{'invisible': [('is_abnormal_result', '=', False)]}\">Warning</span>\n"
+"                            <span attrs=\"{'invisible': [('is_abnormal_result', '=', False)]}\" class=\"text-warning\">Your final result is different from the computed result.</span>"
+msgstr ""
 
 #. module: learning_project
 #: model:ir.model.fields,field_description:learning_project.field_project_submission__message_needaction
@@ -34,9 +59,43 @@ msgid "Activity Type Icon"
 msgstr "Biểu tượng loại hành động"
 
 #. module: learning_project
+#: model:res.groups,name:learning_project.group_project_admin
+msgid "Admin"
+msgstr "Quản trị viên dự án"
+
+#. module: learning_project
+#. odoo-javascript
+#: code:addons/learning_project/static/src/xml/material_field.xml:0
+#, python-format
+msgid "Append"
+msgstr ""
+
+#. module: learning_project
+#: model_terms:ir.ui.view,arch_db:learning_project.project_criterion_response_view_form
+msgid "Apply Template"
+msgstr ""
+
+#. module: learning_project
+#: model_terms:ir.ui.view,arch_db:learning_project.project_submission_view_form
+msgid "Approve"
+msgstr ""
+
+#. module: learning_project
+#: model:ir.model.fields,field_description:learning_project.field_project_submission__approved
+msgid "Approved"
+msgstr ""
+
+#. module: learning_project
+#: model_terms:ir.ui.view,arch_db:learning_project.project_submission_view_form
+msgid "Are you sure that you want to disapprove this submsision result?"
+msgstr ""
+
+#. module: learning_project
 #: model_terms:ir.ui.view,arch_db:learning_project.project_submission_view_form
 msgid "Are you sure? You can not re-grade this submission after clicking OK."
-msgstr "Bạn có chắc không? Bạn không thể chấm điểm lại bài gửi này sau khi nhấp vào OK."
+msgstr ""
+"Bạn có chắc không? Bạn không thể chấm điểm lại bài gửi này sau khi nhấp vào "
+"OK."
 
 #. module: learning_project
 #: model:ir.model.fields,field_description:learning_project.field_project_submission__message_attachment_count
@@ -45,8 +104,42 @@ msgstr "Tính toán tệp đính kèm"
 
 #. module: learning_project
 #: model_terms:ir.ui.view,arch_db:learning_project.project_criterion_response_view_form
+msgid "Back"
+msgstr ""
+
+#. module: learning_project
+#: model:ir.model.fields.selection,name:learning_project.selection__project_submission__result__canceled
+msgid "Canceled"
+msgstr ""
+
+#. module: learning_project
+#: model:ir.model.fields,field_description:learning_project.field_project_criterion_response__computed_result
+msgid "Computed Result"
+msgstr ""
+
+#. module: learning_project
+#: model:ir.model.fields,field_description:learning_project.field_project_criterion_material__content
+#: model:ir.model.fields,field_description:learning_project.field_project_specification__content
+#: model_terms:ir.ui.view,arch_db:learning_project.project_criterion_material_view_form
 msgid "Content"
-msgstr "Nội dung"
+msgstr ""
+
+#. module: learning_project
+#: model:ir.model.fields,field_description:learning_project.field_project_criterion_material__append
+msgid "Content To Append"
+msgstr ""
+
+#. module: learning_project
+#: model_terms:ir.ui.view,arch_db:learning_project.project_criterion_material_view_form
+msgid "Content to Append"
+msgstr ""
+
+#. module: learning_project
+#. odoo-javascript
+#: code:addons/learning_project/static/src/xml/material_field.xml:0
+#, python-format
+msgid "Copy URL"
+msgstr ""
 
 #. module: learning_project
 #: model:ir.model.fields,field_description:learning_project.field_project__course
@@ -64,9 +157,11 @@ msgstr "Tên khóa học"
 #: model:ir.model.fields,field_description:learning_project.field_project__create_uid
 #: model:ir.model.fields,field_description:learning_project.field_project_criteria_group__create_uid
 #: model:ir.model.fields,field_description:learning_project.field_project_criterion__create_uid
+#: model:ir.model.fields,field_description:learning_project.field_project_criterion_material__create_uid
 #: model:ir.model.fields,field_description:learning_project.field_project_criterion_response__create_uid
+#: model:ir.model.fields,field_description:learning_project.field_project_specification__create_uid
+#: model:ir.model.fields,field_description:learning_project.field_project_specification_response__create_uid
 #: model:ir.model.fields,field_description:learning_project.field_project_submission__create_uid
-#: model:ir.model.fields,field_description:learning_project.field_response_component__create_uid
 msgid "Created by"
 msgstr "Tạo bởi"
 
@@ -74,9 +169,11 @@ msgstr "Tạo bởi"
 #: model:ir.model.fields,field_description:learning_project.field_project__create_date
 #: model:ir.model.fields,field_description:learning_project.field_project_criteria_group__create_date
 #: model:ir.model.fields,field_description:learning_project.field_project_criterion__create_date
+#: model:ir.model.fields,field_description:learning_project.field_project_criterion_material__create_date
 #: model:ir.model.fields,field_description:learning_project.field_project_criterion_response__create_date
+#: model:ir.model.fields,field_description:learning_project.field_project_specification__create_date
+#: model:ir.model.fields,field_description:learning_project.field_project_specification_response__create_date
 #: model:ir.model.fields,field_description:learning_project.field_project_submission__create_date
-#: model:ir.model.fields,field_description:learning_project.field_response_component__create_date
 msgid "Created on"
 msgstr "Được tạo trên"
 
@@ -89,7 +186,6 @@ msgid "Criteria"
 msgstr "Các tiêu chí"
 
 #. module: learning_project
-#: model:ir.model.fields,field_description:learning_project.field_project_criterion__criteria_group
 #: model:ir.model.fields,field_description:learning_project.field_project_criterion_response__criteria_group
 #: model_terms:ir.ui.view,arch_db:learning_project.project_criterion_view_form
 msgid "Criteria Group"
@@ -107,7 +203,9 @@ msgid "Criteria Groups"
 msgstr "Nhóm tiêu chí"
 
 #. module: learning_project
+#: model:ir.model.fields,field_description:learning_project.field_project_criterion_material__criterion
 #: model:ir.model.fields,field_description:learning_project.field_project_criterion_response__criterion
+#: model:ir.model.fields,field_description:learning_project.field_project_specification__criterion
 #: model_terms:ir.ui.view,arch_db:learning_project.project_criterion_response_view_form
 msgid "Criterion"
 msgstr "Tiêu chí"
@@ -123,15 +221,10 @@ msgid "Criterion Name"
 msgstr "Tên tiêu chí"
 
 #. module: learning_project
-#: model:ir.model.fields,field_description:learning_project.field_response_component__criterion_response
+#: model:ir.model.fields,field_description:learning_project.field_project_specification_response__criterion_response
 #: model_terms:ir.ui.view,arch_db:learning_project.project_submission_view_form
 msgid "Criterion Response"
 msgstr "Phản hồi tiêu chí"
-
-#. module: learning_project
-#: model:ir.model.fields,field_description:learning_project.field_response_component__criterion_response_result
-msgid "Criterion Result"
-msgstr "Kết quả tiêu chí"
 
 #. module: learning_project
 #: model:ir.model.fields,field_description:learning_project.field_project_criterion__title
@@ -144,20 +237,40 @@ msgid "Criterion numbers conflict."
 msgstr "Số tiêu chí xung đột."
 
 #. module: learning_project
+#: model:ir.model.fields.selection,name:learning_project.selection__project_criterion_response__computed_result__did_not_pass
+#: model:ir.model.fields.selection,name:learning_project.selection__project_criterion_response__display_result__did_not_pass
 #: model:ir.model.fields.selection,name:learning_project.selection__project_criterion_response__result__did_not_pass
+#: model:ir.model.fields.selection,name:learning_project.selection__project_specification_response__result__did_not_pass
 #: model:ir.model.fields.selection,name:learning_project.selection__project_submission__result__did_not_pass
-msgid "Did Not Pass"
+msgid "Did not pass"
 msgstr "Không vượt qua"
+
+#. module: learning_project
+#: model_terms:ir.ui.view,arch_db:learning_project.project_submission_view_form
+msgid "Disapprove"
+msgstr ""
+
+#. module: learning_project
+#: model:ir.model.fields,field_description:learning_project.field_project_criterion__display_content
+msgid "Display Content for LMS"
+msgstr ""
 
 #. module: learning_project
 #: model:ir.model.fields,field_description:learning_project.field_project__display_name
 #: model:ir.model.fields,field_description:learning_project.field_project_criteria_group__display_name
 #: model:ir.model.fields,field_description:learning_project.field_project_criterion__display_name
+#: model:ir.model.fields,field_description:learning_project.field_project_criterion_material__display_name
 #: model:ir.model.fields,field_description:learning_project.field_project_criterion_response__display_name
+#: model:ir.model.fields,field_description:learning_project.field_project_specification__display_name
+#: model:ir.model.fields,field_description:learning_project.field_project_specification_response__display_name
 #: model:ir.model.fields,field_description:learning_project.field_project_submission__display_name
-#: model:ir.model.fields,field_description:learning_project.field_response_component__display_name
 msgid "Display Name"
 msgstr "Tên hiển thị"
+
+#. module: learning_project
+#: model:ir.model.fields,field_description:learning_project.field_project_criterion_response__display_result
+msgid "Display Result"
+msgstr ""
 
 #. module: learning_project
 #: model:ir.model.constraint,message:learning_project.constraint_project_criterion_response_unique_submission_criterion
@@ -175,15 +288,29 @@ msgid "Duplicated project title."
 msgstr "Tiêu đề dự án bị trùng lặp."
 
 #. module: learning_project
-#: model:ir.model.fields,field_description:learning_project.field_project_criterion_response__feed_back
 #: model_terms:ir.ui.view,arch_db:learning_project.project_criterion_response_view_form
-msgid "Feedback"
-msgstr "Phản hồi"
+msgid "Edit"
+msgstr ""
 
 #. module: learning_project
-#: model:ir.model.fields,field_description:learning_project.field_project_criterion_response__feedback_components
-msgid "Feedback Components"
-msgstr "Thành phần phản hồi"
+#: model:ir.model.fields.selection,name:learning_project.selection__project_submission__grading_status__failed
+msgid "Failed"
+msgstr ""
+
+#. module: learning_project
+#: model:ir.model.fields,field_description:learning_project.field_project_specification_response__feedback
+msgid "Feedback"
+msgstr ""
+
+#. module: learning_project
+#: model:ir.model.fields,field_description:learning_project.field_project_criterion_response__feedback
+msgid "Feedback Total"
+msgstr ""
+
+#. module: learning_project
+#: model_terms:ir.ui.view,arch_db:learning_project.project_criterion_response_view_form
+msgid "Finish"
+msgstr ""
 
 #. module: learning_project
 #: model:ir.model.fields,field_description:learning_project.field_project_submission__message_follower_ids
@@ -212,10 +339,43 @@ msgid "General Response"
 msgstr "Phản hồi chung"
 
 #. module: learning_project
+#: model_terms:ir.ui.view,arch_db:learning_project.project_criterion_response_view_form
+msgid "Graded All"
+msgstr ""
+
+#. module: learning_project
+#: model:ir.model.fields,field_description:learning_project.field_project_criterion_response__graded_all
+msgid "Graded All Specifications"
+msgstr ""
+
+#. module: learning_project
+#: model:ir.model.fields,field_description:learning_project.field_project_criterion_response__grading_status
+#: model:ir.model.fields,field_description:learning_project.field_project_submission__grading_status
+msgid "Grading Status"
+msgstr ""
+
+#. module: learning_project
+#: model:ir.model.fields,field_description:learning_project.field_project_criterion__criteria_group
+msgid "Group"
+msgstr "Nhóm tiêu chí"
+
+#. module: learning_project
 #: model:ir.model.fields,field_description:learning_project.field_project_criterion__criteria_group_number
 #: model_terms:ir.ui.view,arch_db:learning_project.project_criteria_group_view_form
 msgid "Group Number"
 msgstr "Số nhóm"
+
+#. module: learning_project
+#. odoo-javascript
+#: code:addons/learning_project/static/src/js/wysiwyg.js:0
+#, python-format
+msgid "HERE"
+msgstr "ĐÂY"
+
+#. module: learning_project
+#: model:ir.model.fields,field_description:learning_project.field_project_submission__has_abnormal_result
+msgid "Has Abnormal Result"
+msgstr "Có kết quả chấm bất thường"
 
 #. module: learning_project
 #: model:ir.model.fields,field_description:learning_project.field_project_submission__has_graded_all_criteria
@@ -228,17 +388,14 @@ msgid "Has Message"
 msgstr "Có tin nhắn"
 
 #. module: learning_project
-#: model:ir.model.fields,field_description:learning_project.field_response_component__content
-msgid "Html Content"
-msgstr "Nội dung Html"
-
-#. module: learning_project
 #: model:ir.model.fields,field_description:learning_project.field_project__id
 #: model:ir.model.fields,field_description:learning_project.field_project_criteria_group__id
 #: model:ir.model.fields,field_description:learning_project.field_project_criterion__id
+#: model:ir.model.fields,field_description:learning_project.field_project_criterion_material__id
 #: model:ir.model.fields,field_description:learning_project.field_project_criterion_response__id
+#: model:ir.model.fields,field_description:learning_project.field_project_specification__id
+#: model:ir.model.fields,field_description:learning_project.field_project_specification_response__id
 #: model:ir.model.fields,field_description:learning_project.field_project_submission__id
-#: model:ir.model.fields,field_description:learning_project.field_response_component__id
 msgid "ID"
 msgstr "ID"
 
@@ -253,6 +410,11 @@ msgid "Icon to indicate an exception activity."
 msgstr "Biểu tượng để cho biết một hoạt động ngoại lệ."
 
 #. module: learning_project
+#: model:ir.model.fields.selection,name:learning_project.selection__project_submission__grading_status__idle
+msgid "Idle"
+msgstr ""
+
+#. module: learning_project
 #: model:ir.model.fields,help:learning_project.field_project_submission__message_needaction
 msgid "If checked, new messages require your attention."
 msgstr "Nếu được chọn, tin nhắn mới đòi hỏi sự chú ý của bạn."
@@ -263,9 +425,30 @@ msgid "If checked, some messages have a delivery error."
 msgstr "Nếu được chọn, một số thư có lỗi gửi."
 
 #. module: learning_project
+#: model:ir.model.fields.selection,name:learning_project.selection__project_criterion_response__display_result__incomplete
 #: model:ir.model.fields.selection,name:learning_project.selection__project_criterion_response__result__incomplete
+#: model:ir.model.fields.selection,name:learning_project.selection__project_specification_response__result__incomplete
 msgid "Incomplete"
 msgstr "Chưa hoàn thành"
+
+#. module: learning_project
+#. odoo-javascript
+#: code:addons/learning_project/static/src/xml/material_field.xml:0
+#, python-format
+msgid "Insert 1"
+msgstr ""
+
+#. module: learning_project
+#. odoo-javascript
+#: code:addons/learning_project/static/src/xml/material_field.xml:0
+#, python-format
+msgid "Insert 2"
+msgstr ""
+
+#. module: learning_project
+#: model:ir.model.fields,field_description:learning_project.field_project_criterion_response__is_abnormal_result
+msgid "Is Abnormal Result"
+msgstr ""
 
 #. module: learning_project
 #: model:ir.model.fields,field_description:learning_project.field_project_submission__message_is_follower
@@ -274,42 +457,24 @@ msgstr "Là người theo dõi"
 
 #. module: learning_project
 #: model_terms:ir.ui.view,arch_db:learning_project.project_submission_view_form
-msgid "Is Missing"
-msgstr "Bị thiếu"
+msgid "Is abnormal"
+msgstr ""
 
 #. module: learning_project
-#: model:ir.model.fields,field_description:learning_project.field_project_criterion_response__is_missing_required_feedback
-msgid "Is Missing Required Feedback"
-msgstr "Thiếu phản hồi bắt buộc"
-
-#. module: learning_project
-#: model:ir.model.fields,field_description:learning_project.field_response_component__is_optional
-msgid "Is Optional"
-msgstr "Tùy chọn"
-
-#. module: learning_project
-#: model:ir.model.fields,field_description:learning_project.field_response_component__is_show
-#: model_terms:ir.ui.view,arch_db:learning_project.project_criterion_response_view_form
-msgid "Is Show"
-msgstr "Hiển thị"
-
-#. module: learning_project
-#: model:ir.model.fields,field_description:learning_project.field_project_submission__lms_grade_update_status
-msgid "LMS Grade Update LMS"
-msgstr "Cập nhật điểm đến LMS "
-
-#. module: learning_project
-#: model_terms:ir.ui.view,arch_db:learning_project.project_submission_view_form
-msgid "LMS Status"
-msgstr "Trạng thái LMS"
+#: model:ir.model.fields,field_description:learning_project.field_project_criterion_material__label
+#: model_terms:ir.ui.view,arch_db:learning_project.project_criterion_material_view_form
+msgid "Label"
+msgstr ""
 
 #. module: learning_project
 #: model:ir.model.fields,field_description:learning_project.field_project____last_update
 #: model:ir.model.fields,field_description:learning_project.field_project_criteria_group____last_update
 #: model:ir.model.fields,field_description:learning_project.field_project_criterion____last_update
+#: model:ir.model.fields,field_description:learning_project.field_project_criterion_material____last_update
 #: model:ir.model.fields,field_description:learning_project.field_project_criterion_response____last_update
+#: model:ir.model.fields,field_description:learning_project.field_project_specification____last_update
+#: model:ir.model.fields,field_description:learning_project.field_project_specification_response____last_update
 #: model:ir.model.fields,field_description:learning_project.field_project_submission____last_update
-#: model:ir.model.fields,field_description:learning_project.field_response_component____last_update
 msgid "Last Modified on"
 msgstr "Sửa đổi lần cuối vào"
 
@@ -317,9 +482,11 @@ msgstr "Sửa đổi lần cuối vào"
 #: model:ir.model.fields,field_description:learning_project.field_project__write_uid
 #: model:ir.model.fields,field_description:learning_project.field_project_criteria_group__write_uid
 #: model:ir.model.fields,field_description:learning_project.field_project_criterion__write_uid
+#: model:ir.model.fields,field_description:learning_project.field_project_criterion_material__write_uid
 #: model:ir.model.fields,field_description:learning_project.field_project_criterion_response__write_uid
+#: model:ir.model.fields,field_description:learning_project.field_project_specification__write_uid
+#: model:ir.model.fields,field_description:learning_project.field_project_specification_response__write_uid
 #: model:ir.model.fields,field_description:learning_project.field_project_submission__write_uid
-#: model:ir.model.fields,field_description:learning_project.field_response_component__write_uid
 msgid "Last Updated by"
 msgstr "Cập nhật lần cuối bởi"
 
@@ -327,9 +494,11 @@ msgstr "Cập nhật lần cuối bởi"
 #: model:ir.model.fields,field_description:learning_project.field_project__write_date
 #: model:ir.model.fields,field_description:learning_project.field_project_criteria_group__write_date
 #: model:ir.model.fields,field_description:learning_project.field_project_criterion__write_date
+#: model:ir.model.fields,field_description:learning_project.field_project_criterion_material__write_date
 #: model:ir.model.fields,field_description:learning_project.field_project_criterion_response__write_date
+#: model:ir.model.fields,field_description:learning_project.field_project_specification__write_date
+#: model:ir.model.fields,field_description:learning_project.field_project_specification_response__write_date
 #: model:ir.model.fields,field_description:learning_project.field_project_submission__write_date
-#: model:ir.model.fields,field_description:learning_project.field_response_component__write_date
 msgid "Last Updated on"
 msgstr "Cập nhật lần cuối vào"
 
@@ -342,6 +511,22 @@ msgstr "Nhóm các dự án"
 #: model:ir.model.fields,field_description:learning_project.field_project_submission__message_main_attachment_id
 msgid "Main Attachment"
 msgstr "Tệp đính kèm chính"
+
+#. module: learning_project
+#: model_terms:ir.ui.view,arch_db:learning_project.project_criterion_response_view_form
+msgid "Material"
+msgstr ""
+
+#. module: learning_project
+#: model:ir.model.fields,field_description:learning_project.field_project_criterion__material
+#: model:ir.model.fields,field_description:learning_project.field_project_criterion_response__material
+msgid "Materials"
+msgstr ""
+
+#. module: learning_project
+#: model:res.groups,name:learning_project.group_project_mentor
+msgid "Mentor"
+msgstr ""
 
 #. module: learning_project
 #: model:ir.model.fields,field_description:learning_project.field_project_submission__message_has_error
@@ -359,10 +544,15 @@ msgid "My Activity Deadline"
 msgstr "Thời hạn hoạt động của tôi"
 
 #. module: learning_project
-#: model:ir.model.fields,field_description:learning_project.field_response_component__name
-#: model_terms:ir.ui.view,arch_db:learning_project.project_criterion_response_view_form
+#: model:ir.model.fields,field_description:learning_project.field_project_criterion_material__name
+#: model_terms:ir.ui.view,arch_db:learning_project.project_criterion_material_view_form
 msgid "Name"
-msgstr "Tên"
+msgstr ""
+
+#. module: learning_project
+#: model_terms:ir.ui.view,arch_db:learning_project.project_criterion_response_view_form
+msgid "Next"
+msgstr ""
 
 #. module: learning_project
 #: model:ir.model.fields,field_description:learning_project.field_project_submission__activity_date_deadline
@@ -380,9 +570,12 @@ msgid "Next Activity Type"
 msgstr "Loại hoạt động tiếp theo"
 
 #. module: learning_project
+#: model:ir.model.fields.selection,name:learning_project.selection__project_criterion_response__computed_result__not_graded
+#: model:ir.model.fields.selection,name:learning_project.selection__project_criterion_response__display_result__not_graded
 #: model:ir.model.fields.selection,name:learning_project.selection__project_criterion_response__result__not_graded
+#: model:ir.model.fields.selection,name:learning_project.selection__project_specification_response__result__not_graded
 #: model:ir.model.fields.selection,name:learning_project.selection__project_submission__result__not_graded
-msgid "Not Graded"
+msgid "Not graded"
 msgstr "Không chấm điểm"
 
 #. module: learning_project
@@ -416,20 +609,39 @@ msgid "Number of messages with delivery error"
 msgstr "Số lượng thư có lỗi gửi"
 
 #. module: learning_project
-#: model:ir.model.fields,field_description:learning_project.field_response_component__number
-msgid "Order"
-msgstr "Thứ tự"
-
-#. module: learning_project
+#: model:ir.model.fields.selection,name:learning_project.selection__project_criterion_response__computed_result__passed
+#: model:ir.model.fields.selection,name:learning_project.selection__project_criterion_response__display_result__passed
 #: model:ir.model.fields.selection,name:learning_project.selection__project_criterion_response__result__passed
+#: model:ir.model.fields.selection,name:learning_project.selection__project_specification_response__result__passed
 #: model:ir.model.fields.selection,name:learning_project.selection__project_submission__result__passed
 msgid "Passed"
 msgstr "Đạt"
 
 #. module: learning_project
 #: model_terms:ir.ui.view,arch_db:learning_project.project_criterion_response_view_form
-msgid "Preview"
-msgstr "Xem trước"
+msgid "Preview and Finish"
+msgstr ""
+
+#. module: learning_project
+#: model_terms:ir.ui.view,arch_db:learning_project.project_criterion_response_view_form
+msgid "Previous Feedback"
+msgstr ""
+
+#. module: learning_project
+#: model:ir.model.fields,field_description:learning_project.field_project_criterion_response__previous_result
+#: model_terms:ir.ui.view,arch_db:learning_project.project_criterion_response_view_form
+msgid "Previous Result"
+msgstr ""
+
+#. module: learning_project
+#: model:ir.model.fields,field_description:learning_project.field_project_criterion_response__previous_feedback
+msgid "Previously Feedback"
+msgstr ""
+
+#. module: learning_project
+#: model:ir.model.fields,field_description:learning_project.field_project_criterion_response__previously_passed
+msgid "Previously Passed"
+msgstr ""
 
 #. module: learning_project
 #: model:ir.model.fields,field_description:learning_project.field_project_criteria_group__project
@@ -447,7 +659,7 @@ msgstr "Dự án"
 
 #. module: learning_project
 #: model:res.groups,comment:learning_project.group_project_admin
-#: model:res.groups,name:learning_project.group_project_admin
+#: model:res.groups,comment:learning_project.group_project_mentor
 msgid "Project Admin"
 msgstr "Quản trị viên dự án"
 
@@ -471,8 +683,19 @@ msgstr "Nhóm tiêu chí dự án"
 #. module: learning_project
 #: model_terms:ir.ui.view,arch_db:learning_project.project_criterion_view_form
 #: model_terms:ir.ui.view,arch_db:learning_project.project_criterion_view_tree
+#: model_terms:ir.ui.view,arch_db:learning_project.project_specification_response_view_form
+#: model_terms:ir.ui.view,arch_db:learning_project.project_specification_response_view_tree
+#: model_terms:ir.ui.view,arch_db:learning_project.project_specification_view_form
+#: model_terms:ir.ui.view,arch_db:learning_project.project_specification_view_tree
 msgid "Project Criterion"
 msgstr "Tiêu chí dự án"
+
+#. module: learning_project
+#: model:ir.actions.act_window,name:learning_project.project_criterion_material_action
+#: model_terms:ir.ui.view,arch_db:learning_project.project_criterion_material_view_form
+#: model_terms:ir.ui.view,arch_db:learning_project.project_criterion_material_view_tree
+msgid "Project Criterion Material"
+msgstr ""
 
 #. module: learning_project
 #: model:ir.actions.act_window,name:learning_project.project_criterion_response_action
@@ -484,6 +707,16 @@ msgstr "Phản hồi tiêu chí dự án"
 #: model_terms:ir.ui.view,arch_db:learning_project.project_view_form
 msgid "Project Name"
 msgstr "Tên dự án"
+
+#. module: learning_project
+#: model:ir.actions.act_window,name:learning_project.project_specification_action
+msgid "Project Specification"
+msgstr ""
+
+#. module: learning_project
+#: model:ir.actions.act_window,name:learning_project.project_specification_response_action
+msgid "Project Specification Response"
+msgstr ""
 
 #. module: learning_project
 #: model:ir.actions.act_window,name:learning_project.project_submission_action
@@ -529,38 +762,71 @@ msgstr "Người dùng có trách nhiệm"
 
 #. module: learning_project
 #: model:ir.model.fields,field_description:learning_project.field_project_criterion_response__result
-#: model:ir.model.fields,field_description:learning_project.field_project_criterion_response__submission_result
+#: model:ir.model.fields,field_description:learning_project.field_project_specification_response__result
 #: model:ir.model.fields,field_description:learning_project.field_project_submission__result
-#: model_terms:ir.ui.view,arch_db:learning_project.project_criterion_response_view_form
 #: model_terms:ir.ui.view,arch_db:learning_project.project_submission_view_form
 msgid "Result"
 msgstr "Kết quả"
 
 #. module: learning_project
+#: model_terms:ir.ui.view,arch_db:learning_project.project_criterion_response_view_form
+msgid "Save"
+msgstr "Lưu"
+
+#. module: learning_project
+#: model:ir.model.fields,field_description:learning_project.field_project_submission__should_display_approve_btn
+msgid "Should display approve button"
+msgstr ""
+
+#. module: learning_project
+#: model:ir.model.fields,field_description:learning_project.field_project_specification_response__specification
+msgid "Specification"
+msgstr ""
+
+#. module: learning_project
+#: model:ir.model.fields,field_description:learning_project.field_project_specification_response__specification_content
+msgid "Specification Content"
+msgstr ""
+
+#. module: learning_project
 #: model:ir.model.fields,field_description:learning_project.field_project_criterion__specifications
+#: model:ir.model.fields,field_description:learning_project.field_project_criterion_response__specifications
+#: model_terms:ir.ui.view,arch_db:learning_project.project_criterion_response_view_form
 #: model_terms:ir.ui.view,arch_db:learning_project.project_criterion_view_form
 msgid "Specifications"
-msgstr "Các đặc điểm"
+msgstr "Các đặc tả"
+
+#. module: learning_project
+#: model:ir.model.fields,field_description:learning_project.field_project_criterion_response__specifications_description
+msgid "Specifications Description"
+msgstr ""
 
 #. module: learning_project
 #: model:ir.model.fields,help:learning_project.field_project_submission__activity_state
-msgid "Status based on activities\n"
+msgid ""
+"Status based on activities\n"
 "Overdue: Due date is already passed\n"
 "Today: Activity date is today\n"
 "Planned: Future activities."
-msgstr "Trạng thái dựa trên các hoạt động\n"
+msgstr ""
+"Trạng thái dựa trên các hoạt động\n"
 "Quá hạn: Ngày hết hạn đã qua\n"
 "Hôm nay: Ngày hoạt động là hôm nay\n"
 "Kế hoạch: Các hoạt động trong tương lai."
 
 #. module: learning_project
+#: model:ir.model.fields,field_description:learning_project.field_project_criterion_response__step
+#: model_terms:ir.ui.view,arch_db:learning_project.project_criterion_response_view_form
+msgid "Step"
+msgstr "Bước"
+
+#. module: learning_project
 #: model:ir.model.fields,field_description:learning_project.field_project_submission__student
 #: model_terms:ir.ui.view,arch_db:learning_project.project_submission_view_form
 msgid "Student"
-msgstr "Sinh viên"
+msgstr "Học viên"
 
 #. module: learning_project
-#: model:ir.model.fields,field_description:learning_project.field_project_criterion_response__submission
 #: model:ir.ui.menu,name:learning_project.menu_action_project_submission
 #: model_terms:ir.ui.view,arch_db:learning_project.project_criterion_response_view_form
 msgid "Submission"
@@ -570,12 +836,13 @@ msgstr "Bài nộp"
 #: model:ir.model.fields,field_description:learning_project.field_project_submission__submission_note
 #: model_terms:ir.ui.view,arch_db:learning_project.project_submission_view_form
 msgid "Submission Note"
-msgstr "Ghi chú bài nộp"
+msgstr "Ghi chú của học viên"
 
 #. module: learning_project
+#: model:ir.model.fields,field_description:learning_project.field_project_criterion_response__submission_result
 #: model_terms:ir.ui.view,arch_db:learning_project.project_criterion_response_view_form
 msgid "Submission Result"
-msgstr "Kết quả bài nộp"
+msgstr "Kết quả"
 
 #. module: learning_project
 #: model_terms:ir.ui.view,arch_db:learning_project.project_submission_view_form
@@ -588,9 +855,29 @@ msgid "Submission Url"
 msgstr "URL bài nộp"
 
 #. module: learning_project
+#: model:ir.model.fields,field_description:learning_project.field_project__submissions
+msgid "Submissions"
+msgstr "Các bài nộp"
+
+#. module: learning_project
 #: model_terms:ir.ui.view,arch_db:learning_project.project_submission_view_form
 msgid "Submit"
 msgstr "Nộp bài"
+
+#. module: learning_project
+#: model:ir.model.fields,field_description:learning_project.field_project_criterion_response__submission
+msgid "Submsision"
+msgstr "Bài nộp"
+
+#. module: learning_project
+#: model:ir.model.fields.selection,name:learning_project.selection__project_submission__grading_status__success
+msgid "Success"
+msgstr "Thành công"
+
+#. module: learning_project
+#: model:ir.model.fields,field_description:learning_project.field_project_criterion_response__templates
+msgid "Templates"
+msgstr "Templates"
 
 #. module: learning_project
 #: model:ir.model.constraint,message:learning_project.constraint_project_criterion_unique_project_criterion_name
@@ -608,9 +895,22 @@ msgid "The titles of criteria Groups must be unique within a project."
 msgstr "Tiêu đề của tiêu chí Nhóm phải là duy nhất trong một dự án."
 
 #. module: learning_project
+#: model_terms:ir.ui.view,arch_db:learning_project.project_submission_view_form
+msgid ""
+"This is an abnormal result. Are you sure? You can not re-grade this "
+"submission after clicking OK."
+msgstr "Đây là mọt kết quả chấm bất thường. Bạn không thể chấm lại sau khi click OK."
+
+#. module: learning_project
 #: model:ir.model.fields,help:learning_project.field_project_submission__activity_exception_decoration
 msgid "Type of the exception activity on record."
 msgstr "Loại hoạt động ngoại lệ trong hồ sơ."
+
+#. module: learning_project
+#: model:ir.model.fields,field_description:learning_project.field_project_criterion_material__url
+#: model_terms:ir.ui.view,arch_db:learning_project.project_criterion_material_view_form
+msgid "URL"
+msgstr "URL"
 
 #. module: learning_project
 #: model_terms:ir.ui.view,arch_db:learning_project.project_submission_view_form
@@ -623,10 +923,27 @@ msgid "Unable to Review"
 msgstr "Không thể chấm"
 
 #. module: learning_project
+#: model:ir.model.constraint,message:learning_project.constraint_project_specification_response_unique_criterion_response_and_specification
+msgid "Unique criterion response and specification"
+msgstr ""
+
+#. module: learning_project
 #: model_terms:ir.ui.view,arch_db:learning_project.project_submission_view_form
 #: model_terms:ir.ui.view,arch_db:learning_project.project_submission_view_tree
 msgid "View File"
 msgstr "Xem tập tin"
+
+#. module: learning_project
+#: model:ir.model.fields.selection,name:learning_project.selection__project_submission__grading_status__waiting_for_approving
+msgid "Waiting For Approving"
+msgstr "Đang chờ chấp thuận"
+
+#. module: learning_project
+#. odoo-javascript
+#: code:addons/learning_project/static/src/js/wysiwyg.js:0
+#, python-format
+msgid "You can read more about"
+msgstr "Bạn có thể đọc thêm về"
 
 #. module: learning_project
 #: model:mail.template,name:learning_project.submission_result_notification_email_template
@@ -641,24 +958,34 @@ msgstr "Dự án"
 #. module: learning_project
 #: model:ir.model,name:learning_project.model_project_criteria_group
 msgid "project_criteria_group"
-msgstr "Nhóm tiêu chí dự án"
+msgstr "Nhóm tiêu chí"
 
 #. module: learning_project
 #: model:ir.model,name:learning_project.model_project_criterion
 msgid "project_criterion"
-msgstr "Tiêu chí dự án"
+msgstr "Tiêu chí"
+
+#. module: learning_project
+#: model:ir.model,name:learning_project.model_project_criterion_material
+msgid "project_criterion_material"
+msgstr "Tài liệu của tiêu chí"
 
 #. module: learning_project
 #: model:ir.model,name:learning_project.model_project_criterion_response
 msgid "project_criterion_response"
-msgstr "phản hồi tiêu chí dự án"
+msgstr "phản hồi tiêu chí"
+
+#. module: learning_project
+#: model:ir.model,name:learning_project.model_project_specification
+msgid "project_specification"
+msgstr "Đặc tả"
+
+#. module: learning_project
+#: model:ir.model,name:learning_project.model_project_specification_response
+msgid "project_specification_response"
+msgstr "Phản hồi đặc tả"
 
 #. module: learning_project
 #: model:ir.model,name:learning_project.model_project_submission
 msgid "project_submission"
 msgstr "Bài nộp dự án"
-
-#. module: learning_project
-#: model:ir.model,name:learning_project.model_response_component
-msgid "response_component"
-msgstr "Thành phần phản hồi"

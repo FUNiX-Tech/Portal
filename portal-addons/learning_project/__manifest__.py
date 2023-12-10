@@ -25,7 +25,13 @@
     "assets": {
         "web.assets_backend": [
             "learning_project/static/src/js/override_fileselector.js",
-        ]
+            "learning_project/static/src/js/project_grading_html_field.js",
+            "learning_project/static/src/xml/material_field.xml",
+            "learning_project/static/src/js/material_field.js",
+        ],
+        "web_editor.assets_wysiwyg": [
+            "learning_project/static/src/js/wysiwyg.js",
+        ],
     },
     # always loaded
     "data": [

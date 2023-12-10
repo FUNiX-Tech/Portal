@@ -4,10 +4,14 @@
         <field name="name">project_criterion_material.form</field>
         <field name="model">project_criterion_material</field>
         <field name="arch" type="xml">
-            <form string="Project Criterion">
+            <form string="Project Criterion Material">
                 <sheet>
-                    <field name="name" class="border bg-light"/>
-                    <field name="content" class="border bg-light"/>
+                    <group>
+                        <field name="label" string="Label" class="border bg-light"/>
+                        <field name="url" string="URL" class="border bg-light"/>
+                        <field name="append" string="Content to Append" class="border bg-light"/>
+                        <field name="auto_append" string="Will be automatically appended" class="border bg-light"/>
+                    </group>
                 </sheet>
             </form>
         </field>
@@ -17,9 +21,11 @@
         <field name="name">project_criterion_material.tree</field>
         <field name="model">project_criterion_material</field>
         <field name="arch" type="xml">
-            <tree string="Project Criterion" edit="false" class="text-center">
-                <field name="name" />
-                <field name="content" />
+            <tree string="Project Criterion Material" edit="false" class="text-center">
+                <field name="label" widget="material_field"/>
+                <field name="url" />
+                <field name="append" />
+                <field name="auto_append" />
             </tree>
         </field>
     </record>

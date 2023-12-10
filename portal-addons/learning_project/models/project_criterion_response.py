@@ -63,6 +63,7 @@ class ProjectCriterionResponse(models.Model):
         compute="_compute_feedback",
         readonly=False,
         store=True,
+        sanitize_attributes=False,
     )
 
     number = fields.Integer(string="Number", related="criterion.number")
@@ -123,8 +124,6 @@ class ProjectCriterionResponse(models.Model):
         default=DEFAULT_RESULT,
         compute="_compute_computed_result",
     )
-
-    is_final_step = fields.Boolean(string="Is Final Step", default=False)
 
     graded_all = fields.Boolean(
         string="Graded All Specifications", compute="_compute_graded_all"
@@ -250,6 +249,7 @@ class ProjectCriterionResponse(models.Model):
             else:
                 r.previous_result = "none"
 
+    @api.model
     def create(self, values):
         criterion_response = super(ProjectCriterionResponse, self).create(
             values
@@ -265,10 +265,10 @@ class ProjectCriterionResponse(models.Model):
 
         return criterion_response
 
-    @api.depends("specifications.result", "is_final_step")
+    @api.depends("specifications.result")
     def _compute_result(self):
         for r in self:
-            if r.is_final_step:
+            if r.step >= 2:
                 return
 
             results = list(map(lambda spec: spec.result, r.specifications))
@@ -337,9 +337,12 @@ class ProjectCriterionResponse(models.Model):
 
             r.templates = templates
 
-    @api.depends("result", "is_final_step", "templates")
+    @api.depends("result")
     def _compute_feedback(self):
         for r in self:
+            if r.step >= 3:
+                return
+
             if len(r.templates) > 0:
                 feedback_lead = r.templates[0].content
             else:
@@ -366,31 +369,45 @@ class ProjectCriterionResponse(models.Model):
                 "tag": "soft_reload",
             }
 
-    def button_finish_grading(self):
-        self.ensure_one()
-        self.write(
-            {
-                "feedback": self.feedback,
-                "result": self.result,
-                "step": 4,
-            }
-        )
-
-        return {
-            "type": "ir.actions.client",
-            "tag": "soft_reload",
-        }
-
     def button_next(self):
         for r in self:
-            if r.step == 4:
-                return False
+            if r.step == 1:
+                # Đang chấm từng đặc tả
+                # Click next để sang bước gom các đặc tả thành 1 feedback duy nhất
+                if r.graded_all is True:
+                    r.step = 2
+                    return True
+                else:
+                    raise UserError(
+                        "You haven't graded all the specifications."
+                    )
 
-            if r.graded_all is True:
-                r.step += 1
+            if r.step == 2:
+                # Đã gom từng đạc tả thành 1 feedback duy nhất
+                # Click preview and save để sang bước preview
+                if text_from_html(r.feedback).strip() == "":
+                    raise UserError("Feedback cannot be empty.")
+
+                r.write(
+                    {"feedback": r.feedback, "result": r.result, "step": 3}
+                )
+
                 return True
-            else:
-                raise Exception("You haven't graded all the specifications.")
+
+            if r.step == 3:
+                # Đang preview
+                # Click Finish để kết thúc
+                r.step = 4
+                return {
+                    "type": "ir.actions.client",
+                    "tag": "soft_reload",
+                }
+
+            if r.step >= 4:
+                # đã finish
+                raise UserError(
+                    "Internal Server Error: Criterion Grading Step cannot be larger than 4."
+                )
 
     def button_back(self):
         for r in self:
@@ -418,21 +435,21 @@ class ProjectCriterionResponse(models.Model):
         for r in self:
             results = list(map(lambda spec: spec.result, r.specifications))
 
-            computed_result = ""
+            computed_result = []
 
             if NOT_GRADED[0] in results:
-                computed_result = NOT_GRADED[0]
+                computed_result = [NOT_GRADED[0]]
 
             elif INCOMPLETE[0] in results:
-                computed_result = INCOMPLETE[0]
+                computed_result = [INCOMPLETE[0], DID_NOT_PASS[0]]
 
             elif DID_NOT_PASS[0] in results:
-                computed_result = DID_NOT_PASS[0]
+                computed_result = [DID_NOT_PASS[0]]
 
             else:
-                computed_result = PASSED[0]
+                computed_result = [PASSED[0]]
 
-            self.is_abnormal_result = computed_result != r.result
+            self.is_abnormal_result = r.result not in computed_result
 
     def button_double_back(self):
         for r in self:

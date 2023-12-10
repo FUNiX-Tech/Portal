@@ -158,15 +158,6 @@
     width: 1.25em;
 }
 
-/* 0512  */
-.passed~.preview_criterion_header svg:last-of-type {
-    display: none;
-}
-
-.did_not_pass~.preview_criterion_header svg:first-of-type {
-    display: none;
-}
-
 .preview_criterion_body {
     padding: 1.5em;
 }
@@ -229,4 +220,8 @@
 .preview_criterion_feedback a {
     font-weight: 500;
     color: #0086ff;
+}
+
+.pointer_events_none {
+    pointer-events: none;
 }
