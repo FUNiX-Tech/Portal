@@ -13,6 +13,7 @@
     # any module necessary for this one to work correctly
     "depends": [
         "base",
+        "portal_common",
         "email_server_config",
         "portal_student_management",
         "course_management",
@@ -24,7 +25,13 @@
     "assets": {
         "web.assets_backend": [
             "learning_project/static/src/js/override_fileselector.js",
-        ]
+            "learning_project/static/src/js/project_grading_html_field.js",
+            "learning_project/static/src/xml/material_field.xml",
+            "learning_project/static/src/js/material_field.js",
+        ],
+        "web_editor.assets_wysiwyg": [
+            "learning_project/static/src/js/wysiwyg.js",
+        ],
     },
     # always loaded
     "data": [

@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields
+from odoo.addons.website.tools import text_from_html
+import html
 
 UNIQUE_CODE = (
     "unique_grading_template_code",
@@ -40,5 +42,18 @@ class GradingTemplate(models.Model):
             .sudo()
             .search([("id", "=", criterion_repsonse_id)])[0]
         )
-        criterion_repsonse.feedback_lead = picked_template
+        feedback_lead = picked_template
+
+        feedback_body = "<ul>"
+
+        for spec in criterion_repsonse.specifications:
+            if text_from_html(spec.feedback).strip() != "":
+                feedback_body += f"<li>{spec.feedback}</li>"
+
+        feedback_body += "</ul>"
+
+        criterion_repsonse.feedback = html.unescape(
+            feedback_lead + feedback_body
+        )
+
         return True

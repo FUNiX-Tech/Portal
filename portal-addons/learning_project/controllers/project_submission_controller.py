@@ -251,7 +251,7 @@ class ProjectSubmissionController(http.Controller):
                                 "number": response.number,
                                 "criteria_group": response.criteria_group.title,
                                 "group_number": response.criteria_group.number,
-                                "specifications": response.criterion.sumarized_content,
+                                "specifications": response.criterion.display_content,
                             }
                         )
 
@@ -307,79 +307,34 @@ class ProjectSubmissionController(http.Controller):
         try:
             submission = self.submission
 
-            if submission.result == CANCELED[0]:
-                return json_response(
-                    400, "This submission has already canceled."
-                )
-
-            if submission.result != NOT_GRADED[0]:
-                return json_response(
-                    400,
-                    "You cannot cancel this submission because the submission has been graded.",
-                )
-
-            minutes = round(
-                (datetime.now() - submission.create_date).total_seconds() / 60
-            )
-            if minutes > 30:
-                return json_response(
-                    400,
-                    "You cannot cancel this submission because it was submitted more than 30 minutes ago.",
-                )
-
-            if submission.mentor_id.id is not False:
-                return json_response(
-                    400,
-                    "You cannot cancel this submission because a mentor is reviewing it.",
-                )
+            cancel_error = submission.cancel_error
+            if cancel_error:
+                return json_response(400, cancel_error)
 
             submission.result = CANCELED[0]
 
-            try:
-                request.env["submission_history"].sudo().create(
-                    {
-                        "student_id": self.student.id,
-                        "project_id": self.project.id,
-                        "submission_id": submission.id,
-                        "status": "submission_cancelled",  # Đặt trạng thái là 'submission_cancelled'
-                    }
-                )
+            # tạo submission history
+            # self._create_submission_history(self.student, self.project, submission)
+            submission.create_submission_history()
 
-                # send mail to student
-                # lấy thông tin ProjectSubmission và student như:
-                # student email, project title, course name, course code, submission_url
-                student_email = self.student.email
-                project_title = self.project.title
-                course_name = self.project.course.course_name
-                course_code = self.project.course.course_code
-                submission_url = submission.submission_url
-
-                # Tạo nội dung email
-                body = f"""<div>
-                <h2>Hello {self.student.name}</h2>
-                <h3>You had successfully canceled Project Submission  </h3>
-                <p>Project: {project_title}</p>
-                <p>Course name: {course_name}</p>
-                <p>Couse code: {course_code}</p>
-                <div>"""
-
-                # Gửi email
-                submission.send_email(
-                    submission,
-                    student_email,
-                    "Notification:  Project Submission Successfully Canceled",
-                    "Notification:  Project Submission Successfully Canceled",
-                    body,
-                    "Project Submission Canceled Successfully",
-                    submission_url,
-                    "Go to Project Submission",
-                )
-
-            except Exception as e:
-                logger.error(str(e))
+            # Gửi email thông báo cho học viên và mentor
+            submission.send_cancel_emails()
 
             return json_response(200, "Canceled submission successfully.")
 
         except Exception as e:
             logger.error(str(e))
             return json_response(500, "Internal Server Error")
+
+    def _create_submission_history(self, student, project, submission):
+        try:
+            request.env["submission_history"].sudo().create(
+                {
+                    "student_id": student.id,
+                    "project_id": project.id,
+                    "submission_id": submission.id,
+                    "status": "submission_cancelled",
+                }
+            )
+        except Exception as e:
+            logger.error(str(e))

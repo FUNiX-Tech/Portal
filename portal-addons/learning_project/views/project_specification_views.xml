@@ -7,7 +7,6 @@
             <form string="Project Criterion">
                 <sheet>
                     <group>
-                        <field name="criterion" class="border bg-light"/>
                         <field name="content" class="border bg-light"/>
                     </group>
                 </sheet>

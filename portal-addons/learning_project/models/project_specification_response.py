@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import models, fields
+from odoo.exceptions import UserError
 from ..common import PASSED, DID_NOT_PASS, INCOMPLETE, NOT_GRADED
 
 
@@ -34,3 +35,13 @@ class ProjectSpecificationResponse(models.Model):
             "Unique criterion response and specification",
         )
     ]
+
+    def write(self, values):
+        if (
+            self.env.su
+            or self.env.user.login
+            == self.criterion_response.submission.mentor_id.email
+        ):
+            return super(ProjectSpecificationResponse, self).write(values)
+        else:
+            raise UserError("You are not assigned to this submission.")
