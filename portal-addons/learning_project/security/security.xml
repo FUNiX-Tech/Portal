@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <record id="module_category_project" model="ir.module.category">
-        <field name="name">Project Category Module</field>
-        <field name="description">Project Category Module</field>
+        <field name="name">Learning Project Module</field>
+        <field name="description">Learning Project Module</field>
     </record>
 
     <record id="group_project_admin" model="res.groups">
@@ -10,7 +10,7 @@
         <field name="category_id" ref="module_category_project"/>
         <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
         <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
-        <field name="comment">Project Admin</field>
+        <field name="comment">Admin</field>
     </record>
 
     <record id="group_project_mentor" model="res.groups">
@@ -18,6 +18,6 @@
         <field name="category_id" ref="module_category_project"/>
         <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
         <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
-        <field name="comment">Project Admin</field>
+        <field name="comment">Mentor</field>
     </record>
 </odoo>
