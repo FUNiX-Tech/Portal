@@ -522,7 +522,11 @@ class ProjectSubmission(models.Model):
     def _compute_user_can_grade(self):
         for r in self:
             r.user_can_grade = (
-                self.env.su or self.env.user.login == r.mentor_id.email
+                self.env.su
+                or self.env.user.login == r.mentor_id.email
+                or self.env.user.has_group(
+                    "mentor_management.group_mentor_management_admin"
+                )
             )
 
     def send_cancel_emails(self):
