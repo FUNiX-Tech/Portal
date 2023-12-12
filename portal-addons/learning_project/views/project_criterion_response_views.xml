@@ -82,7 +82,7 @@
                             </div>
                             <div class="preview_criterion_body">
                                 <div class="preview_criterion_feedback">
-                                    <field name="feedback" class="html_field pointer_events_none"/>
+                                    <field name="feedback" attrs="{'readonly': [('step','&gt;', 2)]}" class="html_field pointer_events_none"/>
                                 </div>
                                 <field name="specifications_description" readonly="1"/>
                             </div>
