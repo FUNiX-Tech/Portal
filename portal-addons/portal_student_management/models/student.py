@@ -164,7 +164,9 @@ class Student(models.Model):
             raise exceptions.ValidationError("Email already exists")
         self._check_phone()
 
-        if not self.env.context.get("import_file"):
+        if not self.env.context.get(
+            "import_file"
+        ) and not self.env.context.get("from_lms"):
             headers = {
                 "Content-Type": "application/json",
             }
