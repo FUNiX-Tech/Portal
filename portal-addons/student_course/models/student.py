@@ -1,4 +1,4 @@
-from odoo import models, fields
+from odoo import models, fields, api
 
 
 class Student(models.Model):
@@ -9,5 +9,4 @@ class Student(models.Model):
         "student_course_rel",
         "student_id",
         "course_id",
-        string="Courses",
     )

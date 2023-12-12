@@ -5,7 +5,7 @@
             <field name="model">portal.student</field>
             <field name="inherit_id" ref="portal_student_management.student_form" />
             <field name="arch" type="xml">
-                <xpath expr="//form/sheet/group" position="after">
+                <xpath expr="//form/sheet/group[1]" position="after">
                     <group string="Student Organization">
                         <group>
                             <field name="student_organization_student_ids"
@@ -16,7 +16,6 @@
                             <field name="temp_student_org" invisible="True" />
                         </group>
                     </group>
-
                 </xpath>
             </field>
         </record>
