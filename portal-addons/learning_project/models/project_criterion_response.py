@@ -2,7 +2,7 @@
 
 import logging
 from odoo import models, fields, api
-from odoo.exceptions import ValidationError
+from odoo.exceptions import ValidationError, UserError
 from odoo.addons.website.tools import text_from_html
 from odoo.tools import config
 import html
@@ -21,6 +21,8 @@ from ..common import (
     INCOMPLETE,
     CANCELED,
 )
+
+from .project_submission import GRADE_STATUS
 
 logger = logging.getLogger(__name__)
 
@@ -53,21 +55,7 @@ class ProjectCriterionResponse(models.Model):
     )
 
     specifications_description = fields.Html(
-        "Specifications Description", related="criterion.sumarized_content"
-    )
-
-    feedback_lead = fields.Html(
-        string="Feedback Opening",
-        compute="_compute_feedback_lead",
-        readonly=False,
-        store=True,
-    )
-
-    feedback_body = fields.Html(
-        string="Feedback Body",
-        compute="_compute_feedback_body",
-        readonly=False,
-        store=True,
+        "Specifications Description", related="criterion.display_content"
     )
 
     feedback = fields.Html(
@@ -75,6 +63,7 @@ class ProjectCriterionResponse(models.Model):
         compute="_compute_feedback",
         readonly=False,
         store=True,
+        sanitize_attributes=False,
     )
 
     number = fields.Integer(string="Number", related="criterion.number")
@@ -136,17 +125,21 @@ class ProjectCriterionResponse(models.Model):
         compute="_compute_computed_result",
     )
 
-    is_final_step = fields.Boolean(string="Is Final Step", default=False)
-
     graded_all = fields.Boolean(
         string="Graded All Specifications", compute="_compute_graded_all"
     )
 
     is_abnormal_result = fields.Boolean(
-        string="Is Abnormal Result", compute="_compute_is_abnormal_result"
+        string="Is Abnormal Result",
+        compute="_compute_is_abnormal_result",
+        store=True,
     )
 
     step = fields.Integer(default=1, string="Step", required=True)
+
+    grading_status = fields.Selection(
+        GRADE_STATUS, related="submission.grading_status"
+    )
 
     _sql_constraints = [
         (
@@ -256,6 +249,7 @@ class ProjectCriterionResponse(models.Model):
             else:
                 r.previous_result = "none"
 
+    @api.model
     def create(self, values):
         criterion_response = super(ProjectCriterionResponse, self).create(
             values
@@ -271,10 +265,10 @@ class ProjectCriterionResponse(models.Model):
 
         return criterion_response
 
-    @api.depends("specifications.result", "is_final_step")
+    @api.depends("specifications.result")
     def _compute_result(self):
         for r in self:
-            if r.is_final_step:
+            if r.step >= 2:
                 return
 
             results = list(map(lambda spec: spec.result, r.specifications))
@@ -343,34 +337,26 @@ class ProjectCriterionResponse(models.Model):
 
             r.templates = templates
 
-    @api.depends("result", "templates")
-    def _compute_feedback_lead(self):
-        for r in self:
-            if len(r.templates) > 0:
-                r.feedback_lead = r.templates[0].content
-            else:
-                r.feedback_lead = ""
-
-    @api.depends("feedback_lead", "feedback_body")
+    @api.depends("result")
     def _compute_feedback(self):
         for r in self:
-            r.feedback = r.feedback_lead + r.feedback_body
-
-    @api.depends("result", "is_final_step")
-    def _compute_feedback_body(self):
-        for r in self:
-            if r.is_final_step:
+            if r.step >= 3:
                 return
 
-            result = "<ul>"
+            if len(r.templates) > 0:
+                feedback_lead = r.templates[0].content
+            else:
+                feedback_lead = ""
+
+            feedback_body = "<ul>"
 
             for spec in r.specifications:
                 if text_from_html(spec.feedback).strip() != "":
-                    result += f"<li>{spec.feedback}</li>"
+                    feedback_body += f"<li>{spec.feedback}</li>"
 
-            result += "</ul>"
+            feedback_body += "</ul>"
 
-            r.feedback_body = html.unescape(result)
+            r.feedback = html.unescape(feedback_lead + feedback_body)
 
     def button_save(self):
         for r in self:
@@ -379,44 +365,55 @@ class ProjectCriterionResponse(models.Model):
 
         for r in self:
             return {
-                "type": "ir.actions.act_window",
-                "res_model": "project_submission",
-                "domain": [],
-                "view_mode": "form",
-                "res_id": r.submission.id,
-                "target": "current",
-                "reload": True,
+                "type": "ir.actions.client",
+                "tag": "soft_reload",
             }
-
-    def button_finish_grading(self):
-        self.ensure_one()
-        self.write(
-            {
-                "feedback_lead": self.feedback_lead,
-                "feedback_body": self.feedback_body,
-                "result": self.result,
-                "step": 4,
-            }
-        )
-
-        return {
-            "type": "ir.actions.act_window",
-            "res_model": "project_submission",
-            "domain": [],
-            "view_mode": "form",
-            "res_id": self.submission.id,
-        }
 
     def button_next(self):
         for r in self:
-            if r.graded_all is True:
-                r.step += 1
-            else:
-                raise Exception("You haven't graded all the specifications.")
+            if r.step == 1:
+                # Đang chấm từng đặc tả
+                # Click next để sang bước gom các đặc tả thành 1 feedback duy nhất
+                if r.graded_all is True:
+                    r.step = 2
+                    return True
+                else:
+                    raise UserError(
+                        "You haven't graded all the specifications."
+                    )
+
+            if r.step == 2:
+                # Đã gom từng đạc tả thành 1 feedback duy nhất
+                # Click preview and save để sang bước preview
+                if text_from_html(r.feedback).strip() == "":
+                    raise UserError("Feedback cannot be empty.")
+
+                r.write(
+                    {"feedback": r.feedback, "result": r.result, "step": 3}
+                )
+
+                return True
+
+            if r.step == 3:
+                # Đang preview
+                # Click Finish để kết thúc
+                r.step = 4
+                return {
+                    "type": "ir.actions.client",
+                    "tag": "soft_reload",
+                }
+
+            if r.step >= 4:
+                # đã finish
+                raise UserError(
+                    "Internal Server Error: Criterion Grading Step cannot be larger than 4."
+                )
 
     def button_back(self):
         for r in self:
-            r.step -= 1
+            if r.step > 1:
+                r.step -= 1
+            return True
 
     @api.depends("specifications.result")
     def _compute_graded_all(self):
@@ -438,21 +435,21 @@ class ProjectCriterionResponse(models.Model):
         for r in self:
             results = list(map(lambda spec: spec.result, r.specifications))
 
-            computed_result = ""
+            computed_result = []
 
             if NOT_GRADED[0] in results:
-                computed_result = NOT_GRADED[0]
+                computed_result = [NOT_GRADED[0]]
 
             elif INCOMPLETE[0] in results:
-                computed_result = INCOMPLETE[0]
+                computed_result = [INCOMPLETE[0], DID_NOT_PASS[0]]
 
             elif DID_NOT_PASS[0] in results:
-                computed_result = DID_NOT_PASS[0]
+                computed_result = [DID_NOT_PASS[0]]
 
             else:
-                computed_result = PASSED[0]
+                computed_result = [PASSED[0]]
 
-            self.is_abnormal_result = computed_result != r.result
+            self.is_abnormal_result = r.result not in computed_result
 
     def button_double_back(self):
         for r in self:
@@ -465,3 +462,12 @@ class ProjectCriterionResponse(models.Model):
                 r.display_result = NOT_GRADED[0]
             else:
                 r.display_result = r.result
+
+    def write(self, values):
+        if (
+            self.env.su
+            or self.env.user.login == self.submission.mentor_id.email
+        ):
+            return super(ProjectCriterionResponse, self).write(values)
+        else:
+            raise UserError("You are not assigned to this submission.")

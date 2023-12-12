@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="learning_project.MaterialField" owl="1">
+        <div class="d-flex gap align-items-center justify-content-between material_item" t-ref="material_item" t-att-data-material-id="props.record.data.id">
+            <span t-esc="props.record.data.label" />
+
+            <div class="d-flex gap-2">
+                <button t-on-click="(ev) => this.onMaterial(ev)" t-att-data-url="props.record.data.url" data-action-type="copy_url" class="btn btn-primary copyurl_material_btn">Copy URL</button>
+
+                <button t-on-click="(ev) => this.onMaterial(ev)" t-att-data-url="props.record.data.url" t-att-data-url-label="props.record.data.label" data-action-type="insert_label" class="btn btn-primary insert_material_btn">Insert Name</button>
+
+                <button t-on-click="(ev) => this.onMaterial(ev)" t-att-data-url="props.record.data.url" t-att-data-url-label="props.record.data.label" data-action-type="insert_sentence" class="btn btn-primary insert_material_btn">Insert Sentence</button>
+
+                <button t-on-click="(ev) => this.onMaterial(ev)" t-att-data-material-id="props.record.data.id" t-att-data-append="props.record.data.append" data-action-type="append" t-ref="append_btn" class="btn btn-primary append_material_btn">
+                    <t t-if="state.is_appended">
+                        Unappend
+                    </t>
+                    <t t-else="">
+                        Append
+                    </t>
+                </button>
+
+            </div>
+        </div>
+    </t>
+</templates>

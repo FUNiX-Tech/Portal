@@ -5,6 +5,14 @@
         <field name="model">project_criterion</field>
         <field name="arch" type="xml">
             <form string="Project Criterion">
+                <xpath expr="." position="inside">
+                    <style>
+                    div.o_cell.text-break {
+                        break-word: none !important;
+                        min-width: 100px;
+                    }
+                    </style>
+                </xpath>
                 <sheet>
                     <group>
                         <field name="title" string="Criterion Name" class="border bg-light"/>
@@ -12,16 +20,15 @@
                         <field name="project" string="Project" class="border bg-light" invisible="1"/>
                         <field name="criteria_group" string="Criteria Group" class="border bg-light" context="{'default_project': project}" domain="[('project', '=', project)]" />
                         <field name="criteria_group_number" class="border bg-light"/>
-                        <field name="description" string='Description' class="border bg-light"/>
+                        <field name="display_content" class="border bg-light"/>
                         <field name="specifications" string='Specifications ' class="border bg-light">
                             <tree>
                                 <field name="content" />
                             </tree>
                         </field>
-                        <field name="sumarized_content" class="border bg-light"/>
                         <field name="material" class="border bg-light">
                             <tree>
-                                <field name="name" class="border bg-light"/>
+                                <field name="label" class="border bg-light"/>
                             </tree>
                         </field>
                     </group>
@@ -38,7 +45,7 @@
                 <field name="criteria_group" />
                 <field name="number" />
                 <field name="title" />
-                <field name="sumarized_content" />
+                <field name="display_content" />
             </tree>
         </field>
     </record>

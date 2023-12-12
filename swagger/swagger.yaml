@@ -35,7 +35,7 @@ paths:
       tags:
         - Course Management
       summary: Enroll student to course
-      description: enroll student to course by student id and course id
+      description: enroll student to course by student email and course code
       operationId: course_enroll
       requestBody:
         required: true
@@ -55,21 +55,34 @@ paths:
                     type: string
                     example: "Enrolled successfully!"
         "400":
-          description: "Missing Data"
+          description: Bad Request
           content:
             application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Please make sure the request body include key-value pairs of student_id and course_id"
+              examples:
+                example1:
+                  summary: Missing field
+                  value:
+                    message: "Missing field: '{field-name}'"
+                example2:
+                  summary: Course not found
+                  value:
+                    message: "Not found course with wrong_code"
+                example3:
+                  summary: Not found student email
+                  value:
+                    message: "Not found student with email wrong_email@gmail.com"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              example:
+                message: Internal Server Error
   /api/course_management/unenroll:
     post:
       tags:
         - Course Management
       summary: Unenroll student to course
-      description: Uenroll student to course by student id and course id
+      description: Uenroll student to course by student email and course code
       operationId: course_unenroll
       requestBody:
         required: true
@@ -89,15 +102,28 @@ paths:
                     type: string
                     example: "Unenrolled successfully!"
         "400":
-          description: "Missing Data"
+          description: Bad Request
           content:
             application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Please make sure the request body include key-value pairs of student_id and course_id"
+              examples:
+                example1:
+                  summary: Missing field
+                  value:
+                    message: "Missing field: '{field-name}'"
+                example2:
+                  summary: Course not found
+                  value:
+                    message: "Not found course with wrong_code"
+                example3:
+                  summary: Not found student email
+                  value:
+                    message: "Not found student with email wrong_email@gmail.com"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              example:
+                message: Internal Server Error
   /api/course_management/check_enroll:
     get:
       tags:
@@ -106,41 +132,54 @@ paths:
       description: Check student was enrolled to course or not
       operationId: enroll_check
       parameters:
-        - name: course_id
+        - name: course_code
           in: query
           required: true
           schema:
-            type: integer
-            example: 1
-          description: ID of the course to check enrollment
-        - name: student_id
+            type: string
+            example: course-v1:FUNiX+DMP101x.1.0.VN+1023.XS
+          description: code of the course to check enrollment
+        - name: student_email
           in: query
           required: true
           schema:
-            type: integer
-            example: 1
-          description: ID of the student to check enrollment
+            type: string
+            example: student6@gmail.com
+          description: email of the student to check enrollment
       responses:
         "200":
-          description: "Student unenrolled successfully"
+          description: Status of enrollment true or false
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  message:
-                    type: string
-                    example: "Unenrolled successfully!"
+                  enrolled:
+                    type: boolean
+                    example: false
         "400":
-          description: "Missing Data"
+          description: Bad Request
           content:
             application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Please make sure the request body include key-value pairs of student_id and course_id"
+              examples:
+                example1:
+                  summary: Missing field
+                  value:
+                    message: "Missing field: '{field-name}'"
+                example2:
+                  summary: Course not found
+                  value:
+                    message: "Not found course with wrong_code"
+                example3:
+                  summary: Not found student email
+                  value:
+                    message: "Not found student with email wrong_email@gmail.com"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              example:
+                message: Internal Server Error
   /api/student/register:
     post:
       tags:
@@ -609,11 +648,12 @@ components:
     courseenroll:
       type: object
       properties:
-        student_id:
-          type: integer
-          description: id of the student
-          example: 1
-        course_id:
-          type: integer
-          description: id of the course
-          example: 1
+        student_email:
+          type: string
+          format: email
+          description: email of the student
+          example: student6@gmail.com
+        course_code:
+          type: string
+          description: code of the course
+          example: course-v1:FUNiX+DMP101x.1.0.VN+1023.XS
