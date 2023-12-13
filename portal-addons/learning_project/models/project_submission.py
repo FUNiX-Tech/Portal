@@ -157,7 +157,6 @@ class ProjectSubmission(models.Model):
 
             # Cập nhật điểm ở lms
             lms_error = self._push_grade_result_to_lms()
-            record.grading_status = "success" if lms_error == "" else "failed"
 
             # Hiển thị modal kết quả trên browser
             message = ProjectSubmission._compose_message(
@@ -178,6 +177,13 @@ class ProjectSubmission(models.Model):
                     "DEBUG MODE: skip PUSH GRADE TO LMS error because of debug_mode is True and skip_push_grade_to_lms is True"
                 )
                 return ""
+
+            if record.result == UNABLE_TO_REVIEW[0]:
+                return ""
+
+            if record.result == NOT_GRADED[0]:
+                return "The current submission result is not_graded. Result must be passed or did_not_pass."
+
             headers = {"Content-Type": "application/json"}
             payload = {
                 "project_name": record.project.title,
@@ -198,8 +204,10 @@ class ProjectSubmission(models.Model):
 
                 if response.status_code == 200:
                     logger.info("Pushed project grading result to LMS")
+                    record.grading_status = "success"
                     return ""
                 else:
+                    record.grading_status = "failed"
                     logger.error(
                         f"Failed to push project grading result to LMS: {response.text}"
                     )
@@ -207,6 +215,7 @@ class ProjectSubmission(models.Model):
                     return f"ERROR:Failed to push project grading result to LMS: {response.text}"
 
             except Exception as e:
+                record.grading_status = "failed"
                 logger.error(
                     f"Failed to push project grading result to LMS: {str(e)}"
                 )
@@ -244,16 +253,7 @@ class ProjectSubmission(models.Model):
     def re_update_lms_grade(self):
         error_message = self._push_grade_result_to_lms()
 
-        if error_message != "":
-            return {
-                "type": "ir.actions.client",
-                "tag": "display_notification",
-                "params": {
-                    "title": "Error",
-                    "message": error_message,
-                    "sticky": True,
-                },
-            }
+        raise UserError(error_message)
 
     @api.depends("criteria_responses.is_abnormal_result")
     def _compute_has_abnormal_result(self):
