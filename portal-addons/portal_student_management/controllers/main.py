@@ -37,14 +37,18 @@ class StudentAPI(http.Controller):
         if not name or not email or not student_code or not username:
             return json_error("Missing input data", 400)
 
+        context = {
+            "from_lms": True,
+        }
+
         # 3. Create student record
-        http.request.env["portal.student"].sudo().create(
+        http.request.env["portal.student"].with_context(context).sudo().create(
             {
                 "name": name,
                 "email": email,
                 "student_code": student_code,
                 "username": username,
-            }
+            },
         )
 
         response = json_success("Student created successfully", 201)
