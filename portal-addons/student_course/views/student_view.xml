@@ -5,23 +5,17 @@
             <field name="model">portal.student</field>
             <field name="inherit_id" ref="portal_student_management.student_form" />
             <field name="arch" type="xml">
-                <xpath expr="//form/sheet/notebook/page[1]" position="inside">
+                <xpath expr="//form/sheet" position="inside">
+                            <h4 style="color:#66598f">Courses</h4>
+                            <hr/>
                             <field name="course_ids"
-                                options="{'no_create': True}" string="">
+                                options="{'no_create': True}" string="" context="{'active_id': id}">
                                 <tree>
                                     <field name="course_name" />
-                                    <field name="course_code" />
-                                </tree>
-                            </field>
-                </xpath>
-                <xpath expr="//form/sheet/notebook/page[2]" position="inside">
-                            <field name="course_ids"
-                                options="{'no_create': True}" string="">
-                                <tree>
-                                    <field name="course_name" />
-                                    <field name="display_time" />
-                                    <field name="days_ago" />
-                                    <field name="assignment" />
+                                    <field name="course_code" optional="hide" />
+                                    <field name="course_progress" />
+                                    <field name="last_activity" />
+                                    <field name="learning_project" widget="html"/>
                                 </tree>
                             </field>
                 </xpath>

@@ -6,7 +6,10 @@
             <field name="inherit_id" ref="portal_student_management.student_form" />
             <field name="arch" type="xml">
                 <xpath expr="//form/sheet/group[1]" position="after">
-                    <group string="Student Organization">
+                    <separator />
+                    <h4 style="color:#66598f">Organization</h4>
+                    <hr/>
+                    <group>
                         <group>
                             <field name="student_organization_student_ids"
                                 options="{'no_create': True}">
@@ -16,6 +19,7 @@
                             <field name="temp_student_org" invisible="True" />
                         </group>
                     </group>
+                    <separator />
                 </xpath>
             </field>
         </record>

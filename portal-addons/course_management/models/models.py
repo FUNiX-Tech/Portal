@@ -12,7 +12,7 @@ class course_management(models.Model):
     _description = "Course Management"
     _rec_name = "course_name"
 
-    course_code = fields.Char(string="Course Code", required=True)
+    course_code = fields.Char(string="Course Code", required=True, unique=True)
     course_name = fields.Char(string="Course Name", required=True)
     course_creator = fields.Many2one(
         "res.users", string="Course creator", required=True

@@ -6,6 +6,8 @@
             <!-- !TODO: Sẽ Refactor UI -->
             <form>
                 <sheet>
+                        <h4 style="color:#66598f">General Information</h4>
+                        <hr />
                         <group>
                             <group>
                                 <field name="name" />
@@ -19,12 +21,6 @@
                                 <button string="Reset Password" name="reset_password" type="object" class="oe_highlight wide-button" confirm="Are you sure you want to do this?"/>
                             </group>
                         </group>
-                        <notebook>
-                            <page name="enrolled_courses" string="Enrolled Courses">
-                            </page>
-                            <page name="course_progress" string="Course Progress">
-                            </page>
-                    </notebook>
                 </sheet>
             </form>
         </field>
