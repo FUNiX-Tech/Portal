@@ -38,11 +38,17 @@ class ProjectCriterionMaterial(models.Model):
     _sql_constraints = [UNIQUE_LABEL_CRITERION, UNIQUE_URL_CRITERION]
 
     @api.constrains("auto_append")
-    def _check_unique_name(self):
+    def _check_unique_auto_append(self):
         for r in self:
             if (
                 r.auto_append is True
-                and self.search_count([("auto_append", "=", True)]) >= 1
+                and self.search_count(
+                    [
+                        ("auto_append", "=", True),
+                        ("criterion", "=", r.criterion.id),
+                    ]
+                )
+                > 1
             ):
                 raise ValidationError(
                     "Auto append additional reading for this criterion already exists."

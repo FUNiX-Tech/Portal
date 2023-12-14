@@ -388,6 +388,11 @@ class ProjectCriterionResponse(models.Model):
                 if text_from_html(r.feedback).strip() == "":
                     raise UserError("Feedback cannot be empty.")
 
+                if not r.result or r.result == NOT_GRADED[0]:
+                    raise UserError(
+                        "Result must be in passed, did not pass, incomplete."
+                    )
+
                 r.write(
                     {"feedback": r.feedback, "result": r.result, "step": 3}
                 )
