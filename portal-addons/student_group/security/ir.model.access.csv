@@ -1,6 +1,6 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_student_group_admin,access_student_group_admin,model_student_group,group_student_group_admin,1,1,1,1
-access_student_group_user,access_student_group_user,model_student_group,group_student_group_user,1,0,0,0
+access_student_group_admin,access_student_group_admin,model_student_group,,1,1,1,1
+access_student_group_user,access_student_group_user,model_student_group,,1,0,0,0
 
-access_student_group_admin2,access_student_group_admin2,portal_student_management.model_portal_student,group_student_group_admin,1,1,1,1
-access_student_group_user2,access_student_group_user2,portal_student_management.model_portal_student,group_student_group_user,1,0,0,0
+access_student_group_admin2,access_student_group_admin2,portal_student_management.model_portal_student,,1,1,1,1
+access_student_group_user2,access_student_group_user2,portal_student_management.model_portal_student,,1,0,0,0

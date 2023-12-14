@@ -4,63 +4,52 @@ from odoo import models, fields, api
 # Add Student group into student table
 class StudentGroup_Student(models.Model):
     _inherit = "portal.student"
-    student_group_student_ids = fields.Many2many(
-        "student_group",
-        "student_group_student_rel",
-        "student_id",
-        "student_group__id",
-        string="Student Group",
+    student_group_ids = fields.Many2many(
+        comodel_name="student_group",
+        relation="business_student_group",
+        column1="student_id",
+        column2="group_id",
     )
 
 
-# Add student list into Student Group table
-class Student_GroupStudent(models.Model):
+class StudentOrganization(models.Model):
+    _inherit = "student_organization"
+
+    student_group_ids = fields.One2many(
+        comodel_name="student_group",
+        inverse_name="group_organization_id",
+        string="Group",
+    )
+
+
+class StudentGroup(models.Model):
     _inherit = "student_group"
-    student_ids = fields.Many2many(
-        "portal.student",
-        "student_group_student_rel",
-        "student_group__id",
-        "student_id",
-        string="Student List",
+    business_student_ids = fields.Many2many(
+        comodel_name="portal.student",
+        relation="business_student_group",
+        column1="group_id",
+        column2="student_id",
     )
 
-
-# Add student group into Course table
-class Course_Student_Group(models.Model):
-    _inherit = "course_management"
-    student_group_course_ids = fields.Many2many(
-        "student_group",
-        "student_group_course_rel",
-        "course_id",
-        "student_group__id",
-        string="Student Group",
+    group_organization_id = fields.Many2one(
+        comodel_name="student_organization",
+        string="Group Organization",
+        required=True,
     )
 
-    # integrate students in group with student enrolled /unenrolled
-    @api.onchange("student_group_course_ids")
-    def onchange_student_group_course_ids(self):
-        if self.student_group_course_ids:
-            self.student_ids = self.student_group_course_ids.mapped(
-                "student_ids"
-            )
+    @api.onchange("group_organization_id")
+    def _onchange_group_organization_id(self):
+        if self.group_organization_id:
+            return {
+                "domain": {
+                    "business_student_ids": [
+                        (
+                            "student_organization_student_ids",
+                            "=",
+                            self.group_organization_id.id,
+                        )
+                    ]
+                }
+            }
         else:
-            self.student_ids = False
-
-
-# Add course list into Student Group table
-class Student_Group_Course(models.Model):
-    _inherit = "student_group"
-    course_ids = fields.Many2many(
-        "course_management",
-        "student_group_course_rel",
-        "student_group__id",
-        "course_id",
-        string="Course List",
-    )
-    # When remove course in Student Group
-    # @api.onchange('course_ids')
-    # def onchange_course_ids(self):
-    #     if self.course_ids:
-    #         self.student_group_course_ids = self.course_ids.mapped('student_group_course_ids')
-    #     else:
-    #         self.student_group_course_ids = False
+            return {"domain": {"business_student_ids": []}}

@@ -15,14 +15,17 @@
     "category": "Uncategorized",
     "version": "0.1",
     # any module necessary for this one to work correctly
-    "depends": ["base", "portal_student_management", "course_management"],
+    "depends": [
+        "base",
+        "portal_student_management",
+        "course_management",
+        "student_organization",
+    ],
     # always loaded
     "data": [
-        "security/security.xml",
         "security/ir.model.access.csv",
         "views/student_group_views.xml",
         "views/student_student_group.xml",
-        "views/course_student_group.xml",
     ],
     # only loaded in demonstration mode
 }

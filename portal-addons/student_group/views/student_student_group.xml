@@ -1,22 +1,19 @@
 <odoo>
     <data>
-         <record id="view_student_form_inherit" model="ir.ui.view">
-            <field name="name">portal.student.form.inherit.student_studentgroup</field>
+        <record id="view_student_form_inherit" model="ir.ui.view">
+            <field name="name">portal.student.form.inherit.student_group</field>
             <field name="model">portal.student</field>
             <field name="inherit_id" ref="portal_student_management.student_form" />
             <field name="arch" type="xml">
-                <xpath expr="//form/sheet/group" position="after">
-                    <group string="Student Group">
-                        <field name="student_group_student_ids"
-                            options="{'no_create': True}">
-                            <tree>
-                                <field name="name" />
-                                <field name="creator" />
-                                <field name="created_at" />
-                                <field name="group_note" />
-                            </tree>
-                        </field>
-                    </group>
+                <xpath expr="//form/sheet/notebook" position="inside">
+                    <page name="group" string="Groups"
+                          attrs="{'invisible': ['|', ('student_organization_student_ids', '=', False), ('student_group_ids', '=', [])]}">
+                        <field name="student_group_ids" />
+                    </page>
+                    <!-- <page name="group" string="Groups"
+>
+                        <field name="student_group_ids" />
+                    </page> -->
                 </xpath>
             </field>
         </record>

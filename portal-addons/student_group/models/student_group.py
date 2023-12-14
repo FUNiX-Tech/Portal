@@ -6,10 +6,11 @@ class StudentGroup(models.Model):
     _name = "student_group"
     _description = "Student Group"
 
-    name = fields.Char(string="name", required=True)
-    creator = fields.Char(
-        string="creator", default=lambda self: self.env.user.name
+    group_name = fields.Char(string="name", required=True)
+    creator = fields.Many2one(
+        comodel_name="portal.student", string="Group Creator", required=True
     )
+
     group_note = fields.Text(string="group_note")
     created_at = fields.Datetime(
         string="Created Datetime",

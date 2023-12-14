@@ -14,6 +14,11 @@
                     </group> -->
                 </group>
             </xpath>
+
+            <xpath expr="//form/sheet" position="inside">
+                <notebook>
+                </notebook>
+            </xpath>
         </field>
     </record>
 

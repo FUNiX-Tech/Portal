@@ -5,8 +5,7 @@
             <field name="model">portal.student</field>
             <field name="inherit_id" ref="portal_student_management.student_form" />
             <field name="arch" type="xml">
-                <xpath expr="//form/sheet" position="inside">
-                    <notebook>
+                <xpath expr="//form/sheet/notebook" position="inside">
                         <!-- Page for students with an organization -->
                         <page string="Organization Learning Programs"
                             attrs="{'invisible': [('student_organization_student_ids', '=', False)]}">
@@ -31,7 +30,6 @@
                                 </tree>
                             </field>
                         </page>
-                    </notebook>
                 </xpath>
             </field>
         </record>
