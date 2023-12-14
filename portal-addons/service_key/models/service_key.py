@@ -116,6 +116,7 @@ class ServiceKeyConfiguration(models.Model):
                 "name": "API_BULK_ENROLL",
                 "api_key": "api/bulk_enroll/v1/bulk_enroll",
             },
+            {"name": "MIGRATE_CHECK", "api_key": "False"},
         ]
         for key in key_lists:
             if not self.check_key_existing(key["name"]):  # if key not existing

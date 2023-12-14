@@ -6,20 +6,21 @@
             <!-- !TODO: Sẽ Refactor UI -->
             <form>
                 <sheet>
-                    <group>
+                        <h4 style="color:#66598f">General Information</h4>
+                        <hr />
                         <group>
-                            <field name="name" />
-                            <field name="email" />
-                            <field name="gender" />
-                        </group>
-                        <group>
-                            <field name="username" />
-                            <field name="phone" />
-                            <field name="date_of_birth" />
-
+                            <group>
+                                <field name="name" />
+                                <field name="email" />
+                                <field name="gender" />
+                            </group>
+                            <group>
+                                <field name="username" />
+                                <field name="phone" />
+                                <field name="date_of_birth" />
                                 <button string="Reset Password" name="reset_password" type="object" class="oe_highlight wide-button" confirm="Are you sure you want to do this?"/>
                             </group>
-                    </group>
+                        </group>
                 </sheet>
             </form>
         </field>
