@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    "name": "Learning Program",
+    "name": "PO Learning Program",
     "summary": """
      Adding students into Learning Program
      Adding courses into Learning Program
@@ -16,11 +16,17 @@
     "category": "Uncategorized",
     "version": "0.1",
     # any module necessary for this one to work correctly
-    "depends": ["base", "portal_student_management", "course_management"],
+    "depends": ["base", "course_management"],
     # always loaded
     "data": [
         "security/security.xml",
         "security/ir.model.access.csv",
-        "views/learning_program_views.xml",
+        "views/student_course_data.xml",
+        "views/po_learning_program_views.xml",
+        "views/learning_program_access.xml",
+        "views/course_access.xml",
+        "views/course_management_views.xml",
+        "views/organization_views.xml",
+        "views/student_views.xml",
     ],
 }

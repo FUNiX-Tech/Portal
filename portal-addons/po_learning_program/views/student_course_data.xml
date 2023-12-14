@@ -1,0 +1,17 @@
+<odoo>
+    <data>
+        <!-- Tree view for student_course_data -->
+        <record id="view_student_course_tree" model="ir.ui.view">
+            <field name="name">student.course.data.tree</field>
+            <field name="model">student_course_data</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="course_id"/>
+                    <field name="learning_progress"/>
+                    <field name="enrollment_status"/>
+                </tree>
+            </field>
+        </record>
+        <!-- ... other view definitions ... -->
+    </data>
+</odoo>

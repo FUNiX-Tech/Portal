@@ -31,10 +31,11 @@
               </group>
             </group>
             <separator />
-            <h4 style="color:#66598f">Student List</h4>
-            <hr/>
-            <field name="student_ids" options="{'no_create': True}" widget="many2many" />
-            <separator />
+            <notebook>
+              <page string="Student List">
+                <field name="student_ids" options="{'no_create': True}" widget="many2many" domain="[('student_organization_student_ids','=',False)]"/>
+              </page>
+            </notebook>
           </sheet>
         </form>
       </field>

@@ -1,0 +1,31 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_po_learning_program_admin, po_learning_program_admin,model_po_learning_program,group_po_learning_program_admin,1,1,1,1
+access_po_learning_program_user, po_learning_program_user,model_po_learning_program,group_po_learning_program_user,1,0,0,0
+
+
+
+access_organization_course_access_admin, organization_course_access_admin,model_organization_course_access,group_po_learning_program_admin,1,1,1,1
+
+access_organization_course_access_user, organization_course_access_user,model_organization_course_access,group_po_learning_program_user,1,0,0,0
+
+
+
+access_individual_course_access_admin, individual_course_access_admin,model_individual_course_access,group_po_learning_program_admin,1,1,1,1
+
+access_individual_student_course_access_user, individual_course_access_user,model_individual_course_access,group_po_learning_program_user,1,0,0,0
+
+
+
+access_organization_polp_access_admin, organization_polp_access_admin,model_organization_polp_access,group_po_learning_program_admin,1,1,1,1
+
+access_organization_polp_access_user, organization_polp_access_user,model_organization_polp_access,group_po_learning_program_user,1,0,0,0
+
+
+
+access_individual_polp_access_admin, individual_polp_access_admin,model_individual_polp_access,group_po_learning_program_admin,1,1,1,1
+
+access_individual_polp_course_access_user, individual_polp_access_user,model_individual_polp_access,group_po_learning_program_user,1,0,0,0
+
+access_student_course_data_admin, student_course_data_admin,model_student_course_data,group_po_learning_program_admin,1,1,1,1
+
+access_student_course_data_user, student_course_data_user,model_student_course_data,group_po_learning_program_user,1,0,0,0

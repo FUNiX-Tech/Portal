@@ -1,0 +1,57 @@
+<odoo>
+
+  <!-- Learning Program views -->
+  <record model="ir.ui.view" id="po_learning_program_list">
+    <field name="name">PO Learning Program</field>
+    <field name="model">po_learning_program</field>
+    <field name="arch" type="xml">
+      <tree>
+        <field name="name" />
+        <field name='creator' widget="many2one" />
+        <field name="created_at" />
+        <field name="desc" />
+      </tree>
+    </field>
+  </record>
+
+  <record id="po_learning_program_view_form" model="ir.ui.view">
+    <field name="name">po_learning_program.view.form</field>
+    <field name="model">po_learning_program</field>
+    <field name="arch" type="xml">
+        <form string="PO Learning Program">
+            <sheet>
+                <group>
+                    <field name="name" />
+                    <field name="creator" />
+                    <field name="created_at" />
+                </group>
+                <notebook>
+                    <page string="Courses">
+                        <field name="course_list" />
+                    </page>
+                    <page string="Organizations">
+                        <field name="organization_ids" />
+                    </page>
+                    <page string="Individual Students">
+                        <field name="individual_student_ids" />
+                    </page>
+                </notebook>
+            </sheet>
+        </form>
+    </field>
+</record>
+
+  <record model="ir.actions.act_window" id="po_learning_program.action_window">
+    <field name="name">PO Learning Program</field>
+    <field name="res_model">po_learning_program</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+  <menuitem name="PO Learning Program" id="po_learning_program_main"
+  groups="group_po_learning_program_admin,group_po_learning_program_user" />
+<menuitem name="PO Learning Program" id="po_learning_program_sub_1"
+  parent="po_learning_program_main" action="po_learning_program.action_window"
+  groups="group_po_learning_program_admin,group_po_learning_program_user" sequence="10" />
+
+
+</odoo>

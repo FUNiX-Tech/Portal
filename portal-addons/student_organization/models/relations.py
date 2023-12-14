@@ -13,10 +13,17 @@ class StudentOrganization_Student(models.Model):
     temp_student_org = fields.Many2one(
         "student_organization",
         computed="_compute_temp_organization",
-        string="Temporary Student Organization",
+        string="Organization",
         store=False,
         default=lambda self: self.student_organization_student_ids,
     )
+
+    # has_organization = fields.Boolean(
+    #     string="Has Organization",
+    #     compute="_compute_has_organization",
+    #     store=False,
+    #     readonly=True,
+    # )
 
     @api.model
     def create(self, vals):

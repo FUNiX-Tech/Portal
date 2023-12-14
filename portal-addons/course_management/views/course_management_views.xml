@@ -81,11 +81,11 @@
               </group>
             </group>
             <separator />
-            <h4 style="color:#66598f">Organization List</h4>
+            <!-- <h4 style="color:#66598f">Organization List</h4>
             <hr/>
             <field name="organization_ids" />
-            <field name="temp_organization_ids" invisible="True"/> <!--computed temp_organization to calculate-->
-            <separator />
+            <field name="temp_organization_ids" invisible="True"/> computed temp_organization to calculate -->
+            <!-- <separator /> -->
           </sheet>
         </form>
       </field>

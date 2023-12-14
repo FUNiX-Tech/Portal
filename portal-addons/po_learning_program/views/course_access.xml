@@ -1,0 +1,56 @@
+<odoo>
+    <!-- Organization Course Access Views -->
+    <record model="ir.ui.view" id="view_organization_course_access">
+        <field name="name">Organization Course Access</field>
+        <field name="model">organization_course_access</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="student_organization_name" />
+                <field name="course_name" />
+                <field name="is_single_course" />
+                <field name="is_active" />
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="action_organization_course_access">
+        <field name="name">Organization Course Access</field>
+        <field name="res_model">organization_course_access</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+
+        <!-- Individual Course Access Views -->
+        <record model="ir.ui.view" id="view_individual_course_access">
+            <field name="name">Individual Course Access</field>
+            <field name="model">individual_course_access</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="individual_student_id" />
+                    <field name="course_name" />
+                    <field name="is_single_course" />
+                    <field name="is_active" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_individual_course_access">
+            <field name="name">Individual Student Course Access</field>
+            <field name="res_model">individual_course_access</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem name="Course Access" id="po_learning_program_course_access"
+        parent="po_learning_program_main"
+        groups="group_po_learning_program_admin,group_po_learning_program_user" sequence="30" />
+    <menuitem name="Organization Access" id="po_learning_program_organization_course_access"
+        parent="po_learning_program_course_access"
+        action="action_organization_course_access"
+
+        groups="group_po_learning_program_admin,group_po_learning_program_user" sequence="10" />
+    <menuitem name="Individual Access" id="po_learning_program_individual_course_access"
+        parent="po_learning_program_course_access"
+        action="action_individual_course_access"
+        groups="group_po_learning_program_admin,group_po_learning_program_user" sequence="20" />
+
+</odoo>

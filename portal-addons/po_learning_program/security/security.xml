@@ -1,21 +1,21 @@
 <odoo>
     <data noupdate="0">
-        <record id="module_category_learning_program" model="ir.module.category">
-            <field name="name">Learning Program</field>
+        <record id="module_category_po_learning_program" model="ir.module.category">
+            <field name="name">PO Learning Program</field>
             <field name="sequence">1</field>
         </record>
 
         <!-- Learning Program Admin  -->
-        <record id='group_learning_program_admin' model='res.groups'>
+        <record id='group_po_learning_program_admin' model='res.groups'>
             <field name="name">Admin</field>
-            <field name="category_id" ref='module_category_learning_program'></field>
+            <field name="category_id" ref='module_category_po_learning_program'></field>
             <field name="implied_ids" eval="[(4,ref('base.group_user'))]"></field>
         </record>
 
         <!-- Learning Program User -->
-        <record id='group_learning_program_user' model='res.groups'>
+        <record id='group_po_learning_program_user' model='res.groups'>
             <field name="name">User</field>
-            <field name="category_id" ref='module_category_learning_program'></field>
+            <field name="category_id" ref='module_category_po_learning_program'></field>
             <field name="implied_ids" eval="[(4,ref('base.group_user'))]"></field>
         </record>
     </data>

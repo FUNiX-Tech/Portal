@@ -20,7 +20,7 @@
         "security/security.xml",
         "security/ir.model.access.csv",
         "views/course_management_views.xml",
-        "views/course_for_organization_view.xml",
+        # "views/course_for_organization_view.xml",
     ],
     # only loaded in demonstration mode
     "demo": [

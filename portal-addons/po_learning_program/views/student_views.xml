@@ -1,0 +1,39 @@
+<odoo>
+    <data>
+        <record id="view_student_form_inherit" model="ir.ui.view">
+            <field name="name">portal.student.form.inherit.student_course</field>
+            <field name="model">portal.student</field>
+            <field name="inherit_id" ref="portal_student_management.student_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//form/sheet" position="inside">
+                    <notebook>
+                        <!-- Page for students with an organization -->
+                        <page string="Organization Learning Programs"
+                            attrs="{'invisible': [('student_organization_student_ids', '=', False)]}">
+                            <field name="organization_learning_programs" />
+                        </page>
+                        <!-- Page for individual students -->
+                        <page string="Individual Learning Programs"
+                            attrs="{'invisible': [('student_organization_student_ids', '!=', False)]}">
+                            <field name="individual_learning_programs" />
+                        </page>
+                        <!-- Page for accessible courses -->
+                        <page string="Accessible Courses">
+                            <field name="accessible_courses" />
+                        </page>
+
+                        <page string="Course Progress">
+                            <field name="course_ids">
+                                <tree>
+                                    <field name="course_id"/>
+                                    <field name="learning_progress"/>
+                                    <field name="enrollment_status"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

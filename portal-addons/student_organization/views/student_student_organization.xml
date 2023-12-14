@@ -1,24 +1,31 @@
 <odoo>
-    <data>
-        <record id="view_student_form_inherit" model="ir.ui.view">
-            <field name="name">portal.student.form.inherit.student_student_organization</field>
-            <field name="model">portal.student</field>
-            <field name="inherit_id" ref="portal_student_management.student_form" />
-            <field name="arch" type="xml">
-                <xpath expr="//form/sheet/group" position="after">
-                    <group string="Student Organization">
-                        <group>
-                            <field name="student_organization_student_ids"
-                                options="{'no_create': True}">
-                            </field>
-                        </group>
-                        <group>
-                            <field name="temp_student_org" invisible="True" />
-                        </group>
-                    </group>
+    <record id="view_student_form_inherit" model="ir.ui.view">
+        <field name="name">portal.student.form.inherit.student_student_organization</field>
+        <field name="model">portal.student</field>
+        <field name="inherit_id" ref="portal_student_management.student_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//form/sheet/group" position="after">
+                <group string="Student Organization" attrs="{'invisible': [('student_organization_student_ids', '=', False)]}">
+                    <field name="student_organization_student_ids" options="{'no_create': True}"/>
+                    <!-- <group>
+                        <field name="student_organization_student_ids"
+                            options="{'no_create': True}">
+                        </field>
+                    </group> -->
+                </group>
+            </xpath>
+        </field>
+    </record>
 
+
+        <record id="view_student_tree_inherit" model="ir.ui.view">
+            <field name="name">portal.student.tree.inherit.student_student_organization</field>
+            <field name="model">portal.student</field>
+            <field name="inherit_id" ref="portal_student_management.student_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='phone']" position="after">
+                    <field name="temp_student_org"/>
                 </xpath>
             </field>
         </record>
-    </data>
 </odoo>

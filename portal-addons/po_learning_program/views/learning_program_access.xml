@@ -1,0 +1,52 @@
+<odoo>
+    <!-- Organization Course Access Views -->
+    <record model="ir.ui.view" id="view_organization_polp_access">
+        <field name="name">Organization POLP Access</field>
+        <field name="model">organization_polp_access</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="organization_id" />
+                <field name="po_learning_program_id" />
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="action_organization_polp_access">
+        <field name="name">Organization POLP Access</field>
+        <field name="res_model">organization_polp_access</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+
+        <!-- Individual POLP Access Views -->
+        <record model="ir.ui.view" id="view_individual_polp_access">
+            <field name="name">Individual POLP Access</field>
+            <field name="model">individual_polp_access</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="individual_student_id" domain="[('student_organization_student_ids', '=', False)]"/>
+                    <field name="po_learning_program_id" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_individual_polp_access">
+            <field name="name">Individual Student POLP Access</field>
+            <field name="res_model">individual_polp_access</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem name="Learning Program Access" id="po_learning_program_polp_access"
+        parent="po_learning_program_main"
+        groups="group_po_learning_program_admin,group_po_learning_program_user" sequence="20" />
+    <menuitem name="Organization POLP Access" id="po_learning_program_organization_polp_access"
+        parent="po_learning_program_polp_access"
+        action="action_organization_polp_access"
+
+        groups="group_po_learning_program_admin,group_po_learning_program_user" sequence="10" />
+    <menuitem name="Individual POLP Access" id="po_learning_program_individual_polp_access"
+        parent="po_learning_program_polp_access"
+        action="action_individual_polp_access"
+        groups="group_po_learning_program_admin,group_po_learning_program_user" sequence="20" />
+
+</odoo>
