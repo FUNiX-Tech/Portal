@@ -337,7 +337,7 @@ class ProjectCriterionResponse(models.Model):
 
             r.templates = templates
 
-    @api.depends("result")
+    @api.depends("templates")
     def _compute_feedback(self):
         for r in self:
             if r.step >= 3:

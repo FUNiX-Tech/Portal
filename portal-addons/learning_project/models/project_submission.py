@@ -198,6 +198,7 @@ class ProjectSubmission(models.Model):
                 ].get_api_key_by_service_name("LMS_PUSH_GRADE_URL")
 
                 if not url:
+                    record.grading_status = "failed"
                     return "Missing LMS_PUSH_GRADE_URL"
 
                 response = requests.post(url, headers=headers, json=payload)
