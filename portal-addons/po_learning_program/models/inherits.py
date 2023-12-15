@@ -61,6 +61,7 @@ class Student(models.Model):
         "course_management",
         compute="_compute_accessible_courses",
         string="Accessible Courses",
+        domain="[('is_active', '=', True)]",
     )
 
     def _compute_organization_learning_programs(self):
@@ -106,13 +107,26 @@ class Student(models.Model):
             try:
                 if student.student_organization_student_ids:
                     org_id = student.student_organization_student_ids.id
+                    # Filter only active course access records for the organization
                     course_access_records = self.env[
                         "organization_course_access"
-                    ].search([("student_organization_id", "=", org_id)])
+                    ].search(
+                        [
+                            ("student_organization_id", "=", org_id),
+                            ("is_active", "=", True),
+                        ]
+                    )
                 else:
+                    # Filter only active course access records for individual students
                     course_access_records = self.env[
                         "individual_course_access"
-                    ].search([("individual_student_id", "=", student.id)])
+                    ].search(
+                        [
+                            ("individual_student_id", "=", student.id),
+                            ("is_active", "=", True),
+                        ]
+                    )
+                # Get IDs of all active courses
                 course_ids = course_access_records.mapped(
                     "purchased_course_id.id"
                 )
