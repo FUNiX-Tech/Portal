@@ -1,5 +1,4 @@
-from odoo import models, fields, api
-import datetime
+from odoo import models, fields
 
 # dictionary to get colour for status and result
 DICT_COLOR_STATUS = {
