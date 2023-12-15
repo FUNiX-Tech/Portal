@@ -1,4 +1,4 @@
-from odoo import models, fields, api
+from odoo import models, fields
 
 # dictionary to get colour for status and result
 DICT_COLOR_STATUS = {
@@ -69,8 +69,12 @@ class CourseManagement(models.Model):
                 )
                 project_name_status = ""
                 for project in list_project:
-                    list_submission = project.submissions
-                    list_submission.filtered(lambda s: s.student == student_id)
+                    list_submission = self.env["project_submission"].search(
+                        [
+                            ("student", "=", student_id),
+                            ("project", "=", project.id),
+                        ]
+                    )
                     if list_submission:
                         # Get last submission to find out status
                         last_submission = list_submission[-1]
