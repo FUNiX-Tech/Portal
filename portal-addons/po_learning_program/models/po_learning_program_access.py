@@ -28,12 +28,6 @@ class OrgPOLPAccess(models.Model):
 
     def write(self, vals):
         self.ensure_one()
-        print("SELF.ENSURE ONE", self.ensure_one())
-        print("POLP: organization_idDDD", self.organization_id.id)
-        print(
-            "POLP:po_learning_program_idDDDD",
-            self.po_learning_program_id.course_list.ids,
-        )
         _logger.info(
             "POLP: Updating Learning Program access record for organization"
         )

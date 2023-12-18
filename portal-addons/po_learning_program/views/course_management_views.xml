@@ -16,7 +16,7 @@
                         </page>
 
                         <page string="PO Learning Program">
-                            <field name="po_learning_program_ids" options="{'no_create': False}" />
+                            <field name="po_learning_program_ids" readonly="1" />
                         </page>
                     </notebook>
                 </xpath>

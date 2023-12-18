@@ -7,6 +7,7 @@
             <tree>
                 <field name="organization_id" />
                 <field name="po_learning_program_id" />
+                <field name="is_active" />
             </tree>
         </field>
     </record>
@@ -26,6 +27,7 @@
                 <tree>
                     <field name="individual_student_id" domain="[('student_organization_student_ids', '=', False)]"/>
                     <field name="po_learning_program_id" />
+                    <field name="is_active" />
                 </tree>
             </field>
         </record>
