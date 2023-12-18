@@ -21,6 +21,55 @@ class OrgPOLPAccess(models.Model):
         required=True,
     )
 
+    is_active = fields.Boolean(
+        string="Is Active",
+        default=True,
+    )
+
+    def write(self, vals):
+        self.ensure_one()
+        print("SELF.ENSURE ONE", self.ensure_one())
+        print("POLP: organization_idDDD", self.organization_id.id)
+        print(
+            "POLP:po_learning_program_idDDDD",
+            self.po_learning_program_id.course_list.ids,
+        )
+        _logger.info(
+            "POLP: Updating Learning Program access record for organization"
+        )
+
+        cousre_access_env = self.env["organization_course_access"]
+
+        if "is_active" in vals:
+            if vals.get("is_active"):
+                _logger.info("POLP: Activating access record")
+                for course_id in self.po_learning_program_id.course_list.ids:
+                    self.env["organization_course_access"].search(
+                        [
+                            (
+                                "student_organization_id",
+                                "=",
+                                self.organization_id.id,
+                            ),
+                            ("purchased_course_id", "=", course_id),
+                        ]
+                    ).write(
+                        {
+                            "is_active": True,
+                        }
+                    )
+                    _logger.info("POLP: Access record activated")
+            else:
+                _logger.info("POLP: Deactivating access record")
+                self._deactivate_course_access(
+                    self,
+                    self.organization_id.id,
+                    self.po_learning_program_id.id,
+                    cousre_access_env,
+                )
+
+        return super().write(vals)
+
     @api.model
     def create(self, vals):
         _logger.info("POLP: Creating new access record for organization")
@@ -141,6 +190,77 @@ class OrgPOLPAccess(models.Model):
             }
         }
 
+    def _deactivate_course_access(
+        self,
+        record,
+        org_id,
+        po_learning_program_id,
+        course_access_env,
+        use_active_flag=True,
+    ):
+        for course_id in record.po_learning_program_id.course_list.ids:
+            # Check if this course is in other active learning programs
+            _logger.info(
+                "POLP: Checking if course %s is in other active learning programs",
+                course_id,
+            )
+            other_programs = self.env["organization_polp_access"].search(
+                [
+                    ("organization_id", "=", org_id),
+                    (
+                        "po_learning_program_id",
+                        "!=",
+                        po_learning_program_id,
+                    ),
+                    (
+                        "po_learning_program_id.course_list",
+                        "in",
+                        [course_id],
+                    ),
+                ]
+            )
+            _logger.info(
+                "POLP: Other active learning programs: %s", other_programs
+            )
+
+            if not other_programs:
+                _logger.info(
+                    "POLP: Course is not in other active learning programs, Deactivating course %s",
+                    course_id,
+                )
+                course_access_env.search(
+                    [
+                        ("student_organization_id", "=", org_id),
+                        ("purchased_course_id", "=", course_id),
+                    ]
+                ).write({"is_active": False})
+                _logger.info("POLP: Deactivated course %s", course_id)
+
+            if other_programs and use_active_flag:
+                _logger.info(
+                    "POLP: Check if course %s is in other ACTIVE learning programs",
+                    course_id,
+                )
+                other_active_programs = other_programs.filtered(
+                    lambda r: r.is_active
+                )
+                _logger.info(
+                    "POLP: Other ACTIVE learning programs: %s",
+                    other_active_programs,
+                )
+                if not other_active_programs:
+                    _logger.info(
+                        "POLP: Course is not in other active learning programs, Deactivating course %s",
+                        course_id,
+                    )
+                    course_access_env.search(
+                        [
+                            ("student_organization_id", "=", org_id),
+                            ("purchased_course_id", "=", course_id),
+                        ]
+                    ).write({"is_active": False})
+                    _logger.info("POLP: Deactivated course %s", course_id)
+
     def unlink(self):
         _logger.info("POLP: Deleting course access records for organization")
         course_access_env = self.env["organization_course_access"]
@@ -155,43 +275,13 @@ class OrgPOLPAccess(models.Model):
                 po_learning_program_id,
             )
 
-            for course_id in record.po_learning_program_id.course_list.ids:
-                # Check if this course is in other active learning programs
-                _logger.info(
-                    "POLP: Checking if course %s is in other active learning programs",
-                    course_id,
-                )
-                other_programs = self.env["organization_polp_access"].search(
-                    [
-                        ("organization_id", "=", org_id),
-                        (
-                            "po_learning_program_id",
-                            "!=",
-                            po_learning_program_id,
-                        ),
-                        (
-                            "po_learning_program_id.course_list",
-                            "in",
-                            [course_id],
-                        ),
-                    ]
-                )
-                _logger.info(
-                    "POLP: Other active learning programs: %s", other_programs
-                )
-
-                if not other_programs:
-                    _logger.info(
-                        "POLP: Course is not in other active learning programs, Deactivating course %s",
-                        course_id,
-                    )
-                    course_access_env.search(
-                        [
-                            ("student_organization_id", "=", org_id),
-                            ("purchased_course_id", "=", course_id),
-                        ]
-                    ).write({"is_active": False})
-                    _logger.info("POLP: Deactivated course %s", course_id)
+            self._deactivate_course_access(
+                record,
+                org_id,
+                po_learning_program_id,
+                course_access_env,
+                use_active_flag=False,
+            )
 
         _logger.info("POLP: Course access records deleted successfully")
         return super(OrgPOLPAccess, self).unlink()
@@ -213,6 +303,8 @@ class IndividualPOLPAccess(models.Model):
         string="PO Learning Program",
         required=True,
     )
+
+    is_active = fields.Boolean(string="Is Active", default=True)
 
     @api.model
     def create(self, vals):
@@ -339,6 +431,120 @@ class IndividualPOLPAccess(models.Model):
             }
         }
 
+    def _deactivate_course_access(
+        self,
+        record,
+        individual_id,
+        po_learning_program_id,
+        course_access_env,
+        use_active_flag=True,
+    ):
+        for course_id in record.po_learning_program_id.course_list.ids:
+            # Check if this course is in other active learning programs
+            _logger.info(
+                "POLP: Checking if course %s is in other active learning programs",
+                course_id,
+            )
+            other_programs = self.env["individual_polp_access"].search(
+                [
+                    ("individual_student_id", "=", individual_id),
+                    (
+                        "po_learning_program_id",
+                        "!=",
+                        po_learning_program_id,
+                    ),
+                    (
+                        "po_learning_program_id.course_list",
+                        "in",
+                        [course_id],
+                    ),
+                ]
+            )
+            _logger.info(
+                "POLP: Other active learning programs: %s", other_programs
+            )
+
+            if not other_programs:
+                _logger.info(
+                    "POLP: Course is not in other active learning programs, Deactivating course %s",
+                    course_id,
+                )
+                course_access_env.search(
+                    [
+                        ("individual_student_id", "=", individual_id),
+                        ("purchased_course_id", "=", course_id),
+                    ]
+                ).write({"is_active": False})
+                _logger.info("POLP: Deactivated course %s", course_id)
+
+            if other_programs and use_active_flag:
+                _logger.info(
+                    "POLP: Check if course %s is in other ACTIVE learning programs",
+                    course_id,
+                )
+                other_active_programs = other_programs.filtered(
+                    lambda r: r.is_active
+                )
+                _logger.info(
+                    "POLP: Other ACTIVE learning programs: %s",
+                    other_active_programs,
+                )
+                if not other_active_programs:
+                    _logger.info(
+                        "POLP: Course is not in other active learning programs, Deactivating course %s",
+                        course_id,
+                    )
+
+                    course_access_env.search(
+                        [
+                            ("individual_student_id", "=", individual_id),
+                            ("purchased_course_id", "=", course_id),
+                        ]
+                    ).write({"is_active": False})
+                    _logger.info("POLP: Deactivated course %s", course_id)
+
+    def write(self, vals):
+        self.ensure_one()
+        print("POLP: individual_student_idDDDD", self.individual_student_id.id)
+        print(
+            "POLP:po_learning_program_idDDDD",
+            self.po_learning_program_id.course_list.ids,
+        )
+
+        _logger.info(
+            "POLP: Updating Learning Program access record for individual"
+        )
+
+        course_access_env = self.env["individual_course_access"]
+
+        if "is_active" in vals:
+            if vals.get("is_active"):
+                _logger.info("POLP: Activating access record")
+                for course_id in self.po_learning_program_id.course_list.ids:
+                    self.env["individual_course_access"].search(
+                        [
+                            (
+                                "individual_student_id",
+                                "=",
+                                self.individual_student_id.id,
+                            ),
+                            ("purchased_course_id", "=", course_id),
+                        ]
+                    ).write({"is_active": True})
+                    _logger.info("POLP: Access record activated")
+
+            else:
+                _logger.info("POLP: Deactivating access record")
+                self._deactivate_course_access(
+                    self,
+                    self.individual_student_id.id,
+                    self.po_learning_program_id.id,
+                    course_access_env,
+                )
+                _logger.info("POLP: Access record deactivated")
+
+        return super(IndividualPOLPAccess, self).write(vals)
+
     def unlink(self):
         _logger.info(
             "POLP: Deleting course access records for individual student"
@@ -355,43 +561,13 @@ class IndividualPOLPAccess(models.Model):
                 po_learning_program_id,
             )
 
-            for course_id in record.po_learning_program_id.course_list.ids:
-                # Check if this course is in other active learning programs
-                _logger.info(
-                    "POLP: Checking if course %s is in other active learning programs",
-                    course_id,
-                )
-                other_programs = self.env["individual_polp_access"].search(
-                    [
-                        ("individual_student_id", "=", individual_id),
-                        (
-                            "po_learning_program_id",
-                            "!=",
-                            po_learning_program_id,
-                        ),
-                        (
-                            "po_learning_program_id.course_list",
-                            "in",
-                            [course_id],
-                        ),
-                    ]
-                )
-                _logger.info(
-                    "POLP: Other active learning programs: %s", other_programs
-                )
-
-                if not other_programs:
-                    _logger.info(
-                        "POLP: Course is not in other active learning programs, Deactivating course %s",
-                        course_id,
-                    )
-                    course_access_env.search(
-                        [
-                            ("individual_student_id", "=", individual_id),
-                            ("purchased_course_id", "=", course_id),
-                        ]
-                    ).write({"is_active": False})
-                    _logger.info("POLP: Deactivated course %s", course_id)
+            self._deactivate_course_access(
+                record,
+                individual_id,
+                po_learning_program_id,
+                course_access_env,
+                use_active_flag=False,
+            )
 
         _logger.info("POLP: Course access records deleted successfully")
         return super(IndividualPOLPAccess, self).unlink()
