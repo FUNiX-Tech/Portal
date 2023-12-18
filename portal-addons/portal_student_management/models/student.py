@@ -187,8 +187,12 @@ class Student(models.Model):
         self._check_phone()
 
         _logger.info("PSM: Checking if this is an import file")
-        if not self.env.context.get("import_file"):
-            _logger.info("PSM: Not an import file, sending request to LMS")
+        if not self.env.context.get(
+            "import_file"
+        ) and not self.env.context.get("from_lms"):
+            _logger.info(
+                "PSM: Not an import file or created from LMS, sending request to LMS"
+            )
 
             headers = {
                 "Content-Type": "application/json",

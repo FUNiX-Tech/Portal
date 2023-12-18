@@ -38,7 +38,9 @@ class StudentAPI(http.Controller):
             return json_error("Missing input data", 400)
 
         # 3. Create student record
-        http.request.env["portal.student"].sudo().create(
+        http.request.env["portal.student"].with_context(
+            "from_lms"
+        ).sudo().create(
             {
                 "name": name,
                 "email": email,
