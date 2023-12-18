@@ -120,7 +120,7 @@ class LearningProgram(models.Model):
             return
 
         # Flush the ORM before executing raw SQL
-        # self.env.cr.flush()
+        self.env.cr.flush()
 
         # Find organizations that have access to this learning program
         query = """

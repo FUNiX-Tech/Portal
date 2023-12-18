@@ -20,18 +20,12 @@ class OrgPOLPAccess(models.Model):
 
     @api.model
     def create(self, vals):
-        # print('THIS HAS BEEN CALLED')
         organization_id = vals.get("organization_id")
-        # print('organization_id', organization_id)
         po_learning_program_id = vals.get("po_learning_program_id")
-        # print('po_learning_program_id', po_learning_program_id)
 
-        # if (self.env['organization_course_access'].search([('student_organization_id', '=', organization_id), ('purchased_course_id', '=', po_learning_program_id)])):
-        #     raise UserError('Organization have already purchased this course')
-
-        # Access the course_list using raw SQL
         cr = self._cr
 
+        # Fetch course IDs from the new learning program
         cr.execute(
             """
                 SELECT cm.id
@@ -41,33 +35,44 @@ class OrgPOLPAccess(models.Model):
             """,
             (po_learning_program_id,),
         )
+        new_course_ids = [row[0] for row in cr.fetchall()]
 
-        fetch_result = cr.fetchall()
-        # print('FETCH RESULT:', fetch_result)
-
-        course_ids = [row[0] for row in fetch_result]
-
+        # Fetch existing course access records for the organization
         cr.execute(
-            """SELECT oca.purchased_course_id FROM organization_course_access oca where oca.student_organization_id = %s""",
+            """SELECT oca.purchased_course_id, oca.is_active
+               FROM organization_course_access oca
+               WHERE oca.student_organization_id = %s""",
             (organization_id,),
         )
+        existing_course_access = {row[0]: row[1] for row in cr.fetchall()}
 
-        purchased_course_ids = [row[0] for row in cr.fetchall()]
-
-        print("purchased_course_ids:", purchased_course_ids)
+        print("EXISTING COURSE ACCESS", existing_course_access)
 
         try:
-            for course_id in course_ids:
-                if course_id not in purchased_course_ids:
+            for course_id in new_course_ids:
+                is_active = existing_course_access.get(course_id)
+                if course_id not in existing_course_access:
+                    # Course not accessed before, create new access
                     self.env["organization_course_access"].create(
                         {
                             "student_organization_id": organization_id,
                             "purchased_course_id": course_id,
+                            "is_single_course": False,
+                            "is_active": True,
                         }
                     )
+                elif is_active is False:
+                    # Course previously accessed but inactive, reactivate it
+                    self.env["organization_course_access"].search(
+                        [
+                            ("student_organization_id", "=", organization_id),
+                            ("purchased_course_id", "=", course_id),
+                        ]
+                    ).write({"is_active": True})
+
             return super(OrgPOLPAccess, self).create(vals)
-        except Exception:
-            raise UserError("Something went wrong")
+        except Exception as e:
+            raise UserError("An error occurred: %s" % e)
 
     @api.onchange("organization_id")
     def _onchange_organization_id(self):
@@ -87,6 +92,37 @@ class OrgPOLPAccess(models.Model):
                 ]
             }
         }
+
+    def unlink(self):
+        course_access_env = self.env["organization_course_access"]
+        for record in self:
+            org_id = record.organization_id.id
+            learning_program_id = record.po_learning_program_id.id
+
+            for course_id in record.po_learning_program_id.course_list.ids:
+                # Check if this course is in other active learning programs
+                other_programs = self.env["organization_polp_access"].search(
+                    [
+                        ("organization_id", "=", org_id),
+                        ("po_learning_program_id", "!=", learning_program_id),
+                        (
+                            "po_learning_program_id.course_list",
+                            "in",
+                            [course_id],
+                        ),
+                    ]
+                )
+
+                if not other_programs:
+                    # Deactivate the course as it's not in other active programs
+                    course_access_env.search(
+                        [
+                            ("student_organization_id", "=", org_id),
+                            ("purchased_course_id", "=", course_id),
+                        ]
+                    ).write({"is_active": False})
+
+        return super(OrgPOLPAccess, self).unlink()
 
 
 class IndividualPOLPAccess(models.Model):
@@ -108,18 +144,12 @@ class IndividualPOLPAccess(models.Model):
 
     @api.model
     def create(self, vals):
-        # print('THIS HAS BEEN CALLED 2')
         individual_student_id = vals.get("individual_student_id")
-        # print('individual_student_id', individual_student_id)
         po_learning_program_id = vals.get("po_learning_program_id")
-        # print('po_learning_program_id', po_learning_program_id)
 
-        # if (self.env['individual_course_access'].search([('individual_student_id', '=', individual_student_id), ('purchased_course_id', '=', po_learning_program_id)])):
-        #     raise UserError('Student have already purchased this course')
-
-        # Access the course_list using raw SQL
         cr = self._cr
 
+        # Fetch course IDs from the new learning program
         cr.execute(
             """
                 SELECT cm.id
@@ -129,31 +159,46 @@ class IndividualPOLPAccess(models.Model):
             """,
             (po_learning_program_id,),
         )
+        new_course_ids = [row[0] for row in cr.fetchall()]
 
-        fetch_result = cr.fetchall()
-        course_ids = [row[0] for row in fetch_result]
-
+        # Fetch existing course access records for the individual student
         cr.execute(
-            """SELECT ica.purchased_course_id FROM individual_course_access ica where ica.individual_student_id = %s""",
+            """SELECT ica.purchased_course_id, ica.is_active
+               FROM individual_course_access ica
+               WHERE ica.individual_student_id = %s""",
             (individual_student_id,),
         )
-
-        purchased_course_ids = [row[0] for row in cr.fetchall()]
-
-        # print('purchased_course_ids:', purchased_course_ids)
+        existing_course_access = {row[0]: row[1] for row in cr.fetchall()}
 
         try:
-            for course_id in course_ids:
-                if course_id not in purchased_course_ids:
+            for course_id in new_course_ids:
+                is_active = existing_course_access.get(course_id)
+                if course_id not in existing_course_access:
+                    # Course not accessed before, create new access
                     self.env["individual_course_access"].create(
                         {
                             "individual_student_id": individual_student_id,
                             "purchased_course_id": course_id,
+                            "is_single_course": False,
+                            "is_active": True,
                         }
                     )
+                elif is_active is False:
+                    # Course previously accessed but inactive, reactivate it
+                    self.env["individual_course_access"].search(
+                        [
+                            (
+                                "individual_student_id",
+                                "=",
+                                individual_student_id,
+                            ),
+                            ("purchased_course_id", "=", course_id),
+                        ]
+                    ).write({"is_active": True})
+
             return super(IndividualPOLPAccess, self).create(vals)
-        except Exception:
-            raise UserError("Something went wrong")
+        except Exception as e:
+            raise UserError("An error occurred: %s" % e)
 
     @api.onchange("individual_student_id")
     def _onchange_individual_student_id(self):
@@ -175,3 +220,34 @@ class IndividualPOLPAccess(models.Model):
                 ]
             }
         }
+
+    def unlink(self):
+        course_access_env = self.env["individual_course_access"]
+        for record in self:
+            individual_id = record.individual_student_id.id
+            learning_program_id = record.po_learning_program_id.id
+
+            for course_id in record.po_learning_program_id.course_list.ids:
+                # Check if this course is in other active learning programs
+                other_programs = self.env["individual_polp_access"].search(
+                    [
+                        ("individual_student_id", "=", individual_id),
+                        ("po_learning_program_id", "!=", learning_program_id),
+                        (
+                            "po_learning_program_id.course_list",
+                            "in",
+                            [course_id],
+                        ),
+                    ]
+                )
+
+                if not other_programs:
+                    # Deactivate the course as it's not in other active programs
+                    course_access_env.search(
+                        [
+                            ("individual_student_id", "=", individual_id),
+                            ("purchased_course_id", "=", course_id),
+                        ]
+                    ).write({"is_active": False})
+
+        return super(IndividualPOLPAccess, self).unlink()
