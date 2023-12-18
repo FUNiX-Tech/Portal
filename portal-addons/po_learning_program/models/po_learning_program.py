@@ -96,9 +96,9 @@ class LearningProgram(models.Model):
         query = """
             SELECT organization_id
             FROM organization_polp_access
-            WHERE po_learning_program_id = %s
+            WHERE po_learning_program_id = %s and is_active = %s;
         """
-        self._cr.execute(query, (self._origin.id,))
+        self._cr.execute(query, (self._origin.id, "true"))
         organization_ids = [row[0] for row in self._cr.fetchall()]
         _logger.info("POLP: Fetched organization IDs completed ")
         _logger.debug("POLP: Organization IDs: %s", organization_ids)
@@ -300,9 +300,9 @@ class LearningProgram(models.Model):
         query = """
             SELECT individual_student_id
             FROM individual_polp_access
-            WHERE po_learning_program_id = %s
+            WHERE po_learning_program_id = %s AND is_active = %s;
         """
-        self._cr.execute(query, (self._origin.id,))
+        self._cr.execute(query, (self._origin.id, "true"))
         individual_ids = [row[0] for row in self._cr.fetchall()]
         _logger.info("POLP: Fetched individual IDs completed")
         _logger.debug("POLP: Individual IDs: %s", individual_ids)
