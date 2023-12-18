@@ -1,5 +1,8 @@
 from odoo import models, fields, api
 from datetime import datetime
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class StudentOrganization(models.Model):
@@ -19,6 +22,8 @@ class StudentOrganization(models.Model):
 
     @api.model
     def create(self, vals):
+        _logger.info("Creating student organization")
+
         if "created_at" not in vals:
             vals["created_at"] = datetime.now()
         return super(StudentOrganization, self).create(vals)
