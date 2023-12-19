@@ -9,6 +9,7 @@ class StudentGroup_Student(models.Model):
         relation="business_student_group",
         column1="student_id",
         column2="group_id",
+        domain="[('group_organization_id', '=', student_organization_student_ids)]",
     )
 
 
