@@ -28,6 +28,8 @@ class CourseManagement(models.Model):
         column2="po_learning_program_ids",
     )
 
+    is_active = fields.Boolean(string="Is Active", default=True)
+
 
 class StudentOrganization(models.Model):
     _inherit = "student_organization"
