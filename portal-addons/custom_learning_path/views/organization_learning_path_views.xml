@@ -33,14 +33,14 @@
                     <page string="Courses">
                         <field name="course_ids" />
                     </page>
-                    <page string="Editors">
+                    <!-- <page string="Editors">
                         <field name="editor_ids" />
                     </page>
 
                     <page string="Featured Editors">
                         <field name="featured_editor_ids" />
 
-                    </page>
+                    </page> -->
                 </notebook>
               </sheet>
           </form>
