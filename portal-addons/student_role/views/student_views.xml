@@ -1,0 +1,27 @@
+<odoo>
+    <data>
+        <record id="view_student_tree_inherit" model="ir.ui.view">
+            <field name="name">portal.student.tree.inherit.student_student_organization</field>
+            <field name="model">portal.student</field>
+            <field name="inherit_id" ref="portal_student_management.student_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='phone']" position="after">
+                    <field name="student_role_id"/>
+                </xpath>
+            </field>
+        </record>
+
+
+        <record id="view_student_form_inherit" model="ir.ui.view">
+            <field name="name">portal.student.form.inherit.student_group</field>
+            <field name="model">portal.student</field>
+            <field name="inherit_id" ref="portal_student_management.student_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='date_of_birth']" position="after">
+                        <field name="student_role_id"  attrs="{'invisible': [ ('student_organization_student_ids', '=', False)]}"/>
+
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
