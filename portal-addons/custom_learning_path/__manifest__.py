@@ -27,6 +27,7 @@
         "security/ir.model.access.csv",
         "views/organization_learning_path_views.xml",
         "views/individual_learning_path_views.xml",
+        "views/student_inherit_views.xml",
     ],
     # only loaded in demonstration mode
     "demo": [

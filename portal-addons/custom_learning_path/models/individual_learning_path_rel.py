@@ -29,7 +29,6 @@ class Student(models.Model):
         comodel_name="individual_learning_path",
         inverse_name="creator_id",
         string="Created Custom Learning Paths",
-        domain="[('is_active', '=', True)]",
     )
 
 
@@ -42,5 +41,4 @@ class CourseManagement(models.Model):
         column1="course_ids",
         column2="individual_learning_path_ids",
         string="Individual Learning Paths",
-        domain="[('is_active', '=', True)]",
     )

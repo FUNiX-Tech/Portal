@@ -62,7 +62,6 @@ class Student(models.Model):
         column1="student_ids",
         column2="org_learning_path_ids",
         string="Edited Custom Learning Paths",
-        domain="[('is_active', '=', True)]",
     )
 
     # Many2many field for paths where the student is a featured editor
@@ -72,14 +71,12 @@ class Student(models.Model):
         column1="student_ids",
         column2="org_learning_path_ids",
         string="Featured Editor Learning Paths",
-        domain="[('is_active', '=', True)]",
     )
 
     org_learning_path_ids = fields.One2many(
         comodel_name="organization_learning_path",
         inverse_name="creator_id",
         string="Organization Learning Paths Created",
-        domain="[('is_active', '=', True)]",
     )
 
 
@@ -92,7 +89,6 @@ class CourseManagement(models.Model):
         column1="course_ids",
         column2="org_learning_path_ids",
         string="Organization Learning Paths",
-        domain="[('is_active', '=', True)]",
     )
 
 
@@ -103,5 +99,4 @@ class StudentOrganization(models.Model):
         comodel_name="organization_learning_path",
         inverse_name="organization_id",
         string="Organization Learning Paths",
-        domain="[('is_active', '=', True)]",
     )

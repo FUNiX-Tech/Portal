@@ -11,10 +11,6 @@ class IndividualCustomLearningPath(models.Model):
         string="Name",
         required=True,
     )
-    is_active = fields.Boolean(
-        string="Is Active",
-        default=True,
-    )
 
     description = fields.Html(
         string="Description",
