@@ -251,7 +251,6 @@ class ProjectSubmissionController(http.Controller):
                                 "number": response.number,
                                 "criteria_group": response.criteria_group.title,
                                 "group_number": response.criteria_group.number,
-                                "specifications": "temporary display_content",
                             }
                         )
 
