@@ -1,2 +1,11 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_organization_course_group,organization_course_group,model_organization_course_group,base.group_user,1,1,1,1
+
+access_business_student_course_assignment,business_student_course_assignment,model_business_student_course_assignment,base.group_user,1,1,1,1
+
+access_business_student_course_group_assignment,business_student_course_group_assignment,model_business_student_course_group_assignment,base.group_user,1,1,1,1
+
+
+access_student_group_course_assignment,student_group_course_assignment,model_student_group_course_assignment,base.group_user,1,1,1,1
+
+access_student_group_course_group_assignment,student_group_course_group_assignment,model_student_group_course_group_assignment,base.group_user,1,1,1,1

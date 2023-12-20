@@ -3,7 +3,7 @@
 from odoo import models, fields, api
 
 
-class organization_course_group(models.Model):
+class OrganizationCourseGroup(models.Model):
     _name = "organization_course_group"
     _description = "Course Group created by Admin"
 

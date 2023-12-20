@@ -4,7 +4,7 @@
     <field name="model">student_group</field>
     <field name="arch" type="xml">
       <tree>
-        <field name="group_name" />
+        <field name="name" />
         <field name="creator" />
         <field name="group_note" />
         <field name="created_at" />
@@ -22,7 +22,7 @@
       <form string="">
         <sheet>
           <group>
-            <field name="group_name" />
+            <field name="name" />
             <field name="group_note" />
             <field name="created_at" />
             <field name="group_organization_id" />

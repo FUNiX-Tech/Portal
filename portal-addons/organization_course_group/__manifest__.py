@@ -27,6 +27,8 @@
     "data": [
         "security/ir.model.access.csv",
         "views/views.xml",
+        "views/business_student_assignment_views.xml",
+        "views/student_group_assignment.views.xml",
     ],
     # only loaded in demonstration mode
 }

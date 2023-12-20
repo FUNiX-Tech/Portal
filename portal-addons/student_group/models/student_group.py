@@ -6,7 +6,7 @@ class StudentGroup(models.Model):
     _name = "student_group"
     _description = "Student Group"
 
-    group_name = fields.Char(string="name", required=True)
+    name = fields.Char(string="name", required=True)
     creator = fields.Many2one(
         comodel_name="portal.student", string="Group Creator", required=True
     )
