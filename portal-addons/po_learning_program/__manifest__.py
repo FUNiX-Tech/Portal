@@ -28,5 +28,6 @@
         "views/course_management_views.xml",
         "views/organization_views.xml",
         "views/student_views.xml",
+        "views/student_course_data.xml",
     ],
 }

@@ -1,4 +1,4 @@
-from odoo import fields, models
+from odoo import fields, models, api
 
 import requests
 
@@ -14,8 +14,6 @@ class StudentCourse(models.Model):
         "course_management", string="Course", required=True
     )
 
-    learning_progress = fields.Char(string="Learning Progress")
-
     enrollment_status = fields.Boolean(
         string="Enrollment Status", default=True
     )
@@ -26,6 +24,23 @@ class StudentCourse(models.Model):
     )
 
     learning_progress = fields.Char(string="Learning Progress", default="N/A")
+
+    organization_name = fields.Char(
+        string="Organization Name", compute="_compute_organization_name"
+    )
+
+    @api.depends("student_id")
+    def _compute_organization_name(self):
+        for record in self:
+            if (
+                record.student_id
+                and record.student_id.student_organization_student_ids
+            ):
+                record.organization_name = (
+                    record.student_id.student_organization_student_ids.name
+                )
+            else:
+                record.organization_name = "None"
 
     def _fetch_and_update_learning_progress(self):
         for record in self:

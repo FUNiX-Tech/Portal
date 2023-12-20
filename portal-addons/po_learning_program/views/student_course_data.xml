@@ -1,17 +1,32 @@
 <odoo>
-    <data>
-        <!-- Tree view for student_course_data -->
-        <record id="view_student_course_tree" model="ir.ui.view">
-            <field name="name">student.course.data.tree</field>
-            <field name="model">student_course_data</field>
-            <field name="arch" type="xml">
-                <tree>
-                    <field name="course_id"/>
-                    <field name="learning_progress"/>
-                    <field name="enrollment_status"/>
-                </tree>
-            </field>
-        </record>
-        <!-- ... other view definitions ... -->
-    </data>
+    <!-- Tree view for student_course_data -->
+    <record id="view_student_course_tree" model="ir.ui.view">
+        <field name="name">student.course.data.tree</field>
+        <field name="model">student_course_data</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="course_id" />
+                <field name="student_id" />
+                <field name="organization_name" />
+                <field name="learning_progress" />
+                <field name="enrollment_status" />
+                <field name="enrollment_date" />
+
+            </tree>
+        </field>
+    </record>
+
+
+    <record id="student_course_data_action" model="ir.actions.act_window">
+        <field name="name">Student Course Progress</field>
+        <field name="res_model">student_course_data</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem
+        id="student_course_data_menu"
+        name="Student Course Data"
+        action="student_course_data_action"
+        parent="course_management.menu_root"
+        sequence="20" />
 </odoo>
