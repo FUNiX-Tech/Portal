@@ -5,6 +5,7 @@
       <field name="arch" type="xml">
         <tree>
           <field name="name"/>
+          <field name="organization_code"/>
           <field name="creator"/>
           <field name="created_at"/>
           <field name="note" />
@@ -26,6 +27,7 @@
                 <field name="creator" />
               </group>
               <group>
+                <field name="organization_code" />
                 <field name="created_at" />
                 <field name="note" />
               </group>
