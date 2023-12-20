@@ -7,9 +7,18 @@
             <form string="Project Criterion">
                 <sheet>
                     <group>
+                        <field name="specification_title" class="border bg-light" readonly="1"/>
                         <field name="specification_content" class="border bg-light" readonly="1"/>
                         <field name="result" class="border bg-light"/>
-                        <field name="feedback" class="border bg-light"/>
+                        <field name="feedback" widget="project_grading_html" class="border bg-light"/>
+                        <field name="material">
+                            <tree>
+                                <field name="label" readonly='1' widget="material_field" />
+                                <field name="url" invisible="1" />
+                                <field name="append" invisible="1" />
+                                <field name="id" invisible="1" />
+                            </tree>
+                        </field>
                     </group>
                 </sheet>
             </form>

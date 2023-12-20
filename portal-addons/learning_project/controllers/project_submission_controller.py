@@ -247,11 +247,11 @@ class ProjectSubmissionController(http.Controller):
                             {
                                 "title": response.criterion.title,
                                 "result": response.result,
-                                "feedback": response.feedback,
+                                "feedback": response.feedback_render,
                                 "number": response.number,
                                 "criteria_group": response.criteria_group.title,
                                 "group_number": response.criteria_group.number,
-                                "specifications": response.criterion.display_content,
+                                "specifications": "temporary display_content",
                             }
                         )
 

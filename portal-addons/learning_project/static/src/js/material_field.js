@@ -62,6 +62,9 @@ export class MaterialField extends CharField {
         });
 
         document.querySelector(EDITOR_SELECTOR).dispatchEvent(event);
+
+        // test new form
+        document.dispatchEvent(event);
     }
 
 }

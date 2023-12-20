@@ -25,7 +25,7 @@
 
                             <field name="specifications" string="Specifications" class='criterion_specifications' >
                                 <tree create="false" delete="false" class="row">
-                                    <field name="specification_content" class="col-4" readonly="1" />
+                                    <field name="specification_title" class="col-4" readonly="1" />
                                     <field name="feedback" class="col-6 html_field"/>
                                     <field name="result" class="col-2"/>
                                 </tree>
@@ -51,12 +51,15 @@
                                 </tree>
                             </field>
                             <field name="feedback" widget="project_grading_html" class="feedback_editor bg-light border html_field" />
+                            <field name="additional_reading" widget="project_grading_html" class="feedback_editor bg-light border html_field" />
+
                             <field name="material">
-                                <tree>
+                                <tree class='d-flex'>
                                     <field name="label" readonly='1' widget="material_field" />
                                     <field name="url" invisible="1" />
                                     <field name="append" invisible="1" />
                                     <field name="id" invisible="1" />
+                                    <button string="Use" type="object" name="button_use_additional_reading" context="{'criterion_response_id': parent.id }" class="btn btn-primary" />
                                 </tree>
                             </field>
                         </group>
@@ -82,16 +85,14 @@
                             </div>
                             <div class="preview_criterion_body">
                                 <div class="preview_criterion_feedback">
-                                    <field name="feedback" attrs="{'readonly': [('step','&gt;', 2)]}" class="html_field pointer_events_none"/>
+                                    <field name="feedback_render" class="html_field pointer_events_none"/>
                                 </div>
-                                <field name="specifications_description" readonly="1"/>
                             </div>
                         </div>
 
                         <field name="specifications" string="" attrs="{'readonly': [('step','&gt;',2)]}">
                             <tree create="false" delete="false" class="row">
-                                <field name="specification_content" class="col-10" readonly="1" />
-                                <field name="feedback" class="col-6 html_field" readonly="1" />
+                                <field name="specification_title" class="col-10" readonly="1" />
                                 <field name="result" class="col-2" />
                             </tree>
                         </field>

@@ -22,8 +22,6 @@ class ProjectCriterion(models.Model):
 
     title = fields.Char(string="Criterion name", required=True)
 
-    display_content = fields.Html(string="Display Content for LMS", default="")
-
     specifications = fields.One2many(
         comodel_name="project_specification",
         string="Specifications",

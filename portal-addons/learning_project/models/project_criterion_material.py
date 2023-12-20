@@ -53,3 +53,14 @@ class ProjectCriterionMaterial(models.Model):
                 raise ValidationError(
                     "Auto append additional reading for this criterion already exists."
                 )
+
+    def button_use_additional_reading(self):
+        criterion_response_id = self.env.context.get("criterion_response_id")
+        print(criterion_response_id)
+        criterion_response = self.env["project_criterion_response"].search(
+            [("id", "=", criterion_response_id)]
+        )
+        for r in self:
+            criterion_response.additional_reading = r.append
+
+        return True

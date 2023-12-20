@@ -14,12 +14,24 @@ odoo.define('learning_project.wysiwyg', function (require) {
         async startEdition() {
             await this._super();
 
-            this.$el[0].addEventListener('material', e => {
-                this._handle_material(e.detail)
-            })
+            // this.$el[0].addEventListener('material', e => {
+            //     this._handle_material(e.detail)
+            // })
 
             this._inform_editor_started()
 
+            this.ntav = this.onMeterialListenerHanlder.bind(this)
+
+            document.addEventListener('material',this.ntav)
+
+        },destroy() {
+            this._super()
+            console.log('DESTROY WYYYYY')
+            document.removeEventListener('material',this.ntav)
+
+        }, onMeterialListenerHanlder(e) {
+            console.log('new material event')
+            this._handle_material(e.detail)
         },
         _handle_material(event_data) {
             const action_type = event_data.action_type
