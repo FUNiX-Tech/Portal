@@ -18,6 +18,10 @@ class ProjectSpecificationResponse(models.Model):
         "project_specification", string="Specification"
     )
 
+    specification_title = fields.Char(
+        string="Specification Title", related="specification.title"
+    )
+
     specification_content = fields.Html(
         string="Specification Content", related="specification.content"
     )
@@ -26,6 +30,11 @@ class ProjectSpecificationResponse(models.Model):
         [PASSED, DID_NOT_PASS, INCOMPLETE, NOT_GRADED],
         default=NOT_GRADED[0],
         string="Result",
+    )
+
+    material = fields.One2many(
+        "project_criterion_material",
+        related="criterion_response.criterion.material",
     )
 
     _sql_constraints = [

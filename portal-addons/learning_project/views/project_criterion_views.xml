@@ -20,10 +20,9 @@
                         <field name="project" string="Project" class="border bg-light" invisible="1"/>
                         <field name="criteria_group" string="Criteria Group" class="border bg-light" context="{'default_project': project}" domain="[('project', '=', project)]" />
                         <field name="criteria_group_number" class="border bg-light"/>
-                        <field name="display_content" class="border bg-light"/>
                         <field name="specifications" string='Specifications ' class="border bg-light">
                             <tree>
-                                <field name="content" />
+                                <field name="title" />
                             </tree>
                         </field>
                         <field name="material" class="border bg-light">
@@ -45,7 +44,6 @@
                 <field name="criteria_group" />
                 <field name="number" />
                 <field name="title" />
-                <field name="display_content" />
             </tree>
         </field>
     </record>

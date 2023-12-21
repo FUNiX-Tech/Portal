@@ -54,16 +54,26 @@ class ProjectCriterionResponse(models.Model):
         string="Specifications",
     )
 
-    specifications_description = fields.Html(
-        "Specifications Description", related="criterion.display_content"
-    )
-
     feedback = fields.Html(
-        string="Feedback Total",
+        string="General Feedback",
         compute="_compute_feedback",
         readonly=False,
         store=True,
         sanitize_attributes=False,
+    )
+
+    additional_reading = fields.Html(
+        string="Additional Reading",
+        sanitize_attributes=False,
+        compute="_compute_additional_reading",
+        readonly=False,
+        store=True,
+    )
+
+    feedback_render = fields.Html(
+        string="Feedback to display to student",
+        compute="_compute_feedback_render",
+        store=True,
     )
 
     number = fields.Integer(string="Number", related="criterion.number")
@@ -76,7 +86,7 @@ class ProjectCriterionResponse(models.Model):
 
     criteria_group = fields.Many2one(
         related="criterion.criteria_group", store=True, string="Criteria Group"
-    )  # store=True để có thể sort
+    )
 
     previously_passed = fields.Boolean(
         string="Previously Passed", compute="_compute_previously_passed"
@@ -344,19 +354,9 @@ class ProjectCriterionResponse(models.Model):
                 return
 
             if len(r.templates) > 0:
-                feedback_lead = r.templates[0].content
+                r.feedback = r.templates[0].content
             else:
-                feedback_lead = ""
-
-            feedback_body = "<ul>"
-
-            for spec in r.specifications:
-                if text_from_html(spec.feedback).strip() != "":
-                    feedback_body += f"<li>{spec.feedback}</li>"
-
-            feedback_body += "</ul>"
-
-            r.feedback = html.unescape(feedback_lead + feedback_body)
+                r.feedback = ""
 
     def button_save(self):
         for r in self:
@@ -373,7 +373,19 @@ class ProjectCriterionResponse(models.Model):
         for r in self:
             if r.step == 1:
                 # Đang chấm từng đặc tả
-                # Click next để sang bước gom các đặc tả thành 1 feedback duy nhất
+                # Click next để sang bước nhập nhận xét chung và additional reading
+                # Nếu đặc tả did not pass > required feedback
+                # Nếu đặc tả passed > optional feedback
+
+                for spec in r.specifications:
+                    if (
+                        spec.result == DID_NOT_PASS[0]
+                        and text_from_html(spec.feedback).strip() == ""
+                    ):
+                        raise UserError(
+                            "You have to give feedback for did not pass specification."
+                        )
+
                 if r.graded_all is True:
                     r.step = 2
                     return True
@@ -476,3 +488,64 @@ class ProjectCriterionResponse(models.Model):
             return super(ProjectCriterionResponse, self).write(values)
         else:
             raise UserError("You are not assigned to this submission.")
+
+    @api.depends("step")
+    def _compute_feedback_render(self):
+        for r in self:
+            if r.step >= 3:
+                result = ""
+                header = ""
+                body = ""
+                footer = ""
+
+                header = f'<div class="odoo_criterion_general_response">{r.feedback}</div>'
+                footer = f'<div class="odoo_criterion_additional_reading">{r.additional_reading}</div>'
+
+                if r.result == INCOMPLETE[0]:
+                    body += "<p>Một số điểm cần thay đổi để hoàn thành tiêu chí:</p>"
+                    footer = "<hr/>" + footer
+
+                if r.result == INCOMPLETE[0]:
+                    body += '<ul class="odoo_criteria incomplete">'
+                else:
+                    body += '<ul class="odoo_criteria">'
+
+                i = 1
+                for spec in r.specifications:
+                    if r.result == INCOMPLETE[0]:
+                        ele_class = "odoo_criterion incomplete"
+                        li = f'<li class="{ele_class}"><p class="odoo_spec_title"><strong>Đặc tả {i}: {spec.specification.title}</strong></p><div class="odoo_spec_content">{spec.specification.content}</div></li>'
+                        body += li
+
+                    else:
+                        if text_from_html(spec.feedback).strip() != "":
+                            ele_class = (
+                                "odoo_criterion passed"
+                                if spec.result == "passed"
+                                else "odoo_criterion did_not_pass"
+                            )
+                            li = f'<li class="{ele_class}"><p class="odoo_spec_title"><strong>Đặc tả {i}: {spec.specification.title}</strong></p><div class="odoo_spec_content">{spec.specification.content}</div><hr /><div><p class="odoo_spec_response_title"><strong>Nhận xét:</strong></p><div class="odoo_spec_response_content">{spec.feedback}</div></div></li>'
+                            body += li
+                    i += 1
+
+                body += "</ul>"
+
+                result = header + body + footer
+
+                r.feedback_render = html.unescape(result)
+
+            else:
+                r.feedback_render = ""
+
+    @api.depends("result")
+    def _compute_additional_reading(self):
+        for r in self:
+            default_additional_reading = ""
+            for ad in r.criterion.material:
+                if ad.auto_append is True:
+                    if r.result == INCOMPLETE[0]:
+                        default_additional_reading = f"<div><p><strong>Bạn có thể tham khảo thêm các tài liệu dưới đây để cải thiện bài</strong></p><div>{ad.append}</div></div>"
+                    else:
+                        default_additional_reading = f"<div><p><strong>Đọc thêm</strong></p><div>{ad.append}</div></div>"
+                    break
+            r.additional_reading = default_additional_reading

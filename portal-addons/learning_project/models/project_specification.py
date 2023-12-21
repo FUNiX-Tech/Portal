@@ -9,3 +9,4 @@ class ProjectSpecification(models.Model):
     criterion = fields.Many2one("project_criterion", string="Criterion")
 
     content = fields.Html(string="Content", default="")
+    title = fields.Char(string="Title", default="")

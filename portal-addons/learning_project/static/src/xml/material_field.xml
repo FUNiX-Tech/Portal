@@ -11,7 +11,9 @@
 
                 <button t-on-click="(ev) => this.onMaterial(ev)" t-att-data-url="props.record.data.url" t-att-data-url-label="props.record.data.label" data-action-type="insert_sentence" class="btn btn-primary insert_material_btn">Insert Sentence</button>
 
-                <button t-on-click="(ev) => this.onMaterial(ev)" t-att-data-material-id="props.record.data.id" t-att-data-append="props.record.data.append" data-action-type="append" t-ref="append_btn" class="btn btn-primary append_material_btn">
+                <button t-on-click="(ev) => this.onMaterial(ev)" t-att-data-material-id="props.record.data.id" t-att-data-append="props.record.data.append" data-action-type="append" t-ref="append_btn" class="d-none btn btn-primary append_material_btn">
+
+
                     <t t-if="state.is_appended">
                         Unappend
                     </t>
