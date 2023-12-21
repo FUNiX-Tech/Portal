@@ -230,3 +230,15 @@
 .odoo_criterion_general_response {
     margin-bottom: 1em;
 }
+
+/* html editor height  */
+.feedback_editor .odoo-editor-editable {
+    min-height: 150px;
+}
+
+.show_select_angle select {
+    appearance: auto ;
+    -moz-appearance: auto ;
+    -webkit-appearance: auto ;
+    background: transparent;
+}
