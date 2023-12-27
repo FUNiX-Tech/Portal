@@ -503,7 +503,6 @@ class ProjectCriterionResponse(models.Model):
 
                 if r.result == INCOMPLETE[0]:
                     body += "<p>Một số điểm cần thay đổi để hoàn thành tiêu chí:</p>"
-                    footer = "<hr/>" + footer
 
                 if r.result == INCOMPLETE[0]:
                     body += '<ul class="odoo_criteria incomplete">'
@@ -544,7 +543,7 @@ class ProjectCriterionResponse(models.Model):
             for ad in r.criterion.material:
                 if ad.auto_append is True:
                     if r.result == INCOMPLETE[0]:
-                        default_additional_reading = f"<div><p><strong>Bạn có thể tham khảo thêm các tài liệu dưới đây để cải thiện bài</strong></p><div>{ad.append}</div></div>"
+                        default_additional_reading = f"<hr/><div><p><strong>Bạn có thể tham khảo thêm các tài liệu dưới đây để cải thiện bài</strong></p><div>{ad.append}</div></div>"
                     else:
                         default_additional_reading = f"<div><p><strong>Đọc thêm</strong></p><div>{ad.append}</div></div>"
                     break

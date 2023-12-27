@@ -37,7 +37,7 @@
                     <div attrs="{'invisible': [('step', '!=', 2 )]}" id="form_group_step_2">
 
                         <group>
-                            <field name="result" class="border bg-light"/>
+                            <field name="result" class="border bg-light show_select_angle"/>
                             <span attrs="{'invisible': [('is_abnormal_result', '=', False)]}">Warning</span>
                             <span attrs="{'invisible': [('is_abnormal_result', '=', False)]}" class="text-warning">Your final result is different from the computed result.</span>
 

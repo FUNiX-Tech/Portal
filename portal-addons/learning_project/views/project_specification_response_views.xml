@@ -9,8 +9,8 @@
                     <group>
                         <field name="specification_title" class="border bg-light" readonly="1"/>
                         <field name="specification_content" class="border bg-light" readonly="1"/>
-                        <field name="result" class="border bg-light"/>
-                        <field name="feedback" widget="project_grading_html" class="border bg-light"/>
+                        <field name="result" class="border bg-light show_select_angle"/>
+                        <field name="feedback" widget="project_grading_html" class="border bg-light feedback_editor"/>
                         <field name="material">
                             <tree>
                                 <field name="label" readonly='1' widget="material_field" />
