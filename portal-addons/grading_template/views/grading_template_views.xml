@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="grading_template_view_form" model="ir.ui.view">
+        <field name="name">grading_template.form</field>
+        <field name="model">grading_template</field>
+        <field name="arch" type="xml">
+            <form string="grading_template">
+                <sheet>
+                    <group>
+                        <field name="category" string="Category" class="border bg-light"/>
+                        <field name="code" string="Code" class="border bg-light"/>
+                        <field name="name" string="Name" class="border bg-light" widget="custom_text"/>
+                        <field name="content" string="Content" class="border bg-light dropzone" widget="html" />
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="grading_template_view_tree" model="ir.ui.view">
+        <field name="name">grading_template.tree</field>
+        <field name="model">grading_template</field>
+        <field name="arch" type="xml">
+            <tree limit="20" string="grading_template" edit="false">
+                <field name="category" />
+                <field name="code" />
+                <field name="name" />
+                <field name="content" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="grading_template_action" model="ir.actions.act_window">
+        <field name="name">Grading Template</field>
+        <field name="res_model">grading_template</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_grading_template_root" name="Grading Template">
+        <menuitem id="menu_action_grading_template_action" name="Template" action="grading_template_action"/>
+        <menuitem id="menu_action_grading_template_category_action" name="Template Category" action="grading_template_category_action"/>
+    </menuitem>
+</odoo>

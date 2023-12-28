@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_mail_service_admin,mail_service_admin,model_mail_service,group_mail_service_admin,1,1,1,1
+access_mail_service_user,mail_service_user,model_mail_service,group_mail_service_user,1,0,0,0

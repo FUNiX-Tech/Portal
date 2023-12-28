@@ -1,0 +1,8 @@
+# Submission, criterion, specification status (result)
+PASSED = ("passed", "Passed")
+DID_NOT_PASS = ("did_not_pass", "Did not pass")
+INCOMPLETE = ("incomplete", "Incomplete")
+UNABLE_TO_REVIEW = ("unable_to_review", "Unable to Review")
+NOT_GRADED = ("not_graded", "Not graded")
+NONE = ("none", "None")
+CANCELED = ("canceled", "Canceled")

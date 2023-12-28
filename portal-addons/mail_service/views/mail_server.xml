@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <record id="out_going_mailserver_data" model="ir.mail_server">
+            <field name="name">[PORTAL] Outgoing Mail Server</field>
+            <field name="sequence">1</field>
+            <field name="smtp_host">smtp.sendgrid.net</field>
+            <field name="smtp_port">587</field>
+            <field name="smtp_encryption">starttls</field>
+            <field name="smtp_user">apikey</field>
+            <field name="smtp_pass"></field>
+            <field name="smtp_debug">True</field>
+        </record>
+    </data>
+</odoo>

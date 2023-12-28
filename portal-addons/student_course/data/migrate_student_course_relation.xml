@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<odoo>
+  <data noupdate="0">
+    <function model="student.course" name="migrate_student_course_relation"/>
+  </data>
+</odoo>

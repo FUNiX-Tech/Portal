@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<odoo>
+  <record model="ir.ui.view" id="feedback_tickets_management_list">
+    <field name="name">Feedback Tickets Management List</field>
+    <field name="model">feedback_ticket</field>
+    <field name="arch" type="xml">
+      <tree decoration-danger="warning_ticket == True">
+        <field name="created_at" />
+        <field name="ticket_number" />
+        <field name="processing_time" widget="badge" decoration-danger="warning_ticket"/>
+        <field name="warning_ticket" invisible="True" />
+        <field name="ticket_status" widget="badge"
+                                    decoration-warning="ticket_status == 'waiting'"
+                                    decoration-info="ticket_status == 'assigned'"
+                                    decoration-primary="ticket_status == 'in_progress'"
+                                    decoration-success="ticket_status == 'done'" />
+        <field name="ticket_category"  widget="badge" decoration-bf="True" />
+        <field name="ticket_requester" />
+        <field name="requester_email" />
+        <field name="ticket_attachment" widget="url"  text="Click here to see" attrs="{'invisible':[('ticket_attachment','=', False)]}" />
+        <field name="course_rel" />
+        <field name="ticket_assignee" />
+        <field name="assign_to_you" />
+        <field name="write_date" />
+
+      </tree>
+    </field>
+  </record>
+
+  <record model="ir.ui.view" id="feedback_tickets_management_form">
+    <field name="name">Feedback Tickets Management Form</field>
+      <field name="model">feedback_ticket</field>
+      <field name="arch" type="xml">
+        <form>
+          <header>
+              <field name="check_uid_assignee" invisible="True" />
+              <button type="object" string="Start Resolving " name="button_start_resolving"  class="oe_highlight"  attrs="{'invisible': ['|',('check_uid_assignee', '!=', True ),('ticket_status','!=','assigned')]}"/>
+              <button type="object" string="Start Resolving " name="button_start_resolving"  class="oe_highlight disabled"  attrs="{'invisible': [('check_uid_assignee', '==', True ),('ticket_status','==','assigned')]}"/>
+              <field name="ticket_status" widget="statusbar"/>
+          </header>
+          <sheet>
+              <h4 style="color:#66598f">General Information</h4>
+              <hr />
+              <group>
+                <group>
+                  <field name="ticket_number"/>
+                  <field name="ticket_requester" />
+                  <field name="requester_email" />
+                </group>
+                <group>
+                  <field name="created_at" />
+                  <field name="course_rel" />
+                </group>
+              </group>
+              <separator />
+              <h4 style="color:#66598f">Feedback Details</h4>
+              <hr/>
+              <group>
+                <group>
+                  <field name="ticket_category" widget="badge"  />
+                  <field name="ticket_description"/>
+                </group>
+                <group>
+                  <field name="lesson_url"  widget="url" />
+                  <field name="ticket_attachment" widget="url"  text="Click here to open image" attrs="{'invisible':[('ticket_attachment','==', False)]}"/>
+                  <field name="ticket_attachment" widget="url"  attrs="{'invisible':[('ticket_attachment','!=', False)]}"/>
+                  <field name="ticket_assignee" />
+                </group>
+              </group>
+              <separator />
+              <h4 style="color:#66598f">Response</h4>
+              <hr />
+              <group>
+                <field name="ticket_response" attrs="{'readonly':['|',('ticket_status','in',['waiting','assigned']), ('check_uid_assignee', '!=', True )]}"/>
+              </group>
+          </sheet>
+          <div class="oe_chatter">
+              <field name="activity_ids" />
+              <field name="message_follower_ids" groups="base.group_user"/>
+              <field name="message_ids"/>
+          </div>
+        </form>
+    </field>
+  </record>
+  <!--Ticket search view by number, title, assignee-->
+    <record model="ir.ui.view" id="feedback_tickets_management_search">
+      <field name="name">Feedback Tickets Management Search</field>
+      <field name="model">feedback_ticket</field>
+      <field name="arch" type="xml">
+        <search>
+          <field name="ticket_number" />
+          <field name="ticket_assignee" />
+          <field name="ticket_status" />
+          <filter name="filter_personal_ticket" string="Your Tickets" domain="[('ticket_assignee', '=', uid)]" />
+        </search>
+      </field>
+  </record>
+
+  <!-- actions opening views on models -->
+  <record model="ir.actions.act_window" id="feedback_ticket_management_action_window">
+    <field name="name">Feedback Ticket Management</field>
+    <field name="res_model">feedback_ticket</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+
+
+
+  <!-- Top menu item -->
+  <menuitem name="Feedback Ticket" id="feedback_ticket_management_menu_root"/>
+    <menuitem name="All Tickets" id="feedback_ticket_management_list_all" parent="feedback_ticket_management_menu_root"
+              action="feedback_ticket_management_action_window" />
+</odoo>

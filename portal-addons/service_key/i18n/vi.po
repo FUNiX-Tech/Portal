@@ -1,0 +1,96 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: POEditor.com\n"
+"Project-Id-Version: Odoo Server 16.0\n"
+"Language: vi\n"
+
+#. module: service_key
+#: model:res.groups,name:service_key.group_service_key_admin
+msgid "Admin"
+msgstr "Quản trị viên"
+
+#. module: service_key
+#: model:ir.model.fields,field_description:service_key.field_service_key_configuration__check_group
+msgid "Check Group Super User"
+msgstr "Kiểm tra có thuộc nhóm siêu người dùng"
+
+#. module: service_key
+#: model:ir.model.fields,field_description:service_key.field_service_key_configuration__create_uid
+msgid "Created by"
+msgstr "Tạo bởi"
+
+#. module: service_key
+#: model:ir.model.fields,field_description:service_key.field_service_key_configuration__create_date
+msgid "Created on"
+msgstr "Được tạo trên"
+
+#. module: service_key
+#: model:ir.model.fields,field_description:service_key.field_service_key_configuration__display_name
+msgid "Display Name"
+msgstr "Tên hiển thị"
+
+#. module: service_key
+#: model:ir.model.fields,field_description:service_key.field_service_key_configuration__id
+msgid "ID"
+msgstr "ID"
+
+#. module: service_key
+#: model:ir.model.fields,field_description:service_key.field_service_key_configuration____last_update
+msgid "Last Modified on"
+msgstr "Sửa đổi lần cuối vào"
+
+#. module: service_key
+#: model:ir.model.fields,field_description:service_key.field_service_key_configuration__write_uid
+msgid "Last Updated by"
+msgstr "Cập nhật lần cuối bởi"
+
+#. module: service_key
+#: model:ir.model.fields,field_description:service_key.field_service_key_configuration__write_date
+msgid "Last Updated on"
+msgstr "Cập nhật lần cuối vào"
+
+#. module: service_key
+#: model:ir.model.fields,field_description:service_key.field_service_key_configuration___original_api_key
+msgid "Original API Key"
+msgstr "Khóa API gốc"
+
+#. module: service_key
+#: model:ir.model.fields,field_description:service_key.field_service_key_configuration__private
+msgid "Private"
+msgstr "Bảo mật"
+
+#. module: service_key
+#: model:ir.module.category,name:service_key.module_category_service_key
+msgid "Service Key"
+msgstr "Khóa dịch vụ"
+
+#. module: service_key
+#: model:ir.actions.act_window,name:service_key.action_service_key_configuration
+#: model:ir.model,name:service_key.model_service_key_configuration
+#: model:ir.ui.menu,name:service_key.menu_service_key_configuration
+#: model:ir.ui.menu,name:service_key.menu_service_key_configuration_list
+msgid "Setting Config"
+msgstr "Cài đặt cấu hình"
+
+#. module: service_key
+#: model:ir.model.fields,field_description:service_key.field_service_key_configuration__name
+msgid "Setting Name"
+msgstr "Tên cài đặt"
+
+#. module: service_key
+#: model:ir.model.fields,field_description:service_key.field_service_key_configuration__api_key
+msgid "Setting Value"
+msgstr "Giá trị cài đặt"
+
+#. module: service_key
+#: model:res.groups,name:service_key.group_service_key_super_user
+msgid "Super User"
+msgstr "Siêu người dùng"
+
+#. module: service_key
+#: model:res.groups,name:service_key.group_service_key_user
+msgid "User"
+msgstr "Người dùng"

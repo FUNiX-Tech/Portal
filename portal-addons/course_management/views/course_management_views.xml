@@ -1,0 +1,109 @@
+<odoo>
+  <data>
+    <!--Kanban view-->
+    <record model="ir.ui.view" id="view_course_management_kanban">
+      <field name="name">course_management kanban</field>
+      <field name="model">course_management</field>
+      <field name="arch" type="xml">
+        <kanban string="eLearning Overview" class="o_emphasize_colors o_kanban_dashboard o_slide_kanban breadcrumb_item active" edit="false" sample="1">
+          <field name="course_code"/>
+          <field name="course_name"/>
+          <field name="course_creator"/>
+          <field name="course_desc"/>
+          <field name="created_at"/>
+            <templates>
+              <t t-name="kanban-box">
+                <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                  <div class="o_kanban_card_header">
+                    <div class="o_kanban_card_header_title mb16">
+                        <div class="o_primary">
+                            <a type="edit" class="me-auto">
+                                <span><field name="course_name" class="o_primary"/></span>
+                            </a>
+                        </div>
+                    </div>
+                  </div>
+                    <div class="container o_kanban_card_content mt0">
+                      <div class="row mb16">
+                          <div class="col-8 o_kanban_primary_left">
+                              <div class="d-flex flex-column"  >
+                                  <span>Course Code: <field name="course_code" class="o_primary"/></span>
+                                  <span>Course Creator: <field name="course_creator"/></span>
+                                  <span>Created at: <field name="created_at"/></span>
+                              </div>
+                          </div>
+                          <div class="col-4 o_kanban_primary_right">
+                          </div>
+                      </div>
+                      <div class="row">
+                        <span>Description: <field name="course_desc"/></span>
+                      </div>
+                  </div>
+                </div>
+              </t>
+            </templates>
+        </kanban>
+      </field>
+    </record>
+
+    <!-- explicit list view definition -->
+    <record model="ir.ui.view" id="view_course_management_list">
+      <field name="name">course_management list</field>
+      <field name="model">course_management</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="course_code"/>
+          <field name="course_name"/>
+          <field name="course_creator"/>
+          <field name="course_desc"/>
+          <field name="created_at"/>
+        </tree>
+      </field>
+    </record>
+    <!-- Form view-->
+    <record model="ir.ui.view" id="view_course_management_form">
+      <field name="name">Course Form</field>
+      <field name="model">course_management</field>
+      <field name="arch" type="xml">
+        <form>
+          <sheet>
+            <h4 style="color:#66598f">General Information</h4>
+            <hr/>
+            <group>
+              <group>
+                <field name="course_code"/>
+                <field name="course_name"/>
+                <field name="course_creator"  options="{'no_create': True, 'no_create_edit':True}" attrs="{'readonly': [('created_at', '!=', False)]}"/>
+              </group>
+              <group>
+                <field name="course_desc"/>
+                <field name="created_at" />
+              </group>
+            </group>
+            <separator />
+            <h4 style="color:#66598f">Organization List</h4>
+            <hr/>
+            <field name="organization_ids" />
+            <field name="temp_organization_ids" invisible="True"/> <!--computed temp_organization to calculate-->
+            <separator />
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+
+    <!-- actions opening views on models -->
+    <record model="ir.actions.act_window" id="course_management.action_window">
+      <field name="name">Course Management</field>
+      <field name="res_model">course_management</field>
+      <field name="view_mode">kanban,tree,form</field>
+    </record>
+
+
+
+    <!-- Top menu item -->
+    <menuitem name="Course Management" id="course_management.menu_root" groups="group_course_management_admin"/>
+    <menuitem name="Courses" id="course_management.menu_1_list" parent="course_management.menu_root"
+              action="course_management.action_window" groups="group_course_management_admin"/>
+  </data>
+</odoo>

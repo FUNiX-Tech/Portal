@@ -1,0 +1,24 @@
+<odoo>
+    <data>
+         <record id="view_course_management_form_inherit" model="ir.ui.view">
+            <field name="name">course_management.form.inherit.student_course</field>
+            <field name="model">course_management</field>
+            <field name="inherit_id" ref="course_management.view_course_management_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//form/sheet/group" position="after">
+                    <group string="Student Group">
+                        <field name="student_group_course_ids"
+                            options="{'no_create': True}">
+                            <tree>
+                                <field name="name" />
+                                <field name="creator" />
+                                <field name="created_at" />
+                                <field name="group_note" />
+                            </tree>
+                        </field>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

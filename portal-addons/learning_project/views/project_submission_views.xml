@@ -1,0 +1,113 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="project_submission_view_form" model="ir.ui.view">
+        <field name="name">project_submission.form</field>
+        <field name="model">project_submission</field>
+        <field name="arch" type="xml">
+            <form string="Project Submission">
+                <header>
+                    <span attrs="{'invisible': ['|',('grading_status','=','waiting_for_approving'),('user_can_grade','=',False)]}">
+                        <button name="submit_grade" attrs="{'invisible':[('has_graded_all_criteria','=',True),('result','=','not_graded')]}" string="Submit" confirm="Are you sure? You can not re-grade this submission after clicking OK." type="object" class="oe_highlight disabled"/>
+                        <button name="submit_grade" attrs="{'invisible':['|',('has_graded_all_criteria','=',False),('result','!=','not_graded')]}" string="Submit" confirm="Are you sure? You can not re-grade this submission after clicking OK." type="object" class="oe_highlight"/>
+                    </span>
+
+                    <span attrs="{'invisible': ['|',('grading_status','!=','waiting_for_approving'),('user_can_grade','=',False)]}">
+                        <button name="button_fake_submit" string="Submit" class="mx-2 disabled btn btn-primary" />
+                        <button name="button_fake_unable_to_review" string="Unable To Review" class="mx-2 disabled btn btn-danger" />
+                    </span>
+
+                    <span attrs="{'invisible': ['|',('grading_status','=','waiting_for_approving'),('user_can_grade','=',False)]}">
+                        <button name="submit_grade" attrs="{'invisible':[('result','!=','not_graded')]}" context="{'unable_to_review': True}" type="object" class="mx-2 btn-danger " string="Unable To Review" confirm="Are you sure? You can not re-grade this submission after clicking OK."/>
+                    </span>
+                    <button attrs="{'invisible':['|',('result','=','not_graded'),('user_can_grade','=',False)]}" class="disabled mx-2 btn-danger oe_highlight" string="Unable To Review" />
+
+                    <span attrs="{'invisible': ['|',('grading_status','=','waiting_for_approving'),('user_can_grade','=',False)]}">
+                        <button name="re_update_lms_grade" attrs="{'invisible':['|',('grading_status','=','success'),('grading_status','=','idle')]}" class="mx-2 btn btn-primary" string="Re-update LMS Grade" type="object" />
+                    </span>
+                    <span attrs="{'invisible': [('user_can_grade','=',False)]}">
+                        <button attrs="{'invisible':[('grading_status','=','failed')]}" class="disabled mx-2 oe_highlight" string="Re-update LMS Grade" />
+                    </span>
+
+                    <span attrs="{'invisible': ['|',('grading_status','!=','waiting_for_approving'),('user_can_grade','=',False)]}">
+                        <button groups="mentor_management.group_mentor_management_admin,base.group_system" attrs="{'invisible':[('should_display_approve_btn','=',False)]}" string="Approve" type="object" name="button_approve" class="mx-2 btn btn-warning" confirm="This is an abnormal result. Are you sure? You can not re-grade this submission after clicking OK." />
+                        <button groups="mentor_management.group_mentor_management_admin,base.group_system" attrs="{'invisible':[('should_display_approve_btn','=',False)]}" string="Disapprove" type="object" name="button_disapprove" class="mx-2 btn btn-warning" confirm="Are you sure that you want to disapprove this submsision result?" />
+                    </span>
+                </header>
+                <sheet>
+                    <h3 style="color:#66598f">Genaral Information</h3>
+                    <hr />
+                    <group>
+                        <field name="should_display_approve_btn" invisible="1"/>
+                        <field name="approved" invisible="1"/>
+                        <field name="has_abnormal_result" invisible="1"/>
+                        <field name="has_graded_all_criteria" invisible="1"/>
+                        <group>
+                            <field name="student" string="Student" write="false"/>
+                            <field name="course" string="Course" write="false"/>
+                            <field name="project" string="Project" write="false"/>
+                            <separator />
+                            <field name="submission_note" string="Submission Note" widget="text" colspan="3" />
+                        </group>
+                        <group>
+                            <field name="result" string="Result" widget="badge" write="false" decoration-success="result == 'passed'" decoration-danger="result == 'did_not_pass'" decoration-warning="result == 'unable_to_review'" />
+                            <field name="submission_url" string="Submission URL" write="false" text="View File" widget="url" attrs="{'invisible':[('submission_url','==',False)]}"/>
+                            <field name="submission_url" string="Submission URL" write="false" attrs="{'invisible':[('submission_url','!=',False)]}"/>
+                            <field name="grading_status" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <separator />
+                    <h3 style="color:#66598f">Response</h3>
+                    <hr />
+                    <group>
+                        <field name="general_response" string="General Response" attrs="{'readonly': ['|',('user_can_grade', '=', False),('result', '!=', 'not_graded')]}"/>
+                        <field name="user_can_grade" invisible="1" />
+                    </group>
+                    <separator />
+
+                    <h3 style="color:#66598f">Criterion Grading</h3>
+                    <hr />
+                    <group>
+                        <!-- để nguyên -->
+                        <field attrs="{'readonly':['|',('user_can_grade','=',False),('result','!=','not_graded')]}" name="criteria_responses" string="Criterion Grading" class="row" widget='sidebar'>
+                            <tree string="Criterion Response" create="false" delete="false" default_order="criteria_group">
+                                <field name="criteria_group" class="col-2"/>
+                                <field name="criterion" class="col-7"/>
+                                <field name="display_result" string="Result" class="col-1 text-center" widget="badge" decoration-success="display_result == 'passed'" decoration-danger="display_result == 'did_not_pass'" decoration-warning="display_result == 'incomplete'" />
+                                <field name="result" invisible="1" class="col-1 text-center" widget="badge" decoration-success="result == 'passed'" decoration-danger="result == 'did_not_pass'" decoration-warning="result == 'incomplete'" />
+                                <field name="is_abnormal_result" string="Is abnormal" class="col-1 text-center" />
+                            </tree>
+                        </field>
+                    </group>
+                </sheet>
+
+                <!-- trace log -->
+                <div class="oe_chatter">
+                    <field name="activity_ids"/>
+                    <field name="message_follower_ids" groups="base.group_user"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="project_submission_view_tree" model="ir.ui.view">
+        <field name="name">project_submission.tree</field>
+        <field name="model">project_submission</field>
+        <field name="arch" type="xml">
+            <tree limit="100" string="Project Submission Group" edit="false" class="text-center">
+                <field name="course" />
+                <field name="project" />
+                <field name="student" />
+                <field name="submission_url" text="View File" widget="url" attrs="{'invisible':[('submission_url','==',False)]}" />
+                <field name="result" widget="badge" decoration-success="result == 'passed'" decoration-danger="result == 'did_not_pass'" decoration-warning="result == 'unable_to_review'" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="project_submission_action" model="ir.actions.act_window">
+        <field name="name">Project Submission</field>
+        <field name="res_model">project_submission</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>

@@ -1,0 +1,24 @@
+<odoo>
+    <record model="ir.ui.view" id="student_group_list">
+      <field name="name">Student Group</field>
+      <field name="model">student_group</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="creator"/>
+          <field name="created_at"/>
+          <field name="group_note" />
+        </tree>
+      </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="student_group.action_window">
+      <field name="name">Student Group</field>
+      <field name="res_model">student_group</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem name="Student Group" id="student_group_main" groups='group_student_group_user,group_student_group_admin'/>
+    <menuitem name="Student Group" id="student_group_sub_1" parent="student_group_main" action="student_group.action_window" groups='group_student_group_user,group_student_group_admin'/>
+
+</odoo>

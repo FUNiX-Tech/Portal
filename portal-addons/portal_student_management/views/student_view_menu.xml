@@ -1,0 +1,17 @@
+<odoo>
+    <!-- App Name -->
+    <menuitem id="student_mgmt_app"
+        name="Student Management"
+        sequence="10" />
+
+    <!-- Main Menu -->
+    <menuitem id="student_mgmt_main_menu"
+        name="Student Management"
+        parent="student_mgmt_app"
+        sequence="10">
+        <menuitem id="student_mgmt_student_dropdown_item"
+            name="Student List"
+            action="student_action"
+            sequence="10" />
+    </menuitem>
+</odoo>

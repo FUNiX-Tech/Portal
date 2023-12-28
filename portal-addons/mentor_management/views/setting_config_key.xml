@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<odoo>
+<data noupdate="0">
+  <record id="open_config_key_ticket_management" model="ir.actions.act_window">
+      <field name="name">Set Up Config Key</field>
+      <field name="res_model">service_key_configuration</field>
+      <field name="view_mode">tree,form</field>
+      <field name="domain">[('name', 'in', ['SLA_MENTOR_REMINDER_TIME_IN_DAY'])]</field>
+  </record>
+</data>
+  <menuitem  name="Setting Configs" id="mentor_management_time_reminder" parent="menu_mentor_management"
+              action="open_config_key_ticket_management"  groups="group_mentor_management_admin"/>
+</odoo>

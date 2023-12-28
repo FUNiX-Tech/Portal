@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <!-- Thêm trường mentor_id vào form -->
+    <record id="project_submission_view_form" model="ir.ui.view">
+        <field name="name">project_submission.form</field>
+        <field name="model">project_submission</field>
+        <field name="inherit_id" ref="learning_project.project_submission_view_form" />
+        <field name="arch" type="xml">
+
+            <!-- Xử lý quyền cho nút submit mentor được phân chấm bài mới có thể bấm nút -->
+            <!-- <xpath expr="//header" position="inside">
+                <field name="can_submit" invisible="1" />
+            </xpath> -->
+
+            <!-- Nút có thuộc tính disable -->
+            <!-- <xpath expr="//header/button[@name='submit_grade'][1]" position="attributes">
+                <attribute name="attrs"> {'invisible':[('can_submit','=',True),'&amp;',('has_graded_all_criteria','=',True),('result','=','not_graded')]}
+                </attribute>
+            </xpath> -->
+
+            <!-- Nút không có thuộc tính disable -->
+            <!-- <xpath expr="//header/button[@name='submit_grade'][2]" position="attributes">
+                <attribute name="attrs"> {'invisible':['|','|',('can_submit','=',False),('has_graded_all_criteria','=',False),('result','!=','not_graded')]}
+                </attribute>
+            </xpath> -->
+
+            <!-- Thêm latest_submission_status vào sau assignmet -->
+            <xpath expr="//header" position="inside">
+                <field name="latest_submission_status" widget="statusbar"/>
+            </xpath>
+
+            <!-- Assign mentor ngay trong form Submission -->
+            <field name="result" position="before">
+                <field name="mentor_id"/>
+                <!-- <field name="mentor_id" groups="mentor_management.group_mentor_management_admin,base.group_system"/> -->
+                <field name="mentor_user_id" invisible="1" />
+            </field>
+
+        </field>
+    </record>
+
+    <!-- Thêm các trường vào tree views -->
+    <record id="project_submission_view_tree" model="ir.ui.view">
+        <field name="name">project_submission.tree</field>
+        <field name="model">project_submission</field>
+        <field name="inherit_id" ref="learning_project.project_submission_view_tree" />
+        <field name="arch" type="xml">
+
+            <!-- Thêm submission_id -->
+            <field name="course" position="before">
+                <field name="submission_id"/>
+            </field>
+
+            <!-- Thêm email student -->
+            <field name="student" position="after">
+                <field name="student_email"/>
+                <field name="latest_submission_status" widget="badge" decoration-success="latest_submission_status == 'graded'" decoration-info="latest_submission_status == 'submitted'" decoration-danger="latest_submission_status == 'submission_failed' or latest_submission_status == 'submission_cancelled'" decoration-warning="latest_submission_status == 'grading'" />
+            </field>
+
+            <!-- thêm Status và Create time của Submission -->
+            <field name="result" position="before">
+                <field name="submission_date" />
+
+            </field>
+
+
+
+
+
+            <!-- Thêm email mentor chấm bài -->
+            <field name="result" position="before">
+                <field name="mentor_id"/>
+            </field>
+
+        </field>
+    </record>
+
+</odoo>

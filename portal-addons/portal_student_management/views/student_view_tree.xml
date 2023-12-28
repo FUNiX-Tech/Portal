@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="student_tree" model="ir.ui.view">
+        <field name="name">portal.student.tree</field>
+        <field name="model">portal.student</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name" />
+                <field name="email" />
+                <field name="gender" />
+                <field name="student_code" />
+                <field name="username" />
+                <field name="date_of_birth" />
+                <field name="phone" />
+                <field name="email_verified_status" />
+                <field name="created_at" />
+                <!-- <field name="updated_at" /> -->
+            </tree>
+        </field>
+    </record>
+</odoo>

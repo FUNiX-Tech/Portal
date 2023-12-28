@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="project_criterion_material_view_form" model="ir.ui.view">
+        <field name="name">project_criterion_material.form</field>
+        <field name="model">project_criterion_material</field>
+        <field name="arch" type="xml">
+            <form string="Project Criterion Material">
+                <sheet>
+                    <group>
+                        <field name="label" string="Label" class="border bg-light"/>
+                        <field name="url" string="URL" class="border bg-light"/>
+                        <field name="append" string="Content to Append" class="border bg-light"/>
+                        <field name="auto_append" string="Will be automatically appended" class="border bg-light"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="project_criterion_material_view_tree" model="ir.ui.view">
+        <field name="name">project_criterion_material.tree</field>
+        <field name="model">project_criterion_material</field>
+        <field name="arch" type="xml">
+            <tree string="Project Criterion Material" edit="false" class="text-center">
+                <field name="label" widget="material_field"/>
+                <field name="url" />
+                <field name="append" />
+                <field name="auto_append" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="project_criterion_material_action" model="ir.actions.act_window">
+        <field name="name">Project Criterion Material</field>
+        <field name="res_model">project_criterion_material</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>

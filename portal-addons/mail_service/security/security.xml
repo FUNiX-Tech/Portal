@@ -1,0 +1,22 @@
+<odoo>
+    <data noupdate="0">
+        <record id="module_category_mail_service" model="ir.module.category">
+            <field name="name">Mail Service</field>
+            <field name="sequence">1</field>
+        </record>
+
+        <!-- Mail Service Admin  -->
+        <record id='group_mail_service_admin' model='res.groups'>
+            <field name="name">Admin</field>
+            <field name="category_id" ref='module_category_mail_service'></field>
+            <field name="implied_ids" eval="[(4,ref('base.group_user'))]"></field>
+        </record>
+
+        <!-- Mail Service User -->
+        <record id='group_mail_service_user' model='res.groups'>
+            <field name="name">User</field>
+            <field name="category_id" ref='module_category_mail_service'></field>
+            <field name="implied_ids" eval="[(4,ref('base.group_user'))]"></field>
+        </record>
+    </data>
+</odoo>
