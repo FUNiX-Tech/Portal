@@ -1,0 +1,68 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - staging
+
+jobs:
+  build_and_push:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
+  
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build and push
+      uses: docker/build-push-action@v5
+      env:
+        ECR_REGISTRY: 848839979695.dkr.ecr.ap-southeast-1.amazonaws.com
+        ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+      with:
+        push: true
+        tags:
+          ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:latest
+
+    # - name: Build, tag, and push image to Amazon ECR
+    #   env:
+    #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+    #     ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+    #     IMAGE_TAG: ${{ github.sha }}
+    #   run:
+    #     # Assuming IMAGE_TAG is correctly defined above and ECR_REGISTRY, ECR_REPOSITORY are set
+    #     docker buildx build -t $ECR_REGISTRY/$ECR_REPOSITORY:latest . --platform linux/amd64,linux/arm64 --push
+    #     docker buildx rm --all --force
+    #   shell: bash
+
+    - name: Deploy to EC2
+      env:
+        HOST: ${{ secrets.PORTAL_STAG_IP }}
+        USERNAME: ${{ secrets.EC2_USER }}
+        KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        # The SSH key needs to be saved to a file for SSH to use
+        echo "$KEY" > ec2-key.pem
+        chmod 400 ec2-key.pem
+        # SSH into the EC2 instance, pull the latest image, and restart the Docker service
+        ssh -i ec2-key.pem -o "StrictHostKeyChecking=no" $USERNAME@$HOST << EOF
+          cd portal-deploy-docker
+          aws ecr get-login-password --region ap-southeast-1 | docker login --username AWS --password-stdin 848839979695.dkr.ecr.ap-southeast-1.amazonaws.com
+          docker-compose pull
+          docker-compose up -d
+        EOF
