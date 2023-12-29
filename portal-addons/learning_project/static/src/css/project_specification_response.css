@@ -1,0 +1,3 @@
+.specification_result select#result option[value='"incomplete"'] {
+    display: none !important;
+}

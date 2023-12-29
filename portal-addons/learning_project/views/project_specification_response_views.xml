@@ -5,11 +5,16 @@
         <field name="model">project_specification_response</field>
         <field name="arch" type="xml">
             <form string="Project Criterion">
+
+                <xpath expr="." position="inside">
+                    <link rel="stylesheet" href="learning_project/static/src/css/project_specification_response.css" />
+                </xpath>
+
                 <sheet>
                     <group>
                         <field name="specification_title" class="border bg-light" readonly="1"/>
                         <field name="specification_content" class="border bg-light" readonly="1"/>
-                        <field name="result" class="border bg-light show_select_angle"/>
+                        <field name="result" class="border bg-light show_select_angle specification_result"/>
                         <field name="feedback" widget="project_grading_html" class="border bg-light feedback_editor"/>
                         <field name="material">
                             <tree>
