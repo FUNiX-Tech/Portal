@@ -218,7 +218,9 @@ class ProjectCriterionResponse(models.Model):
 
         for record in self:
             record.previous_feedback = (
-                "" if nearest_response is None else nearest_response.feedback
+                ""
+                if nearest_response is None
+                else nearest_response.feedback_render
             )
 
     def _get_nearest_respone(self):

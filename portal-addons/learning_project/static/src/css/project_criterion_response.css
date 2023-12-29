@@ -247,3 +247,13 @@
 .criterion_result select#result option[value='"not_graded"'] {
     display: none !important;
 }
+
+.previous_feedback {
+    border: 1px solid #ececec;
+    border-radius: 6px;
+    padding: 16px;
+}
+
+button[name=button_use_additional_reading] {
+    padding: 0.375rem 0.75rem !important;
+}
