@@ -37,7 +37,7 @@
                     <div attrs="{'invisible': [('step', '!=', 2 )]}" id="form_group_step_2">
 
                         <group>
-                            <field name="result" class="border bg-light show_select_angle"/>
+                            <field name="result" attrs="{'readonly': [('result','=','incomplete')]}" class="border bg-light show_select_angle criterion_result"/>
                             <span attrs="{'invisible': [('is_abnormal_result', '=', False)]}">Warning</span>
                             <span attrs="{'invisible': [('is_abnormal_result', '=', False)]}" class="text-warning">Your final result is different from the computed result.</span>
 
@@ -102,11 +102,13 @@
                 <footer class="d-flex gap-1" attrs="{'invisible': [('submission_result', '!=', 'not_graded')]}">
                     <button name="button_next" type="object" string="Preview and Finish" attrs="{'invisible': [('step','!=', 2)]}" class="btn btn-primary preview_and_save_btn oe_highlight mx-1" />
 
+
                     <div attrs="{'invisible': [('step','!=', 1)]}">
                         <button attrs="{'invisible': [('graded_all', '=', True)]}" string="Next" name="button_next" class="disabled summarize_btn btn btn-primary mx-1" type="object" />
                         <button attrs="{'invisible': [('graded_all', '=', False)]}" string="Next" name="button_next" class="summarize_btn btn btn-primary mx-1" type="object" />
                     </div>
 
+                    <button name="button_incomplete" type="object" string="Incomplete" attrs="{'invisible': [('step','!=', 1)]}" class="btn btn-primary preview_and_save_btn oe_highlight mx-1" />
                     <button attrs="{'invisible': [('step','!=', 1)]}" string="Save" class="btn btn-primary o_form_button_save" name="button_save" type="object" />
                     <button attrs="{'invisible': [('step','!=', 3)]}" string="Finish" name="button_next" type="object" class="btn save_feedback_btn btn-primary oe_highlight" />
                     <button attrs="{'invisible': ['|','|',('grading_status','=','waiting_for_approving'),('step','!=', 4),('submission_result', '!=', 'not_graded')]}" string="Edit" class="btn btn-primary o_form_button_save" name="button_double_back" type="object" />

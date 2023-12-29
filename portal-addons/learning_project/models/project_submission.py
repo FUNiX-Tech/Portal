@@ -193,13 +193,15 @@ class ProjectSubmission(models.Model):
             }
 
             try:
-                url = self.env[
+                lms_base = self.env[
                     "service_key_configuration"
-                ].get_api_key_by_service_name("LMS_PUSH_GRADE_URL")
+                ].get_api_key_by_service_name("LMS_BASE")
 
-                if not url:
+                if not lms_base:
                     record.grading_status = "failed"
-                    return "Missing LMS_PUSH_GRADE_URL"
+                    return "Missing LMS_BASE"
+
+                url = f"{lms_base}api/funix_portal/project/grade_project"
 
                 response = requests.post(url, headers=headers, json=payload)
 

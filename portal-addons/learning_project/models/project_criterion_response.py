@@ -406,7 +406,12 @@ class ProjectCriterionResponse(models.Model):
                     )
 
                 r.write(
-                    {"feedback": r.feedback, "result": r.result, "step": 3}
+                    {
+                        "feedback": r.feedback,
+                        "result": r.result,
+                        "step": 3,
+                        "additional_reading": r.additional_reading,
+                    }
                 )
 
                 return True
@@ -428,8 +433,15 @@ class ProjectCriterionResponse(models.Model):
 
     def button_back(self):
         for r in self:
+            if r.step == 2 and r.result == INCOMPLETE[0]:
+                for spec in r.specifications:
+                    spec.result = NOT_GRADED[0]
+
+                r.result = NOT_GRADED[0]
+
             if r.step > 1:
                 r.step -= 1
+
             return True
 
     @api.depends("specifications.result")
@@ -548,3 +560,16 @@ class ProjectCriterionResponse(models.Model):
                         default_additional_reading = f"<div><p><strong>Đọc thêm</strong></p><div>{ad.append}</div></div>"
                     break
             r.additional_reading = default_additional_reading
+
+    def button_incomplete(self):
+        for r in self:
+            if r.step != 1:
+                raise UserError("Incomplete button just works for step 1.")
+
+            for spec in r.specifications:
+                spec.result = INCOMPLETE[0]
+
+            r.result = INCOMPLETE[0]
+            r.step = 2
+
+            return True
