@@ -237,8 +237,13 @@
 }
 
 .show_select_angle select {
-    appearance: auto ;
-    -moz-appearance: auto ;
-    -webkit-appearance: auto ;
+    appearance: auto;
+    -moz-appearance: auto;
+    -webkit-appearance: auto;
     background: transparent;
+}
+
+.criterion_result select#result option[value='"incomplete"'],
+.criterion_result select#result option[value='"not_graded"'] {
+    display: none !important;
 }
