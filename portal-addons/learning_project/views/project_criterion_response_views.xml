@@ -21,7 +21,7 @@
                             <field name="criterion" class='criterion_name' readonly="1" string="Criterion" />
                             <field name="submission_result" string="Submission Result" invisible="1"/>
                             <field name="previous_result" readonly="1" string="Previous Result" class='previous_result' />
-                            <field name="previous_feedback" readonly="1" string="Previous Feedback" class='html_field disable_grading_template_html_field_css' />
+                            <field name="previous_feedback" readonly="1" string="Previous Feedback" class='previous_feedback html_field disable_grading_template_html_field_css' />
 
                             <field name="specifications" string="Specifications" class='criterion_specifications' >
                                 <tree create="false" delete="false" class="row">
