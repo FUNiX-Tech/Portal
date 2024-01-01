@@ -241,14 +241,33 @@ def skip_authentication():
         def wrapper(self, *args, **kwargs):
             request_data = json.loads(request.httprequest.data)
             email = request_data.get("email")
+            course_code = request_data.get("course_code")
 
             try:
                 student = (
                     request.env["portal.student"]
                     .sudo()
-                    .search([("email", "=", email)])[0]
+                    .search([("email", "=", email)])
                 )
-                self.student = student
+
+                if not student:
+                    body = {
+                        "email": email,
+                        "name": email.split("@")[0],
+                        "username": email.split("@")[0],
+                    }
+
+                    created_student = (
+                        request.env["portal.student"].sudo().create(body)
+                    )
+
+                    request.env["course_management"].sudo().search(
+                        [("course_code", "=", course_code)]
+                    ).write({"student_ids": [(4, created_student.id)]})
+
+                    self.student = created_student
+                else:
+                    self.student = student
                 return origin_function(self, *args, **kwargs)
             except IndexError as e:
                 logger.info(str(e))
@@ -258,7 +277,7 @@ def skip_authentication():
                 )
             except Exception as e:
                 logger.error(str(e))
-                return json_response(500, "Internal Server Error")
+                return json_response(500, "Internal Server Error", str(e))
 
         return wrapper
 
