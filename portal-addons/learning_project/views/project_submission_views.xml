@@ -50,6 +50,7 @@
                         </group>
                         <group>
                             <field name="result" string="Result" widget="badge" write="false" decoration-success="result == 'passed'" decoration-danger="result == 'did_not_pass'" decoration-warning="result == 'unable_to_review'" />
+                            <field name="temp_result" decoration-success="temp_result == 'Passed'" decoration-danger="temp_result == 'Did not pass'"/>
                             <field name="submission_url" string="Submission URL" write="false" text="View File" widget="url" attrs="{'invisible':[('submission_url','==',False)]}"/>
                             <field name="submission_url" string="Submission URL" write="false" attrs="{'invisible':[('submission_url','!=',False)]}"/>
                             <field name="grading_status" readonly="1"/>
