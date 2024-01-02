@@ -242,6 +242,7 @@ def skip_authentication():
             request_data = json.loads(request.httprequest.data)
             email = request_data.get("email")
             course_code = request_data.get("course_code")
+            context = {"from_lms": True}
 
             try:
                 student = (
@@ -258,7 +259,10 @@ def skip_authentication():
                     }
 
                     created_student = (
-                        request.env["portal.student"].sudo().create(body)
+                        request.env["portal.student"]
+                        .sudo()
+                        .with_context(context)
+                        .create(body)
                     )
 
                     request.env["course_management"].sudo().search(
