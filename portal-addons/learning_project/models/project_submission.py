@@ -69,6 +69,11 @@ class ProjectSubmission(models.Model):
         readonly=True,
     )
 
+    temp_result = fields.Char(
+        string="Current Temp Result",
+        compute="_compute_temp_result",
+    )
+
     submission_note = fields.Text("Submission Note", readonly=True, default="")
 
     general_response = fields.Html(string="General Response", default="")
@@ -99,6 +104,29 @@ class ProjectSubmission(models.Model):
         string="Current user can grade this submission",
         compute="_compute_user_can_grade",
     )
+
+    @api.depends(
+        "criteria_responses.result",
+        "criteria_responses.step",
+        "general_response",
+    )
+    def _compute_temp_result(self):
+        for record in self:
+            # Assume all criteria have passed initially
+            all_criteria_passed = True
+
+            for response in record.criteria_responses:
+                # Check if any criterion has not passed
+                if response.result != PASSED[0]:
+                    all_criteria_passed = False
+                    break  # No need to check further if any criterion has not passed
+
+            # Set temp_result based on whether all criteria have passed
+            record.temp_result = (
+                PASSED[1] if all_criteria_passed else DID_NOT_PASS[1]
+            )
+
+            return record.temp_result
 
     @api.depends(
         "criteria_responses.result",
