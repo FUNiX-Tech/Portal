@@ -31,7 +31,7 @@
             </xpath>
 
             <!-- Assign mentor ngay trong form Submission -->
-            <field name="result" position="before">
+            <field name="project" position="after">
                 <field name="mentor_id"/>
                 <!-- <field name="mentor_id" groups="mentor_management.group_mentor_management_admin,base.group_system"/> -->
                 <field name="mentor_user_id" invisible="1" />
