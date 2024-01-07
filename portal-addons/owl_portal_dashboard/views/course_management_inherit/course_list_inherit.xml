@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="owl_course_list_view_inherit" model="ir.ui.view">
+        <field name="name">owl_portal_student_list_view_inherit</field>
+        <field name="model">course_management</field>
+        <field name="inherit_id" ref="course_management.view_course_management_list"></field>
+        <field name="arch" type="xml">
+            <xpath expr="//tree" position="attributes">
+                <attribute name="js_class">owl_course_list_view</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>

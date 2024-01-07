@@ -1,0 +1,33 @@
+.o_portal_student_list_view_sidebar {
+    flex: 0 0 250px;
+}
+
+.organization_list_group {
+    gap: 5px;
+
+    .organization_list_item {
+        cursor: pointer;
+
+        /* Change background color on hover */
+        &:hover {
+            background-color: #dbdbdb; /* Replace #yourHoverColor with the color you want */
+        }
+
+        /* Change background color when active/clicked */
+    }
+    .active {
+        background-color: #dbdbdb; /* Replace #yourActiveColor with the color you want */
+    }
+}
+
+.o_content {
+    display: flex;
+}
+
+.pagination-button-list {
+    gap: 5px;
+
+    button {
+        font-size: 1rem !important;
+    }
+}

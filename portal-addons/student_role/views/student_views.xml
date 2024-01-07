@@ -23,5 +23,17 @@
                 </xpath>
             </field>
         </record>
+
+        <record model="ir.ui.view" id="portal_student_search">
+            <field name="name">Portal Student Search</field>
+            <field name="model">portal.student</field>
+            <field name="arch" type="xml">
+              <search>
+                <!-- <field name="student_role_id" /> -->
+                <filter name="" string="ADMIN" domain="[('student_role_id.name', '=', 'ADMIN')]" />
+                <filter name="" string="USER" domain="[('student_role_id.name', '=', 'ADMIN')]" />
+              </search>
+            </field>
+        </record>
     </data>
 </odoo>

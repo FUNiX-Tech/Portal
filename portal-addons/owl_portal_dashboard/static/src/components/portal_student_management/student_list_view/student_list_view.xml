@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+    <t t-name="owl.StudentListView" t-inherit="web.ListView" owl="1">
+        <xpath expr="//t[contains(@t-component,'props.Renderer')]" position="before">
+            <div class="p-3 bg-white o_portal_student_list_view_sidebar">
+                <select class="form-select mb-3" t-model="state.selectedView" t-on-change="onDropdownChange">
+                    <option value="all">All</option>
+                    <option value="individual">Individual Students</option>
+                    <option value="business">Business Students</option>
+                </select>
+
+                <!-- Individual Students View -->
+                <div t-if="state.selectedView !== 'business'" class="my-3 d-flex flex-column organization_list_group">
+                    <h2>Individual Students</h2>
+                    <div class="d-flex justify-content-between organization_list_item" t-on-click="selectIndividualView">
+                        <span class="py-1">Individual Student Count:</span>
+                        <span class="w-25 bg-primary text-white py-1 d-flex justify-content-center align-items-center rounded" t-esc="' ' + totalIndividualStudents"></span>
+                    </div>
+                </div>
+
+                <!-- Divider for 'All' view -->
+                <hr t-if="state.selectedView ==='all'"/>
+
+                <!-- Business Students View -->
+                <div t-if="state.selectedView !== 'individual'" class="organization_list_group d-flex flex-column my-3">
+                    <h2>Student Organizations</h2>
+
+                    <!-- Search Input for Business View -->
+                    <div t-if="state.selectedView === 'business'" class="my-3">
+                        <input type="text" class="form-control mb-3" placeholder="Search Organization" t-on-input="searchOrganization"/>
+                    </div>
+
+                    <!-- Organization Items -->
+                    <t t-foreach="paginatedOrgs()" t-as="so" t-key="so.student_organization_student_ids[0]">
+                        <a class="d-flex justify-content-between organization_list_item" href="#"
+                            t-att-class="{'active': state.activeOrgId === so.student_organization_student_ids[0]}"
+                            t-on-click="() => selectOrgs(so.student_organization_student_ids)">
+                            <span t-esc="so.student_organization_student_ids[1]" class="py-1" />
+                            <span t-esc="so.student_organization_student_ids_count"
+                                class="w-25 bg-primary text-white py-1 d-flex justify-content-center align-items-center rounded" />
+                        </a>
+                    </t>
+                    
+
+                    <!-- Pagination Controls -->
+                    <div class="pagination-controls d-flex flex-column">
+                        <span class="text-primary my-1">Page <t t-esc="state.currentPage"/> of <t t-esc="Math.ceil(state.studentOrgs.length / state.itemsPerPage)"/></span>
+                        <div class="pagination-button-list d-flex mt-1">
+
+                            <button type="button" class="btn btn-secondary" t-on-click="() => goToPage(1)" t-att-disabled="state.currentPage == 1">First</button>
+                            <button type="button" class="btn btn-secondary" t-on-click="() => goToPage(state.currentPage - 1)" t-att-disabled="state.currentPage &lt;= 1">Previous</button>
+                            <button type="button" class="btn btn-secondary" t-on-click="() => goToPage(state.currentPage + 1)" t-att-disabled="state.currentPage * state.itemsPerPage >= state.studentOrgs.length">Next</button>
+                            <button type="button" class="btn btn-secondary" t-on-click="() => goToPage(Math.ceil(state.studentOrgs.length / state.itemsPerPage))" t-att-disabled="state.currentPage == Math.ceil(state.studentOrgs.length / state.itemsPerPage)">Last</button>
+                        </div>
+
+                    </div>
+
+                    <!-- Business Students Count -->
+                    <div class="my-3 d-flex flex-column">
+                        <div>
+                            <span>Organization Count:</span>
+                            <span class="text-primary" t-esc="' ' + totalOrgs" />
+                        </div>
+                        <div>
+                            <span>Business Student Count:</span>
+                            <span class="text-primary" t-esc="' ' + totalBusinessStudents" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Total Students for 'All' View -->
+                <div t-if="state.selectedView === 'all'" class="my-3">
+                    <hr />
+                    <h4 t-esc="'Total Student: '+ totalStudents"></h4>
+                </div>
+            </div>
+        </xpath>
+    </t>
+</templates>

@@ -1,5 +1,19 @@
 <odoo>
   <data>
+        <!-- explicit list view definition -->
+        <record model="ir.ui.view" id="view_course_management_list">
+          <field name="name">course_management list</field>
+          <field name="model">course_management</field>
+          <field name="arch" type="xml">
+            <tree>
+              <field name="course_code"/>
+              <field name="course_name"/>
+              <field name="course_creator"/>
+              <field name="course_desc"/>
+              <field name="created_at"/>
+            </tree>
+          </field>
+        </record>
     <!--Kanban view-->
     <record model="ir.ui.view" id="view_course_management_kanban">
       <field name="name">course_management kanban</field>
@@ -46,20 +60,7 @@
       </field>
     </record>
 
-    <!-- explicit list view definition -->
-    <record model="ir.ui.view" id="view_course_management_list">
-      <field name="name">course_management list</field>
-      <field name="model">course_management</field>
-      <field name="arch" type="xml">
-        <tree>
-          <field name="course_code"/>
-          <field name="course_name"/>
-          <field name="course_creator"/>
-          <field name="course_desc"/>
-          <field name="created_at"/>
-        </tree>
-      </field>
-    </record>
+
     <!-- Form view-->
     <record model="ir.ui.view" id="view_course_management_form">
       <field name="name">Course Form</field>
@@ -96,7 +97,7 @@
     <record model="ir.actions.act_window" id="course_management.action_window">
       <field name="name">Course Management</field>
       <field name="res_model">course_management</field>
-      <field name="view_mode">kanban,tree,form</field>
+      <field name="view_mode">tree,kanban,form</field>
     </record>
 
 
