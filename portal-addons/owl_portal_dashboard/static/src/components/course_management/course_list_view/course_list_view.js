@@ -11,7 +11,7 @@ class CourseListController extends ListController {
     setup() {
         super.setup();
         this.orm = useService('orm');
-        this.action = useService('action');
+        this.action =useService('action');
         this.allPOLPs = [];
         this.totalPOLPs = 0;
         this.state = useState({
@@ -29,7 +29,7 @@ class CourseListController extends ListController {
                 this.allPOLPs = allPOLPs;
                 console.log("allPOLPs", this.allPOLPs);
             }
-            
+
         )
     }
 

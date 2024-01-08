@@ -20,8 +20,10 @@
     }
 }
 
-.o_content {
-    display: flex;
+.o_action.o_view_controller.o_list_view {
+    & .o_content {
+        display: flex;
+    }
 }
 
 .pagination-button-list {

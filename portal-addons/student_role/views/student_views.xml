@@ -31,7 +31,7 @@
               <search>
                 <!-- <field name="student_role_id" /> -->
                 <filter name="" string="ADMIN" domain="[('student_role_id.name', '=', 'ADMIN')]" />
-                <filter name="" string="USER" domain="[('student_role_id.name', '=', 'ADMIN')]" />
+                <filter name="" string="USER" domain="[('student_role_id.name', '=', 'USER')]" />
               </search>
             </field>
         </record>

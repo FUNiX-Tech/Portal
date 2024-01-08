@@ -15,7 +15,7 @@ class Student(models.Model):
     name = fields.Char(string="Student Name", required=True)
     username = fields.Char(string="Username", required=True, unique=True)
     email = fields.Char(string="Email", required=True, unique=True, index=True)
-    student_code = fields.Char(string="Student Code", readonly=True)
+    student_code = fields.Char(string="Student Code")
     date_of_birth = fields.Date(string="Date of birth")
     phone = fields.Char(string="Phone")
     gender = fields.Selection(

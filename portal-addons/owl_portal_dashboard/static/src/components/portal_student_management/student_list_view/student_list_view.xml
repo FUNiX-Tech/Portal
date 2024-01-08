@@ -14,7 +14,7 @@
                     <h2>Individual Students</h2>
                     <div class="d-flex justify-content-between organization_list_item" t-on-click="selectIndividualView">
                         <span class="py-1">Individual Student Count:</span>
-                        <span class="w-25 bg-primary text-white py-1 d-flex justify-content-center align-items-center rounded" t-esc="' ' + totalIndividualStudents"></span>
+                        <span class="w-25 bg-primary text-white py-1 d-flex justify-content-center align-items-center rounded" t-esc="' ' + state.totalIndividualStudents"></span>
                     </div>
                 </div>
 
@@ -40,30 +40,39 @@
                                 class="w-25 bg-primary text-white py-1 d-flex justify-content-center align-items-center rounded" />
                         </a>
                     </t>
-                    
 
                     <!-- Pagination Controls -->
                     <div class="pagination-controls d-flex flex-column">
-                        <span class="text-primary my-1">Page <t t-esc="state.currentPage"/> of <t t-esc="Math.ceil(state.studentOrgs.length / state.itemsPerPage)"/></span>
-                        <div class="pagination-button-list d-flex mt-1">
+                        <div class="d-flex justify-content-between">
 
+                            <span class="text-primary my-1">Page <t t-esc="state.currentPage"/> of <t t-esc="Math.ceil(state.studentOrgs.length / state.itemsPerPage)"/></span>
+                            <!-- Page Limit Selection -->
+<div class="page-limit-selector">
+    <select class="form-select" t-on-change="(event) => changeItemsPerPage(event.target.value)">
+      <option value="3">3 items per page</option>
+      <option value="5">5 items per page</option>
+      <option value="10">10 items per page</option>
+      <!-- Add more options as needed -->
+    </select>
+  </div>
+                        </div>
+                        <div class="pagination-button-list d-flex mt-1">
                             <button type="button" class="btn btn-secondary" t-on-click="() => goToPage(1)" t-att-disabled="state.currentPage == 1">First</button>
                             <button type="button" class="btn btn-secondary" t-on-click="() => goToPage(state.currentPage - 1)" t-att-disabled="state.currentPage &lt;= 1">Previous</button>
                             <button type="button" class="btn btn-secondary" t-on-click="() => goToPage(state.currentPage + 1)" t-att-disabled="state.currentPage * state.itemsPerPage >= state.studentOrgs.length">Next</button>
                             <button type="button" class="btn btn-secondary" t-on-click="() => goToPage(Math.ceil(state.studentOrgs.length / state.itemsPerPage))" t-att-disabled="state.currentPage == Math.ceil(state.studentOrgs.length / state.itemsPerPage)">Last</button>
                         </div>
-
                     </div>
 
                     <!-- Business Students Count -->
                     <div class="my-3 d-flex flex-column">
                         <div>
                             <span>Organization Count:</span>
-                            <span class="text-primary" t-esc="' ' + totalOrgs" />
+                            <span class="text-primary" t-esc="' ' + state.totalOrgs" />
                         </div>
                         <div>
                             <span>Business Student Count:</span>
-                            <span class="text-primary" t-esc="' ' + totalBusinessStudents" />
+                            <span class="text-primary" t-esc="' ' + state.totalBusinessStudents" />
                         </div>
                     </div>
                 </div>
@@ -71,7 +80,7 @@
                 <!-- Total Students for 'All' View -->
                 <div t-if="state.selectedView === 'all'" class="my-3">
                     <hr />
-                    <h4 t-esc="'Total Student: '+ totalStudents"></h4>
+                    <h4 t-esc="'Total Student: '+ state.totalStudents"></h4>
                 </div>
             </div>
         </xpath>
