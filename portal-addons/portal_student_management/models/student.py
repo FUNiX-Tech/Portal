@@ -5,6 +5,7 @@ import re
 import string
 import requests
 import logging
+import time
 
 _logger = logging.getLogger(__name__)
 
@@ -142,62 +143,88 @@ class Student(models.Model):
         return super(Student, self).write(student_dict)
 
     @api.model
-    def create(self, student_dict):
+    def create(self, vals):
         """
-        Function is called when creating a new student. Validate email duplicate and create new student_code when creating a new one if it is duplicated.
-        Check if student is created by import file or not by context, if not, send request to LMS API.
-
-        @params:
-            dict: student_dict: Student data sent from the form
-            self: Student Object
+        Create a new student. If context 'from_lms' is not set, send an API request to LMS.
+        Regardless of LMS, always send a request to Udemy. Implement retry mechanism for failed requests.
         """
-        # !TODO: Refresh student_list before create new student
-        student_dict["student_code"] = self._student_code_generator(
-            student_dict
-        )
-
-        student_dict["gender"] = self._gender_generator(student_dict)
-
-        if student_dict["email"] and self.env["portal.student"].search(
-            [("email", "=", student_dict["email"])]
-        ):
+        # Check for email duplication
+        if 'email' in vals and self.env['portal.student'].search([('email', '=', vals['email'])]):
             raise exceptions.ValidationError("Email already exists")
-        self._check_phone()
 
-        if not self.env.context.get(
-            "import_file"
-        ) and not self.env.context.get("from_lms"):
-            headers = {
-                "Content-Type": "application/json",
-            }
-            data_body = [
-                {
-                    "name": student_dict["name"],
-                    "email": student_dict["email"],
-                    "username": student_dict["username"],
-                    "password": "Password1!",
-                }
-            ]
+        # Set student_code and gender
+        vals['student_code'] = self._student_code_generator(vals)
+        vals['gender'] = self._gender_generator(vals)
 
-            response = self.send_api_request(
-                data_body,
-                headers,
-                endpoint="api/funix_portal/user/create_user",
-            )
+        # Perform student creation in Odoo
+        new_student = super(Student, self).create(vals)
 
-            # Check response status
-            if (
-                not response
-                or response.status_code < 200
-                or response.status_code >= 300
-            ):
-                raise exceptions.ValidationError(
-                    "Failed to create student in LMS"
-                )
+        # Send request to LMS unless 'from_lms' context is set
+        if not self.env.context.get('from_lms'):
+            lms_endpoint = 'api/funix_portal/user/create_user'
+            lms_success = self.send_api_request_to_platform(new_student, 'LMS_BASE', lms_endpoint)
 
-        return super(Student, self).create(student_dict)
+            # Retry mechanism for LMS request
+            if lms_success == 'retry':
+                lms_success = self.retry_api_request(new_student, 'LMS_BASE', lms_endpoint)
+            else:
+                pass
 
-    def send_api_request(self, data, headers, endpoint):
+        # Always send request to Udemy
+        udemy_endpoint = 'api/udemy/user/create_user'
+        udemy_success = self.send_api_request_to_platform(new_student, 'UDEMY_BASE', udemy_endpoint)
+
+        # Retry mechanism for Udemy request
+        if udemy_success == 'retry':
+            udemy_success = self.retry_api_request(new_student, 'UDEMY_BASE', udemy_endpoint)
+        else:
+            pass
+            
+        # Check both platforms' request results
+        if not lms_success and not udemy_success:
+            # Rollback Odoo student creation if both requests fail
+            new_student.unlink()
+            raise exceptions.ValidationError("Failed to create student in external platforms")
+
+        return new_student
+
+    def send_api_request_to_platform(self, student, base_url_name, endpoint):
+        """
+        Helper method to send an API request to a given platform.
+        Returns True for success, 'retry' for 500 error, and False for other errors.
+        """
+        headers = {"Content-Type": "application/json"}
+        data_body = [{
+            "name": student.name,
+            "email": student.email,
+            "username": student.username,
+            "password": "Password1!",
+        }]
+
+        response = self.send_api_request(data_body, headers, base_url_name, endpoint)
+
+        if response and 200 <= response.status_code < 300:
+            return True
+        elif response and response.status_code == 500:
+            return 'retry'
+        else:
+            return False
+
+    def retry_api_request(self, student, base_url_name, endpoint):
+        """
+        Retry API request in case of a 500 error, up to 10 times with a 10-second interval.
+        Does not retry for other error codes.
+        """
+        for attempt in range(10):
+            time.sleep(10)
+            response = self.send_api_request_to_platform(student, base_url_name, endpoint)
+            if response is True:
+                return True
+            elif response is not 'retry':
+                break  # Do not retry for errors other than 500
+        return False
+
+    def send_api_request(self, data, headers,base_url_name, endpoint):
         """
         Function to send API request to LMS Staging
 
@@ -207,10 +234,12 @@ class Student(models.Model):
         3. headers: Headers to be sent
         """
 
-        base_url = self._extract_base_url()
+        base_url = self._extract_base_url(base_url_name)
 
         # Define the URL Register API in LMS Staging
         url = f"{base_url}{endpoint}"
+        
+        print('urllllllllllllll', url)
 
         # Send the POST request
         try:
@@ -277,10 +306,10 @@ class Student(models.Model):
 
         return result
 
-    def _extract_base_url(self):
+    def _extract_base_url(self,base_url_name=None):
         service_key_config = self.env["service_key_configuration"]
 
-        base_url = service_key_config.get_api_key_by_service_name("LMS_BASE")
+        base_url = service_key_config.get_api_key_by_service_name(base_url_name)
 
         return base_url
 
