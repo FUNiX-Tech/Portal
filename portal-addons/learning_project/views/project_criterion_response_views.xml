@@ -104,12 +104,12 @@
 
 
                     <div attrs="{'invisible': [('step','!=', 1)]}">
-                        <button attrs="{'invisible': [('graded_all', '=', True)]}" string="Next" name="button_next" class="disabled summarize_btn btn btn-primary mx-1" type="object" />
-                        <button attrs="{'invisible': [('graded_all', '=', False)]}" string="Next" name="button_next" class="summarize_btn btn btn-primary mx-1" type="object" />
+                        <button attrs="{'invisible': [('graded_all', '=', True)]}" string="Next Step" name="button_next" class="disabled summarize_btn btn btn-primary mx-1" type="object" />
+                        <button attrs="{'invisible': [('graded_all', '=', False)]}" string="Next Step" name="button_next" class="summarize_btn btn btn-primary mx-1" type="object" help="Proceed to next step"/>
                     </div>
 
-                    <button name="button_incomplete" type="object" string="Incomplete" attrs="{'invisible': [('step','!=', 1)]}" class="btn btn-primary preview_and_save_btn oe_highlight mx-1" />
-                    <button attrs="{'invisible': [('step','!=', 1)]}" string="Save" class="btn btn-primary o_form_button_save" name="button_save" type="object" />
+                    <button name="button_incomplete" type="object" string="Not Yet Completed" attrs="{'invisible': [('step','!=', 1)]}" class="btn btn-primary preview_and_save_btn oe_highlight mx-1" help="Mark this criterion as incomplete. You can undo this step"/>
+                    <button attrs="{'invisible': [('step','!=', 1)]}" string="Save Progress" class="btn btn-primary o_form_button_save" name="button_save" type="object" help="Save your progress" />
                     <button attrs="{'invisible': [('step','!=', 3)]}" string="Finish" name="button_next" type="object" class="btn save_feedback_btn btn-primary oe_highlight" />
                     <button attrs="{'invisible': ['|','|',('grading_status','=','waiting_for_approving'),('step','!=', 4),('submission_result', '!=', 'not_graded')]}" string="Edit" class="btn btn-primary o_form_button_save" name="button_double_back" type="object" />
                     <button attrs="{'invisible': ['|',('step','=', 1),('step','=',4)]}" string="Back" name="button_back" type="object" class="back_btn btn btn-secondary mx-1" />

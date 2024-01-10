@@ -109,8 +109,14 @@ class ProjectSubmission(models.Model):
         "criteria_responses.result",
         "criteria_responses.step",
         "general_response",
+        "result",
     )
     def _compute_temp_result(self):
+        if self.result == UNABLE_TO_REVIEW[0]:
+            for record in self:
+                record.temp_result = UNABLE_TO_REVIEW[1]
+                return record.temp_result
+
         for record in self:
             # Assume all criteria have passed initially
             all_criteria_passed = True
