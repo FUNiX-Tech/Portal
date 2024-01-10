@@ -117,7 +117,10 @@ class ServiceKeyConfiguration(models.Model):
                 "api_key": "api/bulk_enroll/v1/bulk_enroll",
             },
             {"name": "MIGRATE_CHECK", "api_key": "False"},
-            {"name": "UDEMY_BASE", "api_key": "https://24d1-14-161-31-73.ngrok-free.app/"}
+            {
+                "name": "UDEMY_BASE",
+                "api_key": "https://24d1-14-161-31-73.ngrok-free.app/",
+            },
         ]
         for key in key_lists:
             if not self.check_key_existing(key["name"]):  # if key not existing

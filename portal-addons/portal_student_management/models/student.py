@@ -13,6 +13,7 @@ _logger = logging.getLogger(__name__)
 class Student(models.Model):
     _name = "portal.student"
     _description = "Student Information"
+    _inherit = ["mail.thread", "mail.activity.mixin"]
     name = fields.Char(string="Student Name", required=True)
     username = fields.Char(string="Username", required=True, unique=True)
     email = fields.Char(string="Email", required=True, unique=True, index=True)
@@ -28,6 +29,12 @@ class Student(models.Model):
         ],
         required=True,
         default="unknown",
+    )
+    lms_created_status = fields.Boolean(
+        string="LMS", default=False, readonly=True
+    )
+    udemy_created_status = fields.Boolean(
+        string="Udemy", default=False, readonly=True
     )
     email_verified_status = fields.Boolean(
         string="Veriied Email", default=False
@@ -149,42 +156,85 @@ class Student(models.Model):
         Regardless of LMS, always send a request to Udemy. Implement retry mechanism for failed requests.
         """
         # Check for email duplication
-        if 'email' in vals and self.env['portal.student'].search([('email', '=', vals['email'])]):
+        if "email" in vals and self.env["portal.student"].search(
+            [("email", "=", vals["email"])]
+        ):
             raise exceptions.ValidationError("Email already exists")
 
         # Set student_code and gender
-        vals['student_code'] = self._student_code_generator(vals)
-        vals['gender'] = self._gender_generator(vals)
+        vals["student_code"] = self._student_code_generator(vals)
+        vals["gender"] = self._gender_generator(vals)
 
         # Perform student creation in Odoo
         new_student = super(Student, self).create(vals)
+        new_student.message_post(body="Student record created in Odoo.")
 
         # Send request to LMS unless 'from_lms' context is set
-        if not self.env.context.get('from_lms'):
-            lms_endpoint = 'api/funix_portal/user/create_user'
-            lms_success = self.send_api_request_to_platform(new_student, 'LMS_BASE', lms_endpoint)
+        if not self.env.context.get("from_lms"):
+            lms_endpoint = "api/funix_portal/user/create_user"
+            lms_success = self.send_api_request_to_platform(
+                new_student, "LMS_BASE", lms_endpoint
+            )
 
             # Retry mechanism for LMS request
-            if lms_success == 'retry':
-                lms_success = self.retry_api_request(new_student, 'LMS_BASE', lms_endpoint)
-            else:
-                pass
+            if lms_success == "retry":
+                lms_success = self.retry_api_request(
+                    new_student, "LMS_BASE", lms_endpoint
+                )
+            if lms_success == True:
+                new_student.lms_created_status = True
+                new_student.message_post(
+                    body="Student successfully registered on LMS platform."
+                )
+            elif lms_success == False:
+                new_student.message_post(
+                    body="Failed to register student on LMS platform."
+                )
 
         # Always send request to Udemy
-        udemy_endpoint = 'api/udemy/user/create_user'
-        udemy_success = self.send_api_request_to_platform(new_student, 'UDEMY_BASE', udemy_endpoint)
+        udemy_endpoint = "api/udemy/user/create_user"
+        udemy_success = self.send_api_request_to_platform(
+            new_student, "UDEMY_BASE", udemy_endpoint
+        )
 
         # Retry mechanism for Udemy request
-        if udemy_success == 'retry':
-            udemy_success = self.retry_api_request(new_student, 'UDEMY_BASE', udemy_endpoint)
-        else:
-            pass
-            
+        if udemy_success == "retry":
+            udemy_success = self.retry_api_request(
+                new_student, "UDEMY_BASE", udemy_endpoint
+            )
+
+        if udemy_success == True:
+            new_student.udemy_created_status = True
+            self.action_send_email(
+                new_student.email,
+                email_cc="",
+                body="Your Udemy account has been successfully created!",
+                student_object=new_student,
+            )
+            new_student.message_post(
+                body="Student successfully registered on Udemy platform."
+            )
+        elif udemy_success == False:
+            self.action_send_email(
+                new_student.email,
+                email_cc="",
+                body="Your Udemy account has failed to be created. Please contact support for assistance.",
+                student_object=new_student,
+            )
+            new_student.message_post(
+                body="Failed to register student on Udemy platform."
+            )
+
         # Check both platforms' request results
         if not lms_success and not udemy_success:
             # Rollback Odoo student creation if both requests fail
             new_student.unlink()
-            raise exceptions.ValidationError("Failed to create student in external platforms")
+            new_student.message_post(
+                body="Student registration failed on both platforms. Record deleted from Odoo."
+            )
+            raise exceptions.ValidationError(
+                "Failed to create student in external platforms"
+            )
 
         return new_student
 
@@ -194,19 +244,23 @@ class Student(models.Model):
         Returns True for success, 'retry' for 500 error, and False for other errors.
         """
         headers = {"Content-Type": "application/json"}
-        data_body = [{
-            "name": student.name,
-            "email": student.email,
-            "username": student.username,
-            "password": "Password1!",
-        }]
+        data_body = [
+            {
+                "name": student.name,
+                "email": student.email,
+                "username": student.username,
+                "password": "Password1!",
+            }
+        ]
 
-        response = self.send_api_request(data_body, headers, base_url_name, endpoint)
+        response = self.send_api_request(
+            data_body, headers, base_url_name, endpoint
+        )
 
         if response and 200 <= response.status_code < 300:
             return True
         elif response and response.status_code == 500:
-            return 'retry'
+            return "retry"
         else:
             return False
 
@@ -217,14 +271,33 @@ class Student(models.Model):
         """
         for attempt in range(10):
             time.sleep(10)
-            response = self.send_api_request_to_platform(student, base_url_name, endpoint)
+            response = self.send_api_request_to_platform(
+                student, base_url_name, endpoint
+            )
+            self.message_post(body=f"Attempt {attempt+1}: {response}")
             if response is True:
+                self.message_post(
+                    body=f"Student successfully registered at attempt {attempt+1}."
+                )
                 return True
-            elif response is not 'retry':
-                break  # Do not retry for errors other than 500
+            elif response is not "retry":
+                self.message_post(
+                    body=f"Student registration failed at attempt {attempt+1}."
+                )
+                break
+
+        self.action_send_email(
+            student.email,
+            email_cc="",
+            body="Udemy registration failed after multiple attempts. Please contact support for assistance.",
+            student_object=student,
+        )
+        self.message_post(
+            body="Student registration failed after multiple attempts. Please contact support for assistance."
+        )
         return False
 
-    def send_api_request(self, data, headers,base_url_name, endpoint):
+    def send_api_request(self, data, headers, base_url_name, endpoint):
         """
         Function to send API request to LMS Staging
 
@@ -238,8 +311,8 @@ class Student(models.Model):
 
         # Define the URL Register API in LMS Staging
         url = f"{base_url}{endpoint}"
-        
-        print('urllllllllllllll', url)
+
+        print("urllllllllllllll", url)
 
         # Send the POST request
         try:
@@ -306,10 +379,12 @@ class Student(models.Model):
 
         return result
 
-    def _extract_base_url(self,base_url_name=None):
+    def _extract_base_url(self, base_url_name=None):
         service_key_config = self.env["service_key_configuration"]
 
-        base_url = service_key_config.get_api_key_by_service_name(base_url_name)
+        base_url = service_key_config.get_api_key_by_service_name(
+            base_url_name
+        )
 
         return base_url
 
@@ -352,3 +427,58 @@ class Student(models.Model):
                     "sticky": False,
                 },
             }
+
+    def call_send_email(
+        self,
+        recipient_email,
+        email_cc,
+        title,
+        subject,
+        body,
+        description="Registration Status",
+        external_link=False,
+        external_text=False,
+        ref_model="portal_student_management.model_portal_student",
+        student_object=False,
+        email_from="no-reply@funix.edu.vn",
+    ):
+        self.env["mail_service"].send_email_with_sendgrid(
+            self.env["service_key_configuration"],
+            recipient_email,
+            email_cc,
+            title,
+            subject,
+            body,
+            description,
+            external_link,
+            external_text,
+            ref_model,
+            student_object,
+            email_from,
+        )
+
+    def action_send_email(
+        self,
+        recipient_email,
+        email_cc,
+        student_object=False,
+        body="",
+    ):
+        self.call_send_email(
+            recipient_email,
+            email_cc,
+            title="Funix Portal Registration",
+            subject="Funix Portal Registration Status",
+            body=body,
+            description="Registration Status",
+            external_link=False,
+            external_text=False,
+            ref_model="portal_student_management.model_portal_student",
+            student_object=student_object,
+            email_from="no-reply@funix.edu.vn",
+        )
+        # Ensure message_post is called on a valid single record
+        if student_object:
+            student_object.message_post(
+                body=f"Email sent to {recipient_email}: {body}"
+            )
