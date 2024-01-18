@@ -437,7 +437,9 @@ class Student(models.Model):
         # Perform student creation in Odoo
         new_student = super(Student, self).create(vals)
 
-        if not self.env.context.get("test_import"):
+        if not self.env.context.get(
+            "test_import"
+        ) and not self.env.context.get("from_lms"):
             new_student.message_post(body="Student record created in Odoo.")
             _logger.info("New student created in Odoo")
             _logger.debug(f"New student: {new_student}")
@@ -470,6 +472,20 @@ class Student(models.Model):
                     f"Final Udemy registration status: {udemy_registration_status}"
                 )
 
+        if self.env.context.get("from_lms"):
+            new_student.message_post(
+                body="Student record created from LMS platform."
+            )
+            new_student.lms_created_status = True
+            _logger.info("New student created from LMS platform")
+            _logger.debug(f"New student: {new_student}")
+
+            udemy_registration_status = self._handle_udemy_registration(
+                new_student
+            )
+            _logger.debug(
+                f"Final Udemy registration status: {udemy_registration_status}"
+            )
         return new_student
 
     @api.model
