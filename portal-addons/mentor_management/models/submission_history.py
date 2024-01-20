@@ -7,7 +7,7 @@ class SubmissionHistory(models.Model):
     _description = "Submission History"
 
     student_id = fields.Many2one(
-        "portal.student", string="Student", required=True
+        "portal.student", string="Student", required=True, ondelete="cascade"
     )
     project_id = fields.Many2one(comodel_name="project", string="Project")
     submission_id = fields.Many2one(

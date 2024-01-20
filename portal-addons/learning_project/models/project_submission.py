@@ -49,6 +49,7 @@ class ProjectSubmission(models.Model):
         string="Student",
         readonly=True,
         track_visibility=True,
+        ondelete="cascade",
     )
 
     project = fields.Many2one("project", string="Project", readonly=True)
