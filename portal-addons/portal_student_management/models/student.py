@@ -206,6 +206,9 @@ class Student(models.Model):
         return lms_registration_status
 
     def _handle_udemy_registration(self, student):
+        if not self._extract_base_url(UDEMY_BASE_CONFIG):
+            raise exceptions.ValidationError("Udemy base url is not set")
+
         _logger.info("Registering student on Udemy platform")
         udemy_registration_status = False
         udemy_payload = self._prepare_udemy_payload(student)
@@ -465,12 +468,19 @@ class Student(models.Model):
                     "Failed to create student in LMS platform"
                 )
             else:
-                udemy_registration_status = self._handle_udemy_registration(
-                    new_student
-                )
-                _logger.debug(
-                    f"Final Udemy registration status: {udemy_registration_status}"
-                )
+                if self._extract_base_url(UDEMY_BASE_CONFIG):
+                    udemy_registration_status = (
+                        self._handle_udemy_registration(new_student)
+                    )
+                    _logger.debug(
+                        f"Final Udemy registration status: {udemy_registration_status}"
+                    )
+                else:
+                    udemy_registration_status = False
+                    _logger.info("Udemy platform is not configured")
+                    new_student.message_post(
+                        body="Udemy platform is not configured"
+                    )
 
         if self.env.context.get("from_lms"):
             new_student.message_post(
@@ -480,12 +490,20 @@ class Student(models.Model):
             _logger.info("New student created from LMS platform")
             _logger.debug(f"New student: {new_student}")
 
-            udemy_registration_status = self._handle_udemy_registration(
-                new_student
-            )
-            _logger.debug(
-                f"Final Udemy registration status: {udemy_registration_status}"
-            )
+            if self._extract_base_url(UDEMY_BASE_CONFIG):
+                udemy_registration_status = self._handle_udemy_registration(
+                    new_student
+                )
+
+                _logger.debug(
+                    f"Final Udemy registration status: {udemy_registration_status}"
+                )
+            else:
+                udemy_registration_status = False
+                _logger.info("Udemy platform is not configured")
+                new_student.message_notify(
+                    body="Udemy platform is not configured"
+                )
         return new_student
 
     @api.model
@@ -553,7 +571,7 @@ class Student(models.Model):
 
         data = {
             "email": self.email,
-            "new_password": "NewPassword1!",
+            "new_password": "Funix@12345",
         }
 
         response = self._send_api_request(
