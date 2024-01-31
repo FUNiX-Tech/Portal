@@ -16,15 +16,13 @@
     "version": "0.1",
     # any module necessary for this one to work correctly
     "depends": ["base", "student_organization", "portal_student_management"],
- 
     # always loaded
     "data": [
         "security/ir.model.access.csv",
         "views/student_role_views.xml",
         "views/student_views.xml",
         "views/separate_student_list_views.xml",
-        'data/student_role_data.xml',
+        "data/student_role_data.xml",
     ],
     # only loaded in demonstration mode
-
 }
