@@ -53,3 +53,6 @@ package.json
 odoo.conf
 odoo.http
 odoo_staging.http
+odoo-fix.conf
+odoo-owl.conf
+po.conf

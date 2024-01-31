@@ -32,3 +32,17 @@ class Student(models.Model):
         comodel_name="student_role",
         string="Student Role",
     )
+
+    @api.onchange('student_organization_student_ids')
+    def _onchange_student_organization_student_ids(self):
+        # Check if the student has an organization
+        if self.student_organization_student_ids:
+            # Find or create the 'USER' role
+            user_role = self.env['student_role'].search([('name', '=', 'USER')], limit=1)
+            print('user_role', user_role)
+            if not user_role:
+                print('This user_role', user_role)
+                user_role = self.env['student_role'].create({'name': 'USER', 'description': 'User Role'})
+
+            # Set the 'USER' role as the default role
+            self.student_role_id = user_role.id

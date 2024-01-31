@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <!-- Admin Student Role -->
+        <record model="student_role" id="admin_student_role">
+            <field name="name">ADMIN</field>
+            <field name="description">Administrator Role</field>
+        </record>
+
+        <!-- User Student Role -->
+        <record model="student_role" id="user_student_role">
+            <field name="name">USER</field>
+            <field name="description">User Role</field>
+        </record>
+    </data>
+</odoo>
