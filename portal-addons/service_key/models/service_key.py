@@ -119,7 +119,7 @@ class ServiceKeyConfiguration(models.Model):
             {"name": "MIGRATE_CHECK", "api_key": "False"},
             {
                 "name": "UDEMY_BASE",
-                "api_key": "https://24d1-14-161-31-73.ngrok-free.app/",
+                "api_key": "",
             },
         ]
         for key in key_lists:
