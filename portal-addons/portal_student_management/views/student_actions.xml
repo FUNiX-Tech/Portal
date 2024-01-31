@@ -3,7 +3,6 @@
         <field name="name">Student List</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">portal.student</field>
-        <field name="view_id" ref="student_tree"/>
         <field name="view_mode">tree,kanban,form</field>
     </record>
 </odoo>
