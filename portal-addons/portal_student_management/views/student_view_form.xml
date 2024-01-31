@@ -3,25 +3,59 @@
         <field name="name">portal.student.form</field>
         <field name="model">portal.student</field>
         <field name="arch" type="xml">
-            <!-- !TODO: Sẽ Refactor UI -->
             <form>
+                <header>
+                    <!-- Place buttons here in the header section -->
+                    <!-- Register LMS button -->
+                    <button
+                        name="action_register_in_lms"
+                        string="Register LMS"
+                        type="object"
+                        class="btn btn-primary"
+                        attrs="{'invisible': [('lms_created_status', '=', True)]}"
+                        />
+                    <button name="button_fake_register_lms" string="Register LMS" class="oe_highlight disabled" attrs="{'invisible': [('lms_created_status', '=', False)]}"/>
+                    <!-- Register Udemy button -->
+                    <button
+                        name="action_register_in_udemy"
+                        string="Register Udemy"
+                        type="object"
+                        class="btn btn-primary"
+                        attrs="{'invisible': [('udemy_created_status', '=', True)]}"
+                    />
+                    <button name="button_fake_register_udemy" string="Register Udemy" class="oe_highlight disabled" attrs="{'invisible': [('udemy_created_status', '=', False)]}"/>
+                    <!-- Reset Password button -->
+                    <button
+                        name="reset_password"
+                        string="Reset Password"
+                        type="object"
+                        class="oe_highlight"
+                        confirm="Are you sure you want to do this?"
+                    />
+                </header>
                 <sheet>
-                        <h4 style="color:#66598f">General Information</h4>
-                        <hr />
+                    <h4 style="color:#66598f">General Information</h4>
+                    <hr />
+                    <group>
                         <group>
-                            <group>
-                                <field name="name" />
-                                <field name="email" />
-                                <field name="gender" />
-                            </group>
-                            <group>
-                                <field name="username" />
-                                <field name="phone" />
-                                <field name="date_of_birth" />
-                                <button string="Reset Password" name="reset_password" type="object" class="oe_highlight wide-button" confirm="Are you sure you want to do this?"/>
-                            </group>
+                            <field name="name" />
+                            <field name="email" />
+                            <field name="gender" />
                         </group>
+                        <group>
+                            <field name="username" />
+                            <field name="phone" />
+                            <field name="date_of_birth" />
+                                <field name="lms_created_status" />
+                                <field name="udemy_created_status" />
+                        </group>
+                    </group>
                 </sheet>
+                <div class="oe_chatter">
+                    <field name="activity_ids" />
+                    <field name="message_follower_ids" groups="base.group_user"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
             </form>
         </field>
     </record>

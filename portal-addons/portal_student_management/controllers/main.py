@@ -40,7 +40,7 @@ class StudentAPI(http.Controller):
         context = {
             "from_lms": True,
         }
-
+        
         # 3. Create student record
         http.request.env["portal.student"].with_context(context).sudo().create(
             {

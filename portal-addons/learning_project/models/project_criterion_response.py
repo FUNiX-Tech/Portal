@@ -39,6 +39,7 @@ class ProjectCriterionResponse(models.Model):
         string="Submsision",
         required=True,
         readonly=True,
+        ondelete="cascade",
     )
 
     criterion = fields.Many2one(
