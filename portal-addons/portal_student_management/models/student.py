@@ -270,12 +270,14 @@ class Student(models.Model):
 
     def _prepare_lms_payload(self, student):
         _logger.info("Preparing LMS payload")
-        lms_data_body = {
-            "name": student.name,
-            "email": student.email,
-            "username": student.username,
-            "password": "Password1!",
-        }
+        lms_data_body = [
+            {
+                "name": student.name,
+                "email": student.email,
+                "username": student.username,
+                "password": "Funix@12345",
+            }
+        ]
         _logger.debug(f"LMS payload: {lms_data_body}")
 
         return lms_data_body
